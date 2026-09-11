@@ -1,0 +1,2064 @@
+```html
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PROJECT-X — Software Decision Engine</title>
+
+    <meta
+        name="description"
+        content="Scopri quali strumenti software sono più adatti alla tua attività."
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background: #f5f7fb;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        .container {
+            width: min(1100px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+
+        header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: #6366f1;
+        }
+
+        .nav-button {
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 10px;
+            padding: 9px 15px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* HERO */
+
+        .hero {
+            padding: 85px 0 55px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            background: #eef2ff;
+            color: #4f46e5;
+            border-radius: 999px;
+            padding: 7px 13px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            max-width: 850px;
+            margin: 0 auto 20px;
+            font-size: clamp(40px, 7vw, 72px);
+            line-height: 0.98;
+            letter-spacing: -3px;
+        }
+
+        .hero h1 span {
+            color: #6366f1;
+        }
+
+        .hero p {
+            max-width: 690px;
+            margin: 0 auto;
+            font-size: 19px;
+            color: #6b7280;
+        }
+
+        .hero-sub {
+            margin-top: 14px !important;
+            font-size: 15px !important;
+        }
+
+        /* CARD */
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(15, 23, 42, 0.07);
+        }
+
+        /* QUESTIONNAIRE */
+
+        .questionnaire {
+            max-width: 850px;
+            margin: 0 auto 80px;
+            padding: 35px;
+        }
+
+        .section-title {
+            margin-bottom: 28px;
+        }
+
+        .section-title h2 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .section-title p {
+            color: #6b7280;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 11px;
+            padding: 13px 14px;
+            background: white;
+            color: #111827;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+
+        .start-button {
+            width: 100%;
+            margin-top: 28px;
+            border: 0;
+            border-radius: 12px;
+            background: #111827;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .start-button:hover {
+            background: #000;
+        }
+
+        .start-button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        /* LOADING */
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 34px;
+            height: 34px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* RESULTS */
+
+        #results {
+            display: none;
+            padding-bottom: 100px;
+        }
+
+        #results.active {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .results-header h2 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .results-header p {
+            color: #6b7280;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .result-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .result-card.full {
+            grid-column: 1 / -1;
+        }
+
+        .result-card h3 {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .result-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* SOFTWARE */
+
+        .software-list {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .software-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 13px;
+            padding: 16px;
+            background: #fafafa;
+        }
+
+        .software-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 7px;
+        }
+
+        .software-name {
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .score {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 60px;
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .software-description {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .software-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .tag {
+            background: #f3f4f6;
+            color: #4b5563;
+            padding: 4px 8px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .existing {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        /* VALUE */
+
+        .value-box {
+            background: #f9fafb;
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .value-number {
+            font-size: 34px;
+            font-weight: 850;
+            margin-bottom: 4px;
+        }
+
+        .value-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .value-note {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* NEEDS */
+
+        .needs-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .need {
+            padding: 7px 10px;
+            background: #fef2f2;
+            color: #b91c1c;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* AUTOMATIONS */
+
+        .automation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .automation-item {
+            padding: 14px;
+            border-radius: 11px;
+            background: #f9fafb;
+            border: 1px solid #eef0f3;
+        }
+
+        .automation-item strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .automation-item span {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* ERROR */
+
+        .error-box {
+            display: none;
+            margin-top: 20px;
+            padding: 14px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .error-box.active {
+            display: block;
+        }
+
+        /* FOOTER */
+
+        footer {
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            padding: 30px 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 18px;
+        }
+
+        .footer-links a {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 750px) {
+
+            .container {
+                width: calc(100% - 24px);
+            }
+
+            .hero {
+                padding: 55px 0 35px;
+            }
+
+            .hero h1 {
+                font-size: 43px;
+            }
+
+            .questionnaire {
+                padding: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-card.full {
+                grid-column: auto;
+            }
+
+            .results-header h2 {
+                font-size: 34px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <div class="container nav">
+
+        <div class="logo">
+            PROJECT<span>-X</span>
+        </div>
+
+        <button
+            class="nav-button"
+            type="button"
+            onclick="scrollToQuestionnaire()"
+        >
+            Inizia
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <div class="container">
+
+        <div class="badge">
+            ✦ Software Decision Engine
+        </div>
+
+        <h1>
+            Stop guessing.<br>
+            <span>Build the right system.</span>
+        </h1>
+
+        <p>
+            Dimmi che attività hai, cosa vuoi ottenere e cosa ti fa perdere tempo.
+            PROJECT-X individua gli strumenti software più adatti alle tue esigenze.
+        </p>
+
+        <p class="hero-sub">
+            Non devi conoscere già gli strumenti. Partiamo dal tuo problema.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     QUESTIONNAIRE
+========================= -->
+
+<section id="questionnaire">
+
+    <div class="container">
+
+        <div class="questionnaire card">
+
+            <div class="section-title">
+
+                <h2>
+                    Costruiamo il tuo sistema
+                </h2>
+
+                <p>
+                    Rispondi alle domande. Il motore confronterà le tue esigenze
+                    con gli strumenti disponibili.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="field">
+
+                    <label for="businessType">
+                        1. Che tipo di attività hai?
+                    </label>
+
+                    <select id="businessType">
+
+                        <option value="">
+                            Seleziona...
+                        </option>
+
+                        <option value="Professionista">
+                            Professionista
+                        </option>
+
+                        <option value="Impresa di servizi">
+                            Impresa di servizi
+                        </option>
+
+                        <option value="E-commerce">
+                            E-commerce
+                        </option>
+
+                        <option value="Agenzia">
+                            Agenzia
+                        </option>
+
+                        <option value="Ristorante / attività locale">
+                            Ristorante / attività locale
+                        </option>
+
+                        <option value="Startup">
+                            Startup
+                        </option>
+
+                        <option value="Azienda">
+                            Azienda
+                        </option>
+
+                        <option value="Altro">
+                            Altro
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="team">
+                        2. Quante persone lavorano con te?
+                    </label>
+
+                    <select id="team">
+
+                        <option value="">
+                            Seleziona...
+                        </option>
+
+                        <option value="Solo io">
+                            Solo io
+                        </option>
+
+                        <option value="2–5">
+                            2–5
+                        </option>
+
+                        <option value="6–20">
+                            6–20
+                        </option>
+
+                        <option value="21–50">
+                            21–50
+                        </option>
+
+                        <option value="50+">
+                            50+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field full">
+
+                    <label for="goals">
+                        3. Cosa vuoi migliorare?
+                    </label>
+
+                    <input
+                        id="goals"
+                        type="text"
+                        placeholder="Es. clienti, vendite, email, preventivi, marketing, automazioni..."
+                    >
+
+                    <span class="hint">
+                        Puoi inserire più obiettivi separati da virgole.
+                    </span>
+
+                </div>
+
+
+                <div class="field full">
+
+                    <label for="painPoint">
+                        4. Qual è il problema che ti fa perdere più tempo?
+                    </label>
+
+                    <textarea
+                        id="painPoint"
+                        placeholder="Es. Perdo molto tempo a rispondere alle email, fare follow-up ai clienti e aggiornare Excel..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="budget">
+                        5. Quanto vuoi spendere al mese?
+                    </label>
+
+                    <select id="budget">
+
+                        <option value="">
+                            Seleziona...
+                        </option>
+
+                        <option value="€0">
+                            €0
+                        </option>
+
+                        <option value="€1–30">
+                            €1–30
+                        </option>
+
+                        <option value="€31–50">
+                            €31–50
+                        </option>
+
+                        <option value="€51–100">
+                            €51–100
+                        </option>
+
+                        <option value="€101–250">
+                            €101–250
+                        </option>
+
+                        <option value="€251–500">
+                            €251–500
+                        </option>
+
+                        <option value="€500+">
+                            €500+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="tech">
+                        6. Quanto sei pratico di tecnologia?
+                    </label>
+
+                    <select id="tech">
+
+                        <option value="">
+                            Seleziona...
+                        </option>
+
+                        <option value="Base">
+                            Base
+                        </option>
+
+                        <option value="Medio">
+                            Medio
+                        </option>
+
+                        <option value="Avanzato">
+                            Avanzato
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="automation">
+                        7. Quanto vuoi automatizzare?
+                    </label>
+
+                    <select id="automation">
+
+                        <option value="">
+                            Seleziona...
+                        </option>
+
+                        <option value="Semplice">
+                            Semplice
+                        </option>
+
+                        <option value="Smart">
+                            Smart
+                        </option>
+
+                        <option value="AI Mode 🤖">
+                            AI Mode 🤖
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="hours">
+                        8. Ore a settimana perse in attività ripetitive?
+                    </label>
+
+                    <select id="hours">
+
+                        <option value="">
+                            Seleziona...
+                        </option>
+
+                        <option value="<1">
+                            Meno di 1
+                        </option>
+
+                        <option value="1–3">
+                            1–3
+                        </option>
+
+                        <option value="4–7">
+                            4–7
+                        </option>
+
+                        <option value="8–15">
+                            8–15
+                        </option>
+
+                        <option value="15+">
+                            15+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="hourValue">
+                        9. Quanto vale circa un'ora del tuo lavoro?
+                    </label>
+
+                    <select id="hourValue">
+
+                        <option value="">
+                            Seleziona...
+                        </option>
+
+                        <option value="€10">
+                            €10
+                        </option>
+
+                        <option value="€20">
+                            €20
+                        </option>
+
+                        <option value="€30">
+                            €30
+                        </option>
+
+                        <option value="€50">
+                            €50
+                        </option>
+
+                        <option value="€75">
+                            €75
+                        </option>
+
+                        <option value="€100+">
+                            €100+
+                        </option>
+
+                        <option value="Non so">
+                            Non so
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field full">
+
+                    <label for="existingTools">
+                        10. Quali strumenti usi già?
+                    </label>
+
+                    <input
+                        id="existingTools"
+                        type="text"
+                        placeholder="Es. Microsoft 365, Outlook, Excel, Gmail, Shopify..."
+                    >
+
+                    <span class="hint">
+                        Indica anche gli strumenti che non vuoi sostituire.
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                id="analyzeButton"
+                class="start-button"
+                type="button"
+                onclick="analyze()"
+            >
+                Analizza il mio sistema →
+            </button>
+
+
+            <div
+                id="errorBox"
+                class="error-box"
+            ></div>
+
+
+            <div
+                id="loading"
+                class="loading"
+            >
+
+                <div class="spinner"></div>
+
+                <strong>
+                    Stiamo analizzando il tuo sistema...
+                </strong>
+
+                <p>
+                    Confrontiamo esigenze e strumenti.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     RESULTS
+========================= -->
+
+<section id="results">
+
+    <div class="container">
+
+        <div class="results-header">
+
+            <div class="badge">
+                ✓ Analisi completata
+            </div>
+
+            <h2>
+                Il tuo sistema
+            </h2>
+
+            <p id="resultsIntro">
+                Abbiamo individuato gli strumenti più compatibili con il tuo profilo.
+            </p>
+
+        </div>
+
+
+        <div class="results-grid">
+
+
+            <!-- SOFTWARE -->
+
+            <div class="result-card full">
+
+                <h3>
+                    🏆 Gli strumenti più adatti
+                </h3>
+
+                <p class="result-description">
+                    Il punteggio indica la compatibilità con le tue esigenze.
+                </p>
+
+                <div
+                    id="softwareResults"
+                    class="software-list"
+                ></div>
+
+            </div>
+
+
+            <!-- STACK -->
+
+            <div class="result-card">
+
+                <h3>
+                    🧩 Il tuo stack
+                </h3>
+
+                <p class="result-description">
+                    Una combinazione di strumenti evitando sovrapposizioni inutili.
+                </p>
+
+                <div
+                    id="stackResults"
+                    class="software-list"
+                ></div>
+
+            </div>
+
+
+            <!-- VALUE -->
+
+            <div class="result-card">
+
+                <h3>
+                    ⏱️ Valore potenziale del tempo
+                </h3>
+
+                <p class="result-description">
+                    Stima teorica basata sulle ore indicate.
+                </p>
+
+                <div class="value-box">
+
+                    <div
+                        id="valueNumber"
+                        class="value-number"
+                    >
+                        —
+                    </div>
+
+                    <div class="value-label">
+                        al mese
+                    </div>
+
+                    <div class="value-note">
+                        Non è una garanzia di risparmio o guadagno.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MISSING -->
+
+            <div class="result-card">
+
+                <h3>
+                    🎯 Esigenze ancora scoperte
+                </h3>
+
+                <p class="result-description">
+                    Le aree che il sistema non copre completamente.
+                </p>
+
+                <div
+                    id="missingNeeds"
+                    class="needs-list"
+                ></div>
+
+            </div>
+
+
+            <!-- AUTOMATIONS -->
+
+            <div class="result-card">
+
+                <h3>
+                    🤖 Automazioni da valutare
+                </h3>
+
+                <p class="result-description">
+                    Alcune automazioni potenzialmente utili.
+                </p>
+
+                <div
+                    id="automationResults"
+                    class="automation-list"
+                ></div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="container footer-inner">
+
+        <div>
+            © 2026 PROJECT-X
+        </div>
+
+        <div class="footer-links">
+
+            <a href="privacy.html">Privacy</a>
+
+            <a href="cookie.html">Cookie</a>
+
+            <a href="terms.html">Termini</a>
+
+            <a href="affiliate.html">Affiliate</a>
+
+            <a href="ai.html">AI</a>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     FILE DEL PROGETTO
+===================================================== -->
+
+<script src="./database.js"></script>
+
+<script src="./engine.js"></script>
+
+
+<!-- =====================================================
+     JAVASCRIPT PRINCIPALE
+===================================================== -->
+
+<script>
+
+    console.log("PROJECT-X: index.html caricato");
+
+
+    /* =========================
+       SCROLL
+    ========================= */
+
+    function scrollToQuestionnaire() {
+
+        document
+            .getElementById("questionnaire")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    /* =========================
+       GET VALUE
+    ========================= */
+
+    function getValue(id) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return "";
+        }
+
+        return element.value.trim();
+
+    }
+
+
+    /* =========================
+       COLLECT ANSWERS
+    ========================= */
+
+    function collectAnswers() {
+
+        return {
+
+            businessType:
+                getValue("businessType"),
+
+            team:
+                getValue("team"),
+
+            goals:
+                getValue("goals"),
+
+            painPoint:
+                getValue("painPoint"),
+
+            budget:
+                getValue("budget"),
+
+            tech:
+                getValue("tech"),
+
+            automation:
+                getValue("automation"),
+
+            hours:
+                getValue("hours"),
+
+            hourValue:
+                getValue("hourValue"),
+
+            existingTools:
+                getValue("existingTools")
+
+        };
+
+    }
+
+
+    /* =========================
+       VALIDATION
+    ========================= */
+
+    function validateAnswers(data) {
+
+        if (!data.businessType) {
+            return "Seleziona il tipo di attività.";
+        }
+
+        if (!data.team) {
+            return "Seleziona la dimensione del team.";
+        }
+
+        if (!data.painPoint) {
+            return "Descrivi il problema che ti fa perdere più tempo.";
+        }
+
+        if (!data.budget) {
+            return "Seleziona il budget.";
+        }
+
+        if (!data.tech) {
+            return "Seleziona il livello tecnologico.";
+        }
+
+        if (!data.automation) {
+            return "Seleziona quanto vuoi automatizzare.";
+        }
+
+        if (!data.hours) {
+            return "Seleziona le ore perse.";
+        }
+
+        if (!data.hourValue) {
+            return "Seleziona il valore dell'ora.";
+        }
+
+        return null;
+
+    }
+
+
+    /* =========================
+       ERROR
+    ========================= */
+
+    function showError(message) {
+
+        const box =
+            document.getElementById("errorBox");
+
+        box.textContent = message;
+
+        box.classList.add("active");
+
+    }
+
+
+    function hideError() {
+
+        const box =
+            document.getElementById("errorBox");
+
+        box.textContent = "";
+
+        box.classList.remove("active");
+
+    }
+
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    function setLoading(active) {
+
+        const loading =
+            document.getElementById("loading");
+
+        const button =
+            document.getElementById("analyzeButton");
+
+
+        if (active) {
+
+            loading.classList.add("active");
+
+            button.disabled = true;
+
+            button.textContent =
+                "Analisi in corso...";
+
+        } else {
+
+            loading.classList.remove("active");
+
+            button.disabled = false;
+
+            button.textContent =
+                "Analizza il mio sistema →";
+
+        }
+
+    }
+
+
+    /* =========================
+       HTML SECURITY
+    ========================= */
+
+    function escapeHtml(value) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+            return "";
+        }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================
+       EURO
+    ========================= */
+
+    function formatEuro(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            Number.isNaN(Number(value))
+        ) {
+            return "—";
+        }
+
+        return new Intl.NumberFormat(
+            "it-IT",
+            {
+                style: "currency",
+                currency: "EUR",
+                maximumFractionDigits: 0
+            }
+        ).format(value);
+
+    }
+
+
+    /* =========================
+       SCORE
+    ========================= */
+
+    function formatScore(value) {
+
+        return (
+            Math.round(Number(value) || 0)
+            + "/100"
+        );
+
+    }
+
+
+    /* =========================
+       SOFTWARE
+    ========================= */
+
+    function renderSoftware(results) {
+
+        const container =
+            document.getElementById("softwareResults");
+
+        container.innerHTML = "";
+
+
+        if (
+            !Array.isArray(results) ||
+            results.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="software-item">
+                    Nessun risultato disponibile.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        results
+            .slice(0, 5)
+            .forEach((item, index) => {
+
+
+                const tool =
+                    item.tool || item;
+
+
+                const score =
+                    item.compatibilityScore ??
+                    item.score ??
+                    0;
+
+
+                const existing =
+                    Number(item.existingBonus || 0) > 0;
+
+
+                const div =
+                    document.createElement("div");
+
+
+                div.className =
+                    "software-item";
+
+
+                div.innerHTML = `
+
+                    <div class="software-top">
+
+                        <div class="software-name">
+
+                            ${index + 1}.
+                            ${escapeHtml(tool.name)}
+
+                        </div>
+
+                        <div class="score">
+
+                            ${formatScore(score)}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="software-description">
+
+                        ${escapeHtml(
+                            tool.description ||
+                            "Strumento compatibile con il tuo profilo."
+                        )}
+
+                    </div>
+
+
+                    <div class="software-meta">
+
+                        <span class="tag">
+
+                            ${escapeHtml(
+                                tool.category ||
+                                "Software"
+                            )}
+
+                        </span>
+
+
+                        ${
+                            existing
+                            ?
+                            `
+                            <span class="tag existing">
+                                ✓ Compatibile con ciò che usi già
+                            </span>
+                            `
+                            :
+                            ""
+                        }
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(div);
+
+            });
+
+    }
+
+
+    /* =========================
+       STACK
+    ========================= */
+
+    function renderStack(stack) {
+
+        const container =
+            document.getElementById("stackResults");
+
+        container.innerHTML = "";
+
+
+        if (
+            !Array.isArray(stack) ||
+            stack.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="software-item">
+                    Nessuno stack disponibile.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        stack.forEach((item, index) => {
+
+            const tool =
+                item.tool || item;
+
+
+            const score =
+                item.compatibilityScore ??
+                item.score ??
+                0;
+
+
+            const div =
+                document.createElement("div");
+
+
+            div.className =
+                "software-item";
+
+
+            div.innerHTML = `
+
+                <div class="software-top">
+
+                    <div class="software-name">
+
+                        ${index + 1}.
+                        ${escapeHtml(tool.name)}
+
+                    </div>
+
+                    <div class="score">
+
+                        ${formatScore(score)}
+
+                    </div>
+
+                </div>
+
+
+                <div class="software-description">
+
+                    ${escapeHtml(
+                        tool.description ||
+                        "Componente dello stack consigliato."
+                    )}
+
+                </div>
+
+            `;
+
+
+            container.appendChild(div);
+
+        });
+
+    }
+
+
+    /* =========================
+       MISSING NEEDS
+    ========================= */
+
+    function renderMissingNeeds(needs) {
+
+        const container =
+            document.getElementById("missingNeeds");
+
+        container.innerHTML = "";
+
+
+        if (
+            !Array.isArray(needs) ||
+            needs.length === 0
+        ) {
+
+            container.innerHTML = `
+                <span class="need">
+                    ✓ Nessuna esigenza critica
+                </span>
+            `;
+
+            return;
+
+        }
+
+
+        needs.forEach(item => {
+
+            const label =
+                typeof item === "string"
+                    ? item
+                    : (
+                        item.label ||
+                        item.name ||
+                        item.need ||
+                        "Esigenza"
+                    );
+
+
+            const span =
+                document.createElement("span");
+
+
+            span.className =
+                "need";
+
+
+            span.textContent =
+                label;
+
+
+            container.appendChild(span);
+
+        });
+
+    }
+
+
+    /* =========================
+       AUTOMATIONS
+    ========================= */
+
+    function renderAutomations(items) {
+
+        const container =
+            document.getElementById("automationResults");
+
+        container.innerHTML = "";
+
+
+        if (
+            !Array.isArray(items) ||
+            items.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="automation-item">
+
+                    <strong>
+                        Nessuna automazione prioritaria
+                    </strong>
+
+                    <span>
+                        Il sistema non ha ancora individuato
+                        automazioni prioritarie.
+                    </span>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        items
+            .slice(0, 5)
+            .forEach(item => {
+
+                let title;
+                let description;
+
+
+                if (typeof item === "string") {
+
+                    title = item;
+                    description = "";
+
+                } else {
+
+                    title =
+                        item.title ||
+                        item.name ||
+                        item.automation ||
+                        "Automazione";
+
+                    description =
+                        item.description ||
+                        item.reason ||
+                        "";
+
+                }
+
+
+                const div =
+                    document.createElement("div");
+
+
+                div.className =
+                    "automation-item";
+
+
+                div.innerHTML = `
+
+                    <strong>
+                        ${escapeHtml(title)}
+                    </strong>
+
+                    <span>
+                        ${escapeHtml(description)}
+                    </span>
+
+                `;
+
+
+                container.appendChild(div);
+
+            });
+
+    }
+
+
+    /* =========================
+       VALUE
+    ========================= */
+
+    function renderValue(valueEstimate) {
+
+        const element =
+            document.getElementById("valueNumber");
+
+
+        if (!valueEstimate) {
+
+            element.textContent = "—";
+
+            return;
+
+        }
+
+
+        const value =
+            valueEstimate.monthlyValue ??
+            valueEstimate.value ??
+            valueEstimate.monthly ??
+            null;
+
+
+        if (value === null) {
+
+            element.textContent = "—";
+
+            return;
+
+        }
+
+
+        element.textContent =
+            formatEuro(value);
+
+    }
+
+
+    /* =========================
+       RESULTS
+    ========================= */
+
+    function showResults(result) {
+
+        renderSoftware(
+            result.rankedTools ||
+            result.tools ||
+            []
+        );
+
+
+        renderStack(
+            result.stack ||
+            []
+        );
+
+
+        renderMissingNeeds(
+            result.missingNeeds ||
+            []
+        );
+
+
+        renderAutomations(
+            result.automationIdeas ||
+            result.automations ||
+            []
+        );
+
+
+        renderValue(
+            result.valueEstimate ||
+            null
+        );
+
+
+        document
+            .getElementById("results")
+            .classList.add("active");
+
+
+        document
+            .getElementById("results")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    /* =========================
+       ANALYZE
+    ========================= */
+
+    async function analyze() {
+
+        hideError();
+
+
+        const answers =
+            collectAnswers();
+
+
+        const validationError =
+            validateAnswers(answers);
+
+
+        if (validationError) {
+
+            showError(validationError);
+
+            return;
+
+        }
+
+
+        setLoading(true);
+
+
+        try {
+
+            /*
+             * Prima proviamo il motore locale.
+             */
+
+            if (
+                !window.ProjectXEngine ||
+                typeof window.ProjectXEngine.analyzeAnswers !== "function"
+            ) {
+
+                throw new Error(
+                    "ProjectXEngine non trovato."
+                );
+
+            }
+
+
+            let result =
+                window.ProjectXEngine.analyzeAnswers(
+                    answers
+                );
+
+
+            /*
+             * Se l'API AI esiste, proviamo
+             * a migliorare il profilo.
+             */
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/analyze",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    answers
+                                )
+                        }
+                    );
+
+
+                if (response.ok) {
+
+                    const aiData =
+                        await response.json();
+
+
+                    const aiProfile =
+                        aiData.profile ||
+                        aiData.analysis ||
+                        aiData.result ||
+                        null;
+
+
+                    if (aiProfile) {
+
+                        result =
+                            window.ProjectXEngine.analyzeAnswers(
+                                answers,
+                                aiProfile
+                            );
+
+                    }
+
+                }
+
+            } catch (apiError) {
+
+                console.warn(
+                    "API AI non disponibile. Uso il motore locale.",
+                    apiError
+                );
+
+            }
+
+
+            showResults(result);
+
+
+        } catch (error) {
+
+            console.error(
+                "Errore PROJECT-X:",
+                error
+            );
+
+
+            showError(
+                "Errore nel motore decisionale. Controlla che database.js ed engine.js siano presenti e corretti."
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    }
+
+
+    /* =========================
+       STARTUP TEST
+    ========================= */
+
+    console.log(
+        "PROJECT-X: frontend OK"
+    );
+
+
+    console.log(
+        "Database:",
+        typeof window.SOFTWARE_DATABASE
+    );
+
+
+    console.log(
+        "Decision Engine:",
+        typeof window.ProjectXEngine
+    );
+
+
+</script>
+
+
+</body>
+
+</html>
+```
