@@ -3,1091 +3,440 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT-X — Build the right system</title>
-<meta name="description" content="Descrivi il tuo lavoro. PROJECT-X costruisce il sistema software più adatto alle tue esigenze.">
+
+<title>PROJECT-X — Software Decision Engine</title>
 
 <style>
-:root{
-  --bg:#07070a;
-  --bg2:#0b0b10;
-  --panel:#111116;
-  --panel2:#15151c;
-  --line:rgba(255,255,255,.09);
-  --text:#f7f7fb;
-  --muted:#9494a4;
-  --muted2:#676775;
-  --accent:#8b5cf6;
-  --accent2:#c084fc;
-  --green:#34d399;
-  --blue:#60a5fa;
-  --orange:#f59e0b;
-  --red:#fb7185;
-  --radius:24px;
+* {
+    box-sizing: border-box;
 }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+html {
+    scroll-behavior: smooth;
 }
 
-html{
-  scroll-behavior:smooth;
+body {
+    margin: 0;
+    font-family: Inter, Arial, sans-serif;
+    background:
+        radial-gradient(circle at 20% 0%, rgba(80,120,255,.12), transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(150,80,255,.10), transparent 30%),
+        #070914;
+    color: #f5f7ff;
+    min-height: 100vh;
 }
 
-body{
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:
-    radial-gradient(circle at 50% -10%,rgba(139,92,246,.16),transparent 34%),
-    radial-gradient(circle at 90% 20%,rgba(96,165,250,.07),transparent 25%),
-    var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
+.container {
+    width: min(1180px, calc(100% - 40px));
+    margin: auto;
 }
 
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.035;
-  background-image:
-    linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);
-  background-size:70px 70px;
-  mask-image:linear-gradient(to bottom,black,transparent 80%);
+header {
+    padding: 26px 0;
+    border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
-a{
-  color:inherit;
-  text-decoration:none;
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-button,
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    opacity: .5;
+}
+
+.hero {
+    padding: 90px 0 70px;
+    text-align: center;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 999px;
+    background: rgba(255,255,255,.04);
+    font-size: 13px;
+    color: #b9c2e8;
+    margin-bottom: 24px;
+}
+
+.hero h1 {
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: clamp(42px, 7vw, 76px);
+    line-height: .98;
+    letter-spacing: -4px;
+}
+
+.hero h1 span {
+    background: linear-gradient(90deg,#fff,#8ea7ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.hero p {
+    max-width: 720px;
+    margin: 28px auto 0;
+    color: #aab2cf;
+    font-size: 19px;
+    line-height: 1.6;
+}
+
+.visual-engine {
+    margin: 20px auto 70px;
+    max-width: 950px;
+    padding: 30px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 24px;
+    background: rgba(255,255,255,.035);
+    box-shadow: 0 30px 100px rgba(0,0,0,.35);
+}
+
+.engine-flow {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 12px;
+}
+
+.engine-box {
+    padding: 22px 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.07);
+    text-align: center;
+    font-size: 13px;
+    color: #ccd3f3;
+}
+
+.section {
+    padding: 80px 0;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 38px;
+    letter-spacing: -2px;
+    margin-bottom: 15px;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #969fbd;
+    max-width: 650px;
+    margin: 0 auto 45px;
+    line-height: 1.6;
+}
+
+.process {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+}
+
+.card {
+    padding: 28px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.035);
+}
+
+.card-number {
+    font-size: 13px;
+    color: #8198ff;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    margin: 0 0 10px;
+}
+
+.card p {
+    color: #979fbc;
+    line-height: 1.6;
+}
+
+.questionnaire-wrap {
+    max-width: 800px;
+    margin: auto;
+}
+
+.questionnaire {
+    border: 1px solid rgba(255,255,255,.09);
+    background: rgba(255,255,255,.04);
+    border-radius: 26px;
+    padding: 35px;
+    box-shadow: 0 30px 100px rgba(0,0,0,.25);
+}
+
+.progress {
+    height: 5px;
+    background: rgba(255,255,255,.08);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 35px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 10%;
+    background: #8198ff;
+    transition: width .25s ease;
+}
+
+.step {
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
+
+.step h2 {
+    font-size: 28px;
+    margin-top: 0;
+}
+
+.step-description {
+    color: #969fbd;
+    margin-bottom: 25px;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+}
+
+.option {
+    cursor: pointer;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.025);
+    transition: .2s;
+}
+
+.option:hover {
+    border-color: rgba(130,150,255,.5);
+    background: rgba(130,150,255,.08);
+}
+
+.option input {
+    display: none;
+}
+
+.option.selected {
+    border-color: #8198ff;
+    background: rgba(129,152,255,.12);
+}
+
+textarea,
 select,
-input,
-textarea{
-  font:inherit;
+input[type="text"] {
+    width: 100%;
+    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(0,0,0,.2);
+    color: white;
+    border-radius: 14px;
+    padding: 16px;
+    font: inherit;
+    outline: none;
 }
 
-/* =========================
-   HEADER
-========================= */
-
-header{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:100;
-  height:76px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  background:rgba(7,7,10,.72);
-  backdrop-filter:blur(20px);
-}
-
-.nav{
-  max-width:1180px;
-  height:100%;
-  margin:auto;
-  padding:0 24px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:11px;
-  font-size:17px;
-  font-weight:750;
-  letter-spacing:-.03em;
-}
-
-.logo-mark{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:
-    linear-gradient(135deg,#a78bfa,#7c3aed);
-  display:grid;
-  place-items:center;
-  box-shadow:0 0 28px rgba(139,92,246,.35);
-}
-
-.logo-mark:before{
-  content:"✦";
-  font-size:16px;
-  color:white;
-}
-
-.logo span{
-  color:#858591;
-  font-weight:500;
-}
-
-.nav-right{
-  display:flex;
-  align-items:center;
-  gap:20px;
-  color:#858591;
-  font-size:13px;
-}
-
-.nav-pill{
-  border:1px solid var(--line);
-  padding:8px 13px;
-  border-radius:999px;
-  background:rgba(255,255,255,.035);
-}
-
-/* =========================
-   HERO
-========================= */
-
-.hero{
-  max-width:1180px;
-  margin:0 auto;
-  padding:150px 24px 85px;
-  text-align:center;
-  position:relative;
-}
-
-.hero-orb{
-  position:absolute;
-  width:520px;
-  height:520px;
-  left:50%;
-  top:40px;
-  transform:translateX(-50%);
-  background:radial-gradient(circle,rgba(139,92,246,.13),transparent 65%);
-  pointer-events:none;
-  filter:blur(10px);
-}
-
-.eyebrow{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  border:1px solid rgba(167,139,250,.22);
-  background:rgba(139,92,246,.07);
-  padding:8px 13px;
-  border-radius:999px;
-  color:#c4b5fd;
-  font-size:12px;
-  font-weight:650;
-  letter-spacing:.02em;
-  position:relative;
-}
-
-.eyebrow-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#a78bfa;
-  box-shadow:0 0 12px #a78bfa;
-}
-
-.hero h1{
-  max-width:900px;
-  margin:28px auto 22px;
-  font-size:clamp(48px,7vw,86px);
-  line-height:.98;
-  letter-spacing:-.065em;
-  font-weight:800;
-  position:relative;
-}
-
-.gradient-text{
-  background:linear-gradient(
-    100deg,
-    #fff 0%,
-    #fff 28%,
-    #c4b5fd 58%,
-    #8b5cf6 100%
-  );
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-.hero-description{
-  max-width:620px;
-  margin:auto;
-  color:#9999a8;
-  font-size:18px;
-  line-height:1.65;
-}
-
-.hero-actions{
-  margin-top:36px;
-  display:flex;
-  justify-content:center;
-  gap:12px;
-}
-
-.primary-btn{
-  border:0;
-  color:white;
-  cursor:pointer;
-  padding:15px 23px;
-  border-radius:13px;
-  font-weight:700;
-  font-size:14px;
-  background:linear-gradient(135deg,#8b5cf6,#6d28d9);
-  box-shadow:
-    0 10px 35px rgba(109,40,217,.28),
-    inset 0 1px rgba(255,255,255,.22);
-  transition:.2s ease;
-}
-
-.primary-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:
-    0 16px 45px rgba(109,40,217,.38),
-    inset 0 1px rgba(255,255,255,.22);
-}
-
-.secondary-btn{
-  border:1px solid var(--line);
-  color:#dddde5;
-  cursor:pointer;
-  padding:15px 23px;
-  border-radius:13px;
-  font-weight:650;
-  font-size:14px;
-  background:rgba(255,255,255,.035);
-  transition:.2s ease;
-}
-
-.secondary-btn:hover{
-  background:rgba(255,255,255,.07);
-}
-
-/* =========================
-   VISUAL ENGINE
-========================= */
-
-.engine-visual{
-  max-width:760px;
-  margin:70px auto 0;
-  position:relative;
-}
-
-.engine-box{
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:28px;
-  padding:20px;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
-  box-shadow:
-    0 30px 100px rgba(0,0,0,.45),
-    inset 0 1px rgba(255,255,255,.06);
-}
-
-.engine-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:2px 3px 17px;
-  color:#777784;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-}
-
-.live{
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-.live i{
-  width:6px;
-  height:6px;
-  background:var(--green);
-  border-radius:50%;
-  box-shadow:0 0 12px var(--green);
-}
-
-.engine-flow{
-  display:grid;
-  grid-template-columns:1fr 80px 1fr;
-  align-items:center;
-  gap:12px;
-}
-
-.flow-card{
-  min-height:120px;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:rgba(0,0,0,.22);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-}
-
-.flow-icon{
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  border-radius:13px;
-  background:rgba(139,92,246,.13);
-  color:#c4b5fd;
-  font-size:19px;
-}
-
-.flow-title{
-  font-size:13px;
-  font-weight:700;
-}
-
-.flow-sub{
-  color:#666674;
-  font-size:10px;
-}
-
-.flow-center{
-  text-align:center;
-  color:#8b5cf6;
-  font-size:25px;
-}
-
-.flow-center small{
-  display:block;
-  margin-top:5px;
-  font-size:8px;
-  letter-spacing:.12em;
-  color:#666674;
-}
-
-/* =========================
-   SECTION
-========================= */
-
-.section{
-  max-width:980px;
-  margin:0 auto;
-  padding:70px 24px;
-}
-
-.section-header{
-  margin-bottom:28px;
-}
-
-.section-kicker{
-  color:#8b5cf6;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.16em;
-  font-weight:750;
-  margin-bottom:10px;
-}
-
-.section-title{
-  font-size:32px;
-  letter-spacing:-.045em;
-}
-
-.section-subtitle{
-  margin-top:8px;
-  color:#777784;
-  font-size:14px;
-}
-
-/* =========================
-   QUESTIONNAIRE
-========================= */
-
-#questionnaire{
-  scroll-margin-top:100px;
-}
-
-.questionnaire{
-  border:1px solid var(--line);
-  border-radius:30px;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
-  overflow:hidden;
-  box-shadow:0 30px 90px rgba(0,0,0,.35);
-}
-
-.questionnaire-head{
-  padding:28px 30px 24px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-}
-
-.q-head-title{
-  font-size:20px;
-  font-weight:750;
-  letter-spacing:-.03em;
-}
-
-.q-head-sub{
-  color:#70707d;
-  font-size:12px;
-  margin-top:5px;
-}
-
-.step-counter{
-  white-space:nowrap;
-  color:#aaaab7;
-  font-size:12px;
-  font-weight:650;
-}
-
-.progress-wrap{
-  height:3px;
-  background:rgba(255,255,255,.05);
-}
-
-.progress{
-  height:100%;
-  width:10%;
-  background:linear-gradient(90deg,#7c3aed,#c084fc);
-  transition:.3s ease;
-}
-
-.form{
-  padding:32px;
-}
-
-.form-step{
-  display:none;
-  animation:fadeIn .25s ease;
-}
-
-.form-step.active{
-  display:block;
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.step-number{
-  color:#777784;
-  font-size:11px;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  margin-bottom:10px;
-}
-
-.step-question{
-  font-size:25px;
-  line-height:1.2;
-  letter-spacing:-.04em;
-  font-weight:750;
-  max-width:650px;
-}
-
-.step-help{
-  margin-top:8px;
-  color:#777784;
-  font-size:13px;
-  line-height:1.5;
-}
-
-.options{
-  margin-top:25px;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.option{
-  position:relative;
+textarea {
+    min-height: 150px;
+    resize: vertical;
 }
 
-.option input{
-  position:absolute;
-  opacity:0;
-  pointer-events:none;
+textarea:focus,
+select:focus,
+input:focus {
+    border-color: #8198ff;
 }
 
-.option label{
-  min-height:58px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:15px 17px;
-  background:rgba(255,255,255,.025);
-  display:flex;
-  align-items:center;
-  cursor:pointer;
-  color:#bcbcc7;
-  font-size:13px;
-  font-weight:600;
-  transition:.18s ease;
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 12px;
 }
 
-.option label:hover{
-  border-color:rgba(167,139,250,.35);
-  background:rgba(139,92,246,.05);
+button {
+    border: 0;
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 15px;
 }
 
-.option input:checked + label{
-  border-color:rgba(139,92,246,.7);
-  background:rgba(139,92,246,.12);
-  color:white;
-  box-shadow:inset 0 0 0 1px rgba(139,92,246,.18);
+.btn-primary {
+    background: #8198ff;
+    color: #071020;
 }
 
-.text-input,
-.select-input{
-  width:100%;
-  margin-top:25px;
-  padding:17px 18px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  outline:none;
-  color:white;
-  background:#0c0c11;
-  transition:.2s;
+.btn-secondary {
+    background: rgba(255,255,255,.07);
+    color: white;
 }
 
-.text-input:focus,
-.select-input:focus{
-  border-color:rgba(139,92,246,.65);
-  box-shadow:0 0 0 4px rgba(139,92,246,.08);
+.loading {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
 }
 
-textarea.text-input{
-  min-height:140px;
-  resize:vertical;
-  line-height:1.55;
+.spinner {
+    width: 45px;
+    height: 45px;
+    border: 3px solid rgba(255,255,255,.1);
+    border-top-color: #8198ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
 }
 
-.text-input::placeholder{
-  color:#555561;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-select option{
-  background:#111116;
-  color:white;
+.results {
+    display: none;
 }
 
-.form-nav{
-  margin-top:30px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+.result-header {
+    text-align: center;
+    margin-bottom: 45px;
 }
 
-.back-btn{
-  background:transparent;
-  border:0;
-  color:#777784;
-  cursor:pointer;
-  padding:12px 4px;
-  font-size:13px;
-  font-weight:600;
+.result-header h2 {
+    font-size: 42px;
+    letter-spacing: -2px;
 }
 
-.back-btn:hover{
-  color:white;
+.value-box {
+    max-width: 700px;
+    margin: 25px auto;
+    padding: 30px;
+    text-align: center;
+    border-radius: 22px;
+    background: rgba(129,152,255,.08);
+    border: 1px solid rgba(129,152,255,.25);
 }
 
-.next-btn{
-  margin-left:auto;
+.value-number {
+    font-size: 42px;
+    font-weight: 800;
 }
 
-/* =========================
-   LOADING
-========================= */
-
-#loading{
-  display:none;
-  max-width:980px;
-  margin:0 auto;
-  padding:90px 24px 130px;
-}
-
-.loading-card{
-  border:1px solid var(--line);
-  border-radius:30px;
-  padding:70px 30px;
-  text-align:center;
-  background:rgba(255,255,255,.025);
-}
-
-.loader{
-  width:52px;
-  height:52px;
-  margin:0 auto 28px;
-  border:2px solid rgba(255,255,255,.08);
-  border-top-color:#a78bfa;
-  border-radius:50%;
-  animation:spin .9s linear infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-.loading-card h2{
-  font-size:27px;
-  letter-spacing:-.04em;
-}
-
-.loading-card p{
-  margin-top:9px;
-  color:#777784;
-}
-
-/* =========================
-   RESULTS
-========================= */
-
-#results{
-  display:none;
-  max-width:1180px;
-  margin:0 auto;
-  padding:110px 24px 100px;
-}
-
-.results-hero{
-  padding-bottom:45px;
-  border-bottom:1px solid var(--line);
-}
-
-.results-eyebrow{
-  color:#a78bfa;
-  text-transform:uppercase;
-  font-size:11px;
-  font-weight:750;
-  letter-spacing:.15em;
-}
-
-.results-title{
-  max-width:760px;
-  margin-top:13px;
-  font-size:clamp(38px,5vw,62px);
-  line-height:1;
-  letter-spacing:-.055em;
-}
-
-.results-description{
-  margin-top:16px;
-  color:#858592;
-  max-width:620px;
-  line-height:1.6;
-}
-
-.results-grid{
-  margin-top:35px;
-  display:grid;
-  grid-template-columns:1.5fr .8fr;
-  gap:16px;
-}
-
-.result-panel{
-  border:1px solid var(--line);
-  border-radius:25px;
-  background:rgba(255,255,255,.025);
-  overflow:hidden;
-}
-
-.panel-head{
-  padding:21px 23px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.panel-title{
-  font-size:14px;
-  font-weight:750;
-}
-
-.panel-meta{
-  font-size:11px;
-  color:#666674;
-}
-
-.panel-body{
-  padding:18px;
-}
-
-/* SOFTWARE CARDS */
-
-.software-card{
-  padding:20px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:19px;
-  background:rgba(0,0,0,.18);
-  margin-bottom:10px;
-}
-
-.software-card:last-child{
-  margin-bottom:0;
-}
-
-.software-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.software-name{
-  font-size:16px;
-  font-weight:750;
-}
-
-.software-category{
-  margin-top:5px;
-  color:#676775;
-  font-size:11px;
-}
-
-.score{
-  min-width:56px;
-  height:56px;
-  border-radius:16px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  background:rgba(139,92,246,.1);
-  border:1px solid rgba(139,92,246,.18);
-}
-
-.score strong{
-  font-size:17px;
-  color:#c4b5fd;
-}
-
-.score span{
-  color:#686876;
-  font-size:8px;
-  text-transform:uppercase;
-}
-
-.software-description{
-  margin-top:15px;
-  color:#8b8b98;
-  font-size:12px;
-  line-height:1.55;
-}
-
-.score-bar{
-  margin-top:17px;
-  height:4px;
-  background:#202027;
-  border-radius:10px;
-  overflow:hidden;
+.result-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
 }
 
-.score-fill{
-  height:100%;
-  background:linear-gradient(90deg,#7c3aed,#c084fc);
-  border-radius:10px;
+.tool-list {
+    display: grid;
+    gap: 15px;
 }
 
-/* VALUE */
-
-.value-card{
-  min-height:100%;
-  padding:27px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  background:
-    radial-gradient(circle at 80% 15%,rgba(139,92,246,.18),transparent 40%),
-    linear-gradient(145deg,#14111d,#0d0d12);
-}
-
-.value-label{
-  color:#898895;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-}
-
-.value-number{
-  margin-top:25px;
-  font-size:45px;
-  line-height:1;
-  letter-spacing:-.06em;
-  font-weight:800;
-}
-
-.value-number small{
-  font-size:17px;
-  color:#888895;
-  letter-spacing:-.02em;
-}
-
-.value-text{
-  margin-top:13px;
-  color:#858592;
-  font-size:12px;
-  line-height:1.55;
-}
-
-.value-note{
-  margin-top:35px;
-  padding-top:18px;
-  border-top:1px solid var(--line);
-  color:#666674;
-  font-size:10px;
-  line-height:1.5;
-}
-
-/* STACK */
-
-.stack-section{
-  margin-top:16px;
-}
-
-.stack-grid{
-  padding:18px;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-
-.stack-item{
-  padding:20px;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:#0d0d12;
-}
-
-.stack-index{
-  color:#5f5f6b;
-  font-size:10px;
-  margin-bottom:14px;
-}
-
-.stack-name{
-  font-size:15px;
-  font-weight:750;
-}
-
-.stack-reason{
-  color:#70707c;
-  font-size:11px;
-  line-height:1.5;
-  margin-top:7px;
-}
-
-/* OTHER RESULTS */
-
-.extra-grid{
-  margin-top:16px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-.simple-list{
-  padding:18px;
-}
-
-.simple-item{
-  padding:15px 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  color:#90909d;
-  font-size:12px;
-  line-height:1.5;
+.tool {
+    padding: 22px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.035);
 }
 
-.simple-item:first-child{
-  padding-top:0;
+.tool-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
 }
 
-.simple-item:last-child{
-  border-bottom:0;
-  padding-bottom:0;
+.tool h3 {
+    margin: 0;
 }
 
-.simple-item strong{
-  display:block;
-  color:#e0e0e7;
-  font-size:13px;
-  margin-bottom:4px;
+.score {
+    font-weight: 800;
+    color: #8198ff;
 }
 
-/* BLUEPRINT */
-
-.blueprint{
-  margin-top:16px;
-  border:1px solid rgba(139,92,246,.25);
-  border-radius:25px;
-  padding:30px;
-  background:
-    radial-gradient(circle at 85% 20%,rgba(139,92,246,.14),transparent 35%),
-    rgba(139,92,246,.035);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:25px;
-}
-
-.blueprint h3{
-  font-size:23px;
-  letter-spacing:-.035em;
+.tool p {
+    color: #999fba;
+    line-height: 1.5;
 }
 
-.blueprint p{
-  color:#777784;
-  font-size:12px;
-  line-height:1.5;
-  margin-top:7px;
-  max-width:580px;
+.tag {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.06);
+    color: #aeb7d8;
+    font-size: 12px;
+    margin: 3px;
 }
 
-.price{
-  margin-top:13px;
-  color:#c4b5fd;
-  font-size:13px;
-  font-weight:750;
+.side-box {
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.035);
 }
-
-/* =========================
-   FOOTER
-========================= */
 
-footer{
-  border-top:1px solid var(--line);
-  padding:35px 24px;
+.side-box h3 {
+    margin-top: 0;
 }
 
-.footer-inner{
-  max-width:1180px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
+.side-box li {
+    margin-bottom: 10px;
+    color: #a4abc3;
 }
 
-.footer-brand{
-  color:#777784;
-  font-size:12px;
+.error {
+    display: none;
+    max-width: 700px;
+    margin: 25px auto;
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(255,70,70,.1);
+    border: 1px solid rgba(255,70,70,.3);
+    color: #ffb5b5;
 }
 
-.footer-links{
-  display:flex;
-  gap:18px;
-  color:#656570;
-  font-size:11px;
+footer {
+    padding: 60px 0;
+    border-top: 1px solid rgba(255,255,255,.07);
+    color: #777f9c;
+    text-align: center;
 }
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:760px){
-
-  header{
-    height:66px;
-  }
-
-  .nav{
-    padding:0 17px;
-  }
-
-  .nav-right{
-    display:none;
-  }
-
-  .hero{
-    padding:120px 18px 55px;
-  }
-
-  .hero h1{
-    font-size:49px;
-  }
-
-  .hero-description{
-    font-size:15px;
-  }
-
-  .hero-actions{
-    flex-direction:column;
-  }
-
-  .primary-btn,
-  .secondary-btn{
-    width:100%;
-  }
-
-  .engine-visual{
-    margin-top:45px;
-  }
-
-  .engine-flow{
-    grid-template-columns:1fr;
-  }
-
-  .flow-center{
-    transform:rotate(90deg);
-  }
-
-  .section{
-    padding:50px 15px;
-  }
-
-  .questionnaire-head{
-    padding:22px 20px;
-  }
-
-  .form{
-    padding:22px 18px;
-  }
-
-  .options{
-    grid-template-columns:1fr;
-  }
-
-  .step-question{
-    font-size:22px;
-  }
-
-  #results{
-    padding:95px 15px 70px;
-  }
-
-  .results-title{
-    font-size:42px;
-  }
-
-  .results-grid,
-  .extra-grid{
-    grid-template-columns:1fr;
-  }
 
-  .stack-grid{
-    grid-template-columns:1fr;
-  }
+@media(max-width:800px) {
+    .engine-flow,
+    .process,
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
 
-  .blueprint{
-    flex-direction:column;
-    align-items:flex-start;
-  }
+    .options {
+        grid-template-columns: 1fr;
+    }
 
-  .blueprint .primary-btn{
-    width:auto;
-  }
+    .hero h1 {
+        letter-spacing: -2px;
+    }
 
-  .footer-inner{
-    flex-direction:column;
-    align-items:flex-start;
-  }
+    .questionnaire {
+        padding: 22px;
+    }
 }
 </style>
 </head>
@@ -1095,4601 +444,1088 @@ footer{
 <body>
 
 <header>
-  <div class="nav">
-    <a href="#" class="logo">
-      <div class="logo-mark"></div>
-      PROJECT-X <span>/ AI Decision Engine</span>
-    </a>
-
-    <div class="nav-right">
-      <div class="nav-pill">AI powered</div>
-      <div>Il tuo stack, deciso meglio.</div>
+    <div class="container nav">
+        <div class="logo">PROJECT<span>-X</span></div>
+        <div style="color:#858eaa;font-size:13px;">Decision Engine</div>
     </div>
-  </div>
 </header>
 
-
-<!-- =========================
-     HERO
-========================= -->
+<main>
 
 <section class="hero">
+    <div class="container">
+        <div class="badge">AI + Decision Engine</div>
 
-  <div class="hero-orb"></div>
+        <h1>
+            Trova gli strumenti giusti per il tuo
+            <span>lavoro.</span>
+        </h1>
 
-  <div class="eyebrow">
-    <span class="eyebrow-dot"></span>
-    AI-powered Software Decision Engine
-  </div>
-
-  <h1>
-    Smetti di cercare strumenti.
-    <span class="gradient-text">Costruisci il sistema giusto.</span>
-  </h1>
-
-  <p class="hero-description">
-    Raccontaci cosa fai, cosa ti fa perdere tempo e cosa vuoi ottenere.
-    PROJECT-X analizza le tue esigenze e costruisce uno stack software
-    personalizzato.
-  </p>
-
-  <div class="hero-actions">
-    <button class="primary-btn" onclick="startQuestionnaire()">
-      Costruisci il mio sistema →
-    </button>
-
-    <button class="secondary-btn" onclick="document.getElementById('how').scrollIntoView()">
-      Come funziona
-    </button>
-  </div>
-
-  <div class="engine-visual">
-    <div class="engine-box">
-
-      <div class="engine-top">
-        <span>Decision engine</span>
-
-        <span class="live">
-          <i></i>
-          System ready
-        </span>
-      </div>
-
-      <div class="engine-flow">
-
-        <div class="flow-card">
-          <div class="flow-icon">✦</div>
-          <div class="flow-title">Il tuo problema</div>
-          <div class="flow-sub">Esigenze reali</div>
-        </div>
-
-        <div class="flow-center">
-          →
-          <small>ANALYZE</small>
-        </div>
-
-        <div class="flow-card">
-          <div class="flow-icon">⌘</div>
-          <div class="flow-title">Il tuo sistema</div>
-          <div class="flow-sub">Stack + automazioni</div>
-        </div>
-
-      </div>
+        <p>
+            Dimmi che attività hai e cosa vuoi ottenere.
+            PROJECT-X interpreta le tue esigenze e costruisce
+            uno stack software personalizzato.
+        </p>
     </div>
-  </div>
-
 </section>
 
-
-<!-- =========================
-     HOW
-========================= -->
-
-<section class="section" id="how">
-
-  <div class="section-header">
-    <div class="section-kicker">Il processo</div>
-    <h2 class="section-title">Da problema a sistema.</h2>
-    <p class="section-subtitle">
-      Non devi sapere quali software esistono. Devi solo dirci cosa vuoi ottenere.
-    </p>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-
-    <div class="result-panel" style="padding:24px;">
-      <div class="section-kicker">01</div>
-      <h3 style="font-size:18px;margin-top:10px;">Descrivi il lavoro</h3>
-      <p style="color:#777784;font-size:12px;line-height:1.6;margin-top:8px;">
-        Ci racconti attività, obiettivi, strumenti attuali e ciò che ti fa perdere tempo.
-      </p>
+<section class="container">
+    <div class="visual-engine">
+        <div class="engine-flow">
+            <div class="engine-box">Le tue esigenze</div>
+            <div class="engine-box">AI</div>
+            <div class="engine-box">Decision Engine</div>
+            <div class="engine-box">Ranking</div>
+            <div class="engine-box">Stack personale</div>
+        </div>
     </div>
-
-    <div class="result-panel" style="padding:24px;">
-      <div class="section-kicker">02</div>
-      <h3 style="font-size:18px;margin-top:10px;">Analizziamo le esigenze</h3>
-      <p style="color:#777784;font-size:12px;line-height:1.6;margin-top:8px;">
-        L'AI interpreta il problema. Il motore decisionale confronta compatibilità,
-        budget, integrazioni e semplicità.
-      </p>
-    </div>
-
-    <div class="result-panel" style="padding:24px;">
-      <div class="section-kicker">03</div>
-      <h3 style="font-size:18px;margin-top:10px;">Costruiamo lo stack</h3>
-      <p style="color:#777784;font-size:12px;line-height:1.6;margin-top:8px;">
-        Ricevi una combinazione di strumenti pensata per lavorare insieme,
-        evitando software inutilmente duplicati.
-      </p>
-    </div>
-
-  </div>
-
 </section>
 
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Non scegliere software a caso.</h2>
+        <p class="section-subtitle">
+            PROJECT-X combina esigenze, budget, team, competenze,
+            integrazioni e automazioni per trovare gli strumenti
+            più adatti al tuo caso.
+        </p>
 
-<!-- =========================
-     QUESTIONNAIRE
-========================= -->
+        <div class="process">
+            <div class="card">
+                <div class="card-number">01</div>
+                <h3>Capisce il problema</h3>
+                <p>
+                    L'AI interpreta quello che scrivi e lo trasforma
+                    in esigenze strutturate.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-number">02</div>
+                <h3>Confronta gli strumenti</h3>
+                <p>
+                    Il Decision Engine applica regole, compatibilità,
+                    budget e integrazioni.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-number">03</div>
+                <h3>Costruisce il tuo stack</h3>
+                <p>
+                    Ricevi una selezione personalizzata evitando
+                    strumenti inutilmente duplicati.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <section class="section" id="questionnaire">
+<div class="container questionnaire-wrap">
 
-  <div class="questionnaire">
+<div class="questionnaire">
 
-    <div class="questionnaire-head">
-      <div>
-        <div class="q-head-title">Costruiamo il tuo sistema</div>
-        <div class="q-head-sub">Rispondi alle domande. Il resto lo facciamo noi.</div>
-      </div>
+<div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
 
-      <div class="step-counter">
-        <span id="currentStep">1</span> / 10
-      </div>
+<form id="questionnaireForm">
+
+<!-- 1 -->
+
+<div class="step active" data-step="1">
+    <h2>Che tipo di attività hai?</h2>
+    <div class="step-description">Partiamo dal tuo contesto.</div>
+
+    <div class="options">
+        <label class="option">
+            <input type="radio" name="businessType" value="Professionista">
+            Professionista
+        </label>
+
+        <label class="option">
+            <input type="radio" name="businessType" value="Impresa di servizi">
+            Impresa di servizi
+        </label>
+
+        <label class="option">
+            <input type="radio" name="businessType" value="E-commerce">
+            E-commerce
+        </label>
+
+        <label class="option">
+            <input type="radio" name="businessType" value="Agenzia">
+            Agenzia
+        </label>
+
+        <label class="option">
+            <input type="radio" name="businessType" value="Ristorante / attività locale">
+            Ristorante / attività locale
+        </label>
+
+        <label class="option">
+            <input type="radio" name="businessType" value="Startup">
+            Startup
+        </label>
+
+        <label class="option">
+            <input type="radio" name="businessType" value="Azienda">
+            Azienda
+        </label>
+
+        <label class="option">
+            <input type="radio" name="businessType" value="Altro">
+            Altro
+        </label>
+    </div>
+</div>
+
+<!-- 2 -->
+
+<div class="step" data-step="2">
+    <h2>Quante persone lavorano con te?</h2>
+
+    <div class="options">
+        <label class="option">
+            <input type="radio" name="teamSize" value="Solo io">
+            Solo io
+        </label>
+
+        <label class="option">
+            <input type="radio" name="teamSize" value="2–5">
+            2–5
+        </label>
+
+        <label class="option">
+            <input type="radio" name="teamSize" value="6–20">
+            6–20
+        </label>
+
+        <label class="option">
+            <input type="radio" name="teamSize" value="21–50">
+            21–50
+        </label>
+
+        <label class="option">
+            <input type="radio" name="teamSize" value="50+">
+            50+
+        </label>
+    </div>
+</div>
+
+<!-- 3 -->
+
+<div class="step" data-step="3">
+    <h2>Cosa vuoi migliorare?</h2>
+    <div class="step-description">Puoi selezionare più obiettivi.</div>
+
+    <div class="options">
+        <label class="option"><input type="checkbox" name="goals" value="Clienti">Clienti</label>
+        <label class="option"><input type="checkbox" name="goals" value="Vendite">Vendite</label>
+        <label class="option"><input type="checkbox" name="goals" value="Preventivi">Preventivi</label>
+        <label class="option"><input type="checkbox" name="goals" value="Email">Email</label>
+        <label class="option"><input type="checkbox" name="goals" value="Appuntamenti">Appuntamenti</label>
+        <label class="option"><input type="checkbox" name="goals" value="Marketing">Marketing</label>
+        <label class="option"><input type="checkbox" name="goals" value="Documenti">Documenti</label>
+        <label class="option"><input type="checkbox" name="goals" value="Progetti">Progetti</label>
+        <label class="option"><input type="checkbox" name="goals" value="Automazioni">Automazioni</label>
+        <label class="option"><input type="checkbox" name="goals" value="AI">AI</label>
+        <label class="option"><input type="checkbox" name="goals" value="E-commerce">E-commerce</label>
+    </div>
+</div>
+
+<!-- 4 -->
+
+<div class="step" data-step="4">
+    <h2>Qual è la cosa che ti fa perdere più tempo?</h2>
+
+    <textarea
+        name="painPoint"
+        placeholder="Esempio: passo troppo tempo a rispondere alle email, fare preventivi e aggiornare Excel..."
+    ></textarea>
+</div>
+
+<!-- 5 -->
+
+<div class="step" data-step="5">
+    <h2>Quanto vuoi spendere?</h2>
+
+    <div class="options">
+        <label class="option"><input type="radio" name="budget" value="€0">€0</label>
+        <label class="option"><input type="radio" name="budget" value="€1–30">€1–30</label>
+        <label class="option"><input type="radio" name="budget" value="€31–50">€31–50</label>
+        <label class="option"><input type="radio" name="budget" value="€51–100">€51–100</label>
+        <label class="option"><input type="radio" name="budget" value="€101–250">€101–250</label>
+        <label class="option"><input type="radio" name="budget" value="€251–500">€251–500</label>
+        <label class="option"><input type="radio" name="budget" value="€500+">€500+</label>
+    </div>
+</div>
+
+<!-- 6 -->
+
+<div class="step" data-step="6">
+    <h2>Quanto sei pratico di tecnologia?</h2>
+
+    <div class="options">
+        <label class="option"><input type="radio" name="tech" value="Base">Base</label>
+        <label class="option"><input type="radio" name="tech" value="Medio">Medio</label>
+        <label class="option"><input type="radio" name="tech" value="Avanzato">Avanzato</label>
+    </div>
+</div>
+
+<!-- 7 -->
+
+<div class="step" data-step="7">
+    <h2>Quanto vuoi automatizzare?</h2>
+
+    <div class="options">
+        <label class="option">
+            <input type="radio" name="automation" value="Semplice">
+            Semplice
+        </label>
+
+        <label class="option">
+            <input type="radio" name="automation" value="Smart">
+            Smart
+        </label>
+
+        <label class="option">
+            <input type="radio" name="automation" value="AI Mode">
+            AI Mode 🤖
+        </label>
+    </div>
+</div>
+
+<!-- 8 -->
+
+<div class="step" data-step="8">
+    <h2>Quante ore a settimana perdi in queste attività?</h2>
+
+    <div class="options">
+        <label class="option"><input type="radio" name="hours" value="<1"><1</label>
+        <label class="option"><input type="radio" name="hours" value="1–3">1–3</label>
+        <label class="option"><input type="radio" name="hours" value="4–7">4–7</label>
+        <label class="option"><input type="radio" name="hours" value="8–15">8–15</label>
+        <label class="option"><input type="radio" name="hours" value="15+">15+</label>
+    </div>
+</div>
+
+<!-- 9 -->
+
+<div class="step" data-step="9">
+    <h2>Quanto vale un'ora del tuo tempo?</h2>
+
+    <div class="options">
+        <label class="option"><input type="radio" name="hourlyValue" value="€10">€10</label>
+        <label class="option"><input type="radio" name="hourlyValue" value="€20">€20</label>
+        <label class="option"><input type="radio" name="hourlyValue" value="€30">€30</label>
+        <label class="option"><input type="radio" name="hourlyValue" value="€50">€50</label>
+        <label class="option"><input type="radio" name="hourlyValue" value="€75">€75</label>
+        <label class="option"><input type="radio" name="hourlyValue" value="€100+">€100+</label>
+        <label class="option"><input type="radio" name="hourlyValue" value="Non so">Non so</label>
+    </div>
+</div>
+
+<!-- 10 -->
+
+<div class="step" data-step="10">
+    <h2>Quali strumenti usi già?</h2>
+
+    <div class="step-description">
+        Scrivili e PROJECT-X cercherà di costruire il sistema intorno a quelli che vuoi mantenere.
     </div>
 
-    <div class="progress-wrap">
-      <div class="progress" id="progress"></div>
-    </div>
-
-
-    <form id="questionnaireForm" class="form">
-
-
-      <!-- STEP 1 -->
-
-      <div class="form-step active" data-step="1">
-
-        <div class="step-number">01 / Attività</div>
-
-        <h2 class="step-question">
-          Che tipo di attività gestisci?
-        </h2>
-
-        <p class="step-help">
-          Questo ci aiuta a capire il contesto in cui lavorano i tuoi strumenti.
-        </p>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt1" value="Professionista">
-            <label for="bt1">Professionista</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt2" value="Impresa di servizi">
-            <label for="bt2">Impresa di servizi</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt3" value="E-commerce">
-            <label for="bt3">E-commerce</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt4" value="Agenzia">
-            <label for="bt4">Agenzia</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt5" value="Ristorante / attività locale">
-            <label for="bt5">Ristorante / attività locale</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt6" value="Startup">
-            <label for="bt6">Startup</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt7" value="Azienda">
-            <label for="bt7">Azienda</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt8" value="Altro">
-            <label for="bt8">Altro</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">
-            Continua →
-          </button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 2 -->
-
-      <div class="form-step" data-step="2">
-
-        <div class="step-number">02 / Team</div>
-
-        <h2 class="step-question">
-          Quante persone lavorano nel tuo team?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts1" value="Solo io">
-            <label for="ts1">Solo io</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts2" value="2–5">
-            <label for="ts2">2–5 persone</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts3" value="6–20">
-            <label for="ts3">6–20 persone</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts4" value="21–50">
-            <label for="ts4">21–50 persone</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts5" value="50+">
-            <label for="ts5">50+ persone</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 3 -->
-
-      <div class="form-step" data-step="3">
-
-        <div class="step-number">03 / Obiettivi</div>
-
-        <h2 class="step-question">
-          Cosa vuoi ottenere?
-        </h2>
-
-        <p class="step-help">
-          Puoi indicare più obiettivi.
-        </p>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g1" value="Clienti">
-            <label for="g1">Acquisire clienti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g2" value="Vendite">
-            <label for="g2">Aumentare le vendite</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g3" value="Preventivi">
-            <label for="g3">Gestire preventivi</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g4" value="Email">
-            <label for="g4">Gestire email</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g5" value="Appuntamenti">
-            <label for="g5">Gestire appuntamenti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g6" value="Marketing">
-            <label for="g6">Marketing</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g7" value="Documenti">
-            <label for="g7">Documenti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g8" value="Progetti">
-            <label for="g8">Gestione progetti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g9" value="Automazioni">
-            <label for="g9">Automazioni</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g10" value="AI">
-            <label for="g10">AI</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g11" value="E-commerce">
-            <label for="g11">E-commerce</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 4 -->
-
-      <div class="form-step" data-step="4">
-
-        <div class="step-number">04 / Il problema</div>
-
-        <h2 class="step-question">
-          Cosa ti fa perdere più tempo?
-        </h2>
-
-        <p class="step-help">
-          Scrivilo come lo diresti a una persona. Non servono termini tecnici.
-        </p>
-
-        <textarea
-          class="text-input"
-          id="painPoint"
-          name="painPoint"
-          placeholder="Es. Passo troppo tempo a rispondere alle email, preparare preventivi e ricordarmi di ricontattare i clienti..."
-        ></textarea>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 5 -->
-
-      <div class="form-step" data-step="5">
-
-        <div class="step-number">05 / Budget</div>
-
-        <h2 class="step-question">
-          Quanto vuoi investire ogni mese?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="budget" id="b1" value="€0">
-            <label for="b1">€0</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b2" value="€1–30">
-            <label for="b2">€1–30 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b3" value="€31–50">
-            <label for="b3">€31–50 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b4" value="€51–100">
-            <label for="b4">€51–100 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b5" value="€101–250">
-            <label for="b5">€101–250 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b6" value="€251–500">
-            <label for="b6">€251–500 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b7" value="€500+">
-            <label for="b7">€500+ / mese</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 6 -->
-
-      <div class="form-step" data-step="6">
-
-        <div class="step-number">06 / Tecnologia</div>
-
-        <h2 class="step-question">
-          Quanto sei pratico con la tecnologia?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="tech" id="t1" value="Base">
-            <label for="t1">Base — voglio cose semplici</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="tech" id="t2" value="Medio">
-            <label for="t2">Medio — me la cavo</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="tech" id="t3" value="Avanzato">
-            <label for="t3">Avanzato — posso configurare sistemi complessi</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 7 -->
-
-      <div class="form-step" data-step="7">
-
-        <div class="step-number">07 / Automazione</div>
-
-        <h2 class="step-question">
-          Quanto vuoi automatizzare?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="automation" id="a1" value="Semplice">
-            <label for="a1">Semplice — poche automazioni</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="automation" id="a2" value="Smart">
-            <label for="a2">Smart — voglio far lavorare i software insieme</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="automation" id="a3" value="AI Mode">
-            <label for="a3">AI Mode 🤖 — voglio spingere al massimo l'automazione</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 8 -->
-
-      <div class="form-step" data-step="8">
-
-        <div class="step-number">08 / Tempo</div>
-
-        <h2 class="step-question">
-          Quante ore alla settimana perdi in queste attività?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="hours" id="h1" value="<1">
-            <label for="h1">Meno di 1 ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h2" value="1–3">
-            <label for="h2">1–3 ore</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h3" value="4–7">
-            <label for="h3">4–7 ore</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h4" value="8–15">
-            <label for="h4">8–15 ore</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h5" value="15+">
-            <label for="h5">Più di 15 ore</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 9 -->
-
-      <div class="form-step" data-step="9">
-
-        <div class="step-number">09 / Valore del tempo</div>
-
-        <h2 class="step-question">
-          Quanto vale, indicativamente, un'ora del tuo lavoro?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv1" value="€10">
-            <label for="hv1">€10 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv2" value="€20">
-            <label for="hv2">€20 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv3" value="€30">
-            <label for="hv3">€30 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv4" value="€50">
-            <label for="hv4">€50 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv5" value="€75">
-            <label for="hv5">€75 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv6" value="€100+">
-            <label for="hv6">€100+ / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv7" value="Non so">
-            <label for="hv7">Non lo so</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 10 -->
-
-      <div class="form-step" data-step="10">
-
-        <div class="step-number">10 / Strumenti attuali</div>
-
-        <h2 class="step-question">
-          Cosa stai già utilizzando?
-        </h2>
-
-        <p class="step-help">
-          Scrivi anche gli strumenti che non vuoi sostituire. Cercheremo di costruire intorno a quelli.
-        </p>
-
-        <textarea
-          class="text-input"
-          id="existingTools"
-          name="existingTools"
-          placeholder="Es. Microsoft 365, Outlook, Excel, WhatsApp, Gmail, Shopify..."
-        ></textarea>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-
-          <button
-            type="submit"
-            class="primary-btn next-btn"
-            id="analyzeButton"
-          >
-            Analizza il mio lavoro ✦
-          </button>
-        </div>
-
-      </div>
-
-    </form>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     LOADING
-========================= -->
-
-<section id="loading">
-
-  <div class="loading-card">
-
-    <div class="loader"></div>
-
-    <h2>Stiamo costruendo il tuo sistema...</h2>
-
-    <p>
-      Analizziamo esigenze, compatibilità, strumenti e automazioni.
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     RESULTS
-========================= -->
-
-<section id="results">
-
-  <div class="results-hero">
-
-    <div class="results-eyebrow">
-      Your system is ready
-    </div>
-
-    <h1 class="results-title">
-      Ecco come potresti <span class="gradient-text">lavorare meglio.</span>
-    </h1>
-
-    <p class="results-description">
-      Abbiamo confrontato gli strumenti in base alle tue esigenze.
-      Non conta quale software è più famoso: conta quale sistema è più adatto a te.
-    </p>
-
-  </div>
-
-
-  <div class="results-grid">
-
-    <div class="result-panel">
-
-      <div class="panel-head">
-        <div class="panel-title">Migliori strumenti per te</div>
-        <div class="panel-meta">Compatibility score</div>
-      </div>
-
-      <div class="panel-body" id="topSoftware">
-        <!-- popolato da JS -->
-      </div>
-
-    </div>
-
-
-    <div class="result-panel">
-
-      <div class="value-card">
-
-        <div>
-          <div class="value-label">
-            Valore potenziale del tempo
-          </div>
-
-          <div class="value-number" id="timeValue">
-            —
-          </div>
-
-          <div class="value-text">
-            Valore potenziale mensile del tempo che potresti recuperare
-            attraverso automazioni e sistemi più efficienti.
-          </div>
-        </div>
-
-        <div class="value-note">
-          Non è una promessa di risparmio o ROI.
-          È una stima indicativa basata sulle informazioni che hai fornito.
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- STACK -->
-
-  <div class="result-panel stack-section">
-
-    <div class="panel-head">
-      <div>
-        <div class="panel-title">Il tuo sistema</div>
-        <div class="panel-meta">Stack consigliato</div>
-      </div>
-    </div>
-
-    <div class="stack-grid" id="stack">
-      <!-- popolato da JS -->
-    </div>
-
-  </div>
-
-
-  <!-- EXTRA -->
-
-  <div class="extra-grid">
-
-    <div class="result-panel">
-
-      <div class="panel-head">
-        <div class="panel-title">Esigenze ancora scoperte</div>
-      </div>
-
-      <div class="simple-list" id="missingNeeds">
-        <!-- popolato da JS -->
-      </div>
-
-    </div>
-
-
-    <div class="result-panel">
-
-      <div class="panel-head">
-        <div class="panel-title">Automazioni da valutare</div>
-      </div>
-
-      <div class="simple-list" id="automations">
-        <!-- popolato da JS -->
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- BLUEPRINT -->
-
-  <div class="blueprint">
-
-    <div>
-
-      <div class="section-kicker">Next step</div>
-
-      <h3>Vuoi sapere esattamente come configurarlo?</h3>
-
-      <p>
-        Il Blueprint trasforma il tuo stack in un piano operativo:
-        cosa configurare, cosa collegare, cosa automatizzare e in quale ordine.
-      </p>
-
-      <div class="price">
-        Blueprint personalizzato · €29
-      </div>
-
-    </div>
-
-    <button class="primary-btn" onclick="alert('Blueprint in arrivo')">
-      Crea il Blueprint →
+    <textarea
+        name="existingTools"
+        placeholder="Esempio: Microsoft 365, Outlook, Excel, Teams, Google Drive..."
+    ></textarea>
+</div>
+
+<div class="buttons">
+
+    <button
+        type="button"
+        class="btn-secondary"
+        id="prevBtn"
+        style="display:none;"
+    >
+        Indietro
     </button>
 
-  </div>
+    <button
+        type="button"
+        class="btn-primary"
+        id="nextBtn"
+    >
+        Continua
+    </button>
 
+    <button
+        type="submit"
+        class="btn-primary"
+        id="submitBtn"
+        style="display:none;"
+    >
+        Analizza il mio lavoro →
+    </button>
+
+</div>
+
+</form>
+</div>
+</div>
 </section>
 
+<section class="loading" id="loading">
+    <div class="spinner"></div>
+    <h2>PROJECT-X sta analizzando il tuo lavoro...</h2>
+    <p style="color:#969fbd;">
+        Stiamo interpretando le tue esigenze e confrontando gli strumenti.
+    </p>
+</section>
+
+<div class="error" id="errorBox"></div>
+
+<section class="section results" id="results">
+<div class="container">
+
+<div class="result-header">
+    <div class="badge">La tua analisi è pronta</div>
+    <h2>Il tuo stack personalizzato</h2>
+    <p style="color:#969fbd;">
+        Gli strumenti sono ordinati in base alla compatibilità con il tuo profilo.
+    </p>
+</div>
+
+<div class="value-box" id="valueBox" style="display:none;">
+    <div style="color:#969fbd;margin-bottom:8px;">
+        Valore potenziale del tempo recuperabile
+    </div>
+
+    <div class="value-number" id="valueNumber">€0</div>
+
+    <div style="color:#858da8;margin-top:8px;font-size:13px;">
+        Stima indicativa, non garanzia di risparmio.
+    </div>
+</div>
+
+<div class="result-grid">
+
+<div>
+    <h2>Strumenti consigliati</h2>
+    <div class="tool-list" id="toolList"></div>
+</div>
+
+<div>
+
+<div class="side-box">
+    <h3>Cosa manca</h3>
+    <ul id="missingList"></ul>
+</div>
+
+<br>
+
+<div class="side-box">
+    <h3>Automazioni suggerite</h3>
+    <ul id="automationList"></ul>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</section>
+
+</main>
 
 <footer>
-
-  <div class="footer-inner">
-
-    <div class="footer-brand">
-      © 2026 PROJECT-X · Software Decision Engine
+    <div class="container">
+        PROJECT-X — Software Decision Engine
     </div>
-
-    <div class="footer-links">
-      <a href="#">Privacy</a>
-      <a href="#">Termini</a>
-      <a href="#">Contatti</a>
-    </div>
-
-  </div>
-
 </footer>
 
-
-<!-- DATABASE + ENGINE -->
-
+<!-- UNA SOLA VOLTA -->
 <script src="database.js"></script>
 <script src="engine.js"></script>
 
-
 <script>
+"use strict";
 
-/* ============================================================
+/* =========================================================
    PROJECT-X FRONTEND
-============================================================ */
+   ========================================================= */
 
-console.log("PROJECT-X: premium frontend loaded");
-console.log("Database:", typeof window.SOFTWARE_DATABASE);
-console.log("Decision Engine:", typeof window.ProjectXEngine);
+const TOTAL_STEPS = 10;
 
-
-/* ------------------------------------------------------------
-   STATE
------------------------------------------------------------- */
-
+/* UNA SOLA DICHIARAZIONE */
 let currentStep = 1;
-const totalSteps = 10;
 
+const form = document.getElementById("questionnaireForm");
+const steps = document.querySelectorAll(".step");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const submitBtn = document.getElementById("submitBtn");
+const progressBar = document.getElementById("progressBar");
+const questionnaire = document.getElementById("questionnaire");
+const loading = document.getElementById("loading");
+const results = document.getElementById("results");
+const errorBox = document.getElementById("errorBox");
 
-/* ------------------------------------------------------------
-   START
------------------------------------------------------------- */
+/* ---------------------------------------------------------
+   UI OPTIONS
+--------------------------------------------------------- */
 
-function startQuestionnaire(){
+document.querySelectorAll(".option").forEach(option => {
 
-  document
-    .getElementById("questionnaire")
-    .scrollIntoView({
-      behavior:"smooth",
-      block:"start"
+    const input = option.querySelector("input");
+
+    if (!input) return;
+
+    input.addEventListener("change", () => {
+
+        if (input.type === "radio") {
+
+            document
+                .querySelectorAll(
+                    `input[name="${input.name}"]`
+                )
+                .forEach(other => {
+                    other.closest(".option")?.classList.remove("selected");
+                });
+
+        }
+
+        option.classList.toggle("selected", input.checked);
+    });
+});
+
+/* ---------------------------------------------------------
+   STEP NAVIGATION
+--------------------------------------------------------- */
+
+function showStep(stepNumber) {
+
+    currentStep = stepNumber;
+
+    steps.forEach(step => {
+        step.classList.remove("active");
+
+        if (Number(step.dataset.step) === currentStep) {
+            step.classList.add("active");
+        }
     });
 
+    progressBar.style.width =
+        `${(currentStep / TOTAL_STEPS) * 100}%`;
+
+    prevBtn.style.display =
+        currentStep > 1 ? "block" : "none";
+
+    nextBtn.style.display =
+        currentStep < TOTAL_STEPS ? "block" : "none";
+
+    submitBtn.style.display =
+        currentStep === TOTAL_STEPS ? "block" : "none";
+
+    document
+        .getElementById("questionnaire")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
 }
 
+function validateStep() {
 
-/* ------------------------------------------------------------
-   STEP UI
------------------------------------------------------------- */
+    const activeStep =
+        document.querySelector(".step.active");
 
-function showStep(step){
+    if (!activeStep) return true;
 
-  currentStep = step;
-
-  document.querySelectorAll(".form-step").forEach(el=>{
-    el.classList.remove("active");
-  });
-
-  const target = document.querySelector(
-    `.form-step[data-step="${step}"]`
-  );
-
-  if(target){
-    target.classList.add("active");
-  }
-
-  document.getElementById("currentStep").textContent = step;
-
-  const progress =
-    document.getElementById("progress");
-
-  progress.style.width =
-    `${(step / totalSteps) * 100}%`;
-
-  document
-    .getElementById("questionnaire")
-    .scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
-}
-
-
-/* ------------------------------------------------------------
-   VALIDATION
------------------------------------------------------------- */
-
-function validateCurrentStep(){
-
-  const step =
-    document.querySelector(
-      `.form-step[data-step="${currentStep}"]`
-    );
-
-  if(!step) return true;
-
-
-  if(currentStep === 4){
-
-    const value =
-      document.getElementById("painPoint").value.trim();
-
-    if(!value){
-
-      alert("Descrivi brevemente cosa ti fa perdere più tempo.");
-
-      return false;
-    }
-
-    return true;
-  }
-
-
-  if(currentStep === 10){
-
-    return true;
-  }
-
-
-  const inputs =
-    step.querySelectorAll(
-      'input[type="radio"]:checked'
-    );
-
-  if(inputs.length === 0){
-
-    /*
-      Step 3 usa checkbox e quindi viene gestito separatamente.
-    */
-
-    if(currentStep === 3){
-
-      const checked =
-        step.querySelectorAll(
-          'input[type="checkbox"]:checked'
+    const requiredInputs =
+        activeStep.querySelectorAll(
+            'input[type="radio"]'
         );
 
-      if(checked.length === 0){
+    if (requiredInputs.length > 0) {
 
-        alert("Seleziona almeno un obiettivo.");
+        const radioNames =
+            [...new Set(
+                [...requiredInputs].map(input => input.name)
+            )];
 
-        return false;
-      }
+        for (const name of radioNames) {
 
-      return true;
+            const checked =
+                activeStep.querySelector(
+                    `input[name="${name}"]:checked`
+                );
+
+            if (!checked) {
+
+                alert("Seleziona una risposta per continuare.");
+                return false;
+            }
+        }
     }
 
-    alert("Seleziona una risposta per continuare.");
+    if (currentStep === 4) {
 
-    return false;
-  }
+        const value =
+            document.querySelector(
+                '[name="painPoint"]'
+            ).value.trim();
 
-  return true;
+        if (!value) {
+
+            alert("Descrivi almeno brevemente cosa ti fa perdere più tempo.");
+            return false;
+        }
+    }
+
+    return true;
 }
 
+nextBtn.addEventListener("click", () => {
 
-/* ------------------------------------------------------------
-   NEXT / BACK
------------------------------------------------------------- */
+    if (!validateStep()) return;
 
-function nextStep(){
+    if (currentStep < TOTAL_STEPS) {
+        showStep(currentStep + 1);
+    }
+});
 
-  if(!validateCurrentStep()) return;
+prevBtn.addEventListener("click", () => {
 
-  if(currentStep < totalSteps){
+    if (currentStep > 1) {
+        showStep(currentStep - 1);
+    }
+});
 
-    showStep(currentStep + 1);
-
-  }
-
-}
-
-
-function prevStep(){
-
-  if(currentStep > 1){
-
-    showStep(currentStep - 1);
-
-  }
-
-}
-
-
-/* ------------------------------------------------------------
+/* ---------------------------------------------------------
    COLLECT ANSWERS
------------------------------------------------------------- */
+--------------------------------------------------------- */
 
-function collectAnswers(){
+function collectAnswers() {
 
-  const form =
-    document.getElementById("questionnaireForm");
+    const data =
+        new FormData(form);
 
-  const data =
-    new FormData(form);
+    const goals =
+        data.getAll("goals");
 
+    const team =
+        data.get("teamSize") || "";
 
-  const goals =
-    Array.from(
-      document.querySelectorAll(
-        'input[name="goals"]:checked'
-      )
-    ).map(input=>input.value);
+    const hours =
+        data.get("hours") || "";
 
+    return {
 
-  return {
+        businessType:
+            data.get("businessType") || "",
 
-    businessType:
-      data.get("businessType") || "",
+        /* ENGINE COMPATIBILITY */
+        team:
+            team,
 
-    teamSize:
-      data.get("teamSize") || "",
+        teamSize:
+            team,
 
-    goals,
+        goals:
+            goals,
 
-    painPoint:
-      data.get("painPoint") || "",
+        painPoint:
+            data.get("painPoint") || "",
 
-    budget:
-      data.get("budget") || "",
+        budget:
+            data.get("budget") || "",
 
-    tech:
-      data.get("tech") || "",
+        tech:
+            data.get("tech") || "",
 
-    automation:
-      data.get("automation") || "",
+        automation:
+            data.get("automation") || "",
 
-    hours:
-      data.get("hours") || "",
+        hours:
+            hours,
 
-    hourlyValue:
-      data.get("hourlyValue") || "",
+        hoursPerWeek:
+            hours,
 
-    existingTools:
-      data.get("existingTools") || ""
+        hourlyValue:
+            data.get("hourlyValue") || "",
 
-  };
-
+        existingTools:
+            data.get("existingTools") || ""
+    };
 }
 
+/* ---------------------------------------------------------
+   AI PROFILE
+--------------------------------------------------------- */
 
-/* ------------------------------------------------------------
-   AI ANALYSIS
------------------------------------------------------------- */
+async function getAIProfile(answers) {
 
-async function getAIProfile(answers){
+    try {
 
-  try{
+        const response =
+            await fetch("/api/analyze", {
 
-    const response =
-      await fetch("/api/analyze",{
+                method: "POST",
 
-        method:"POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-        headers:{
-          "Content-Type":"application/json"
-        },
+                body: JSON.stringify({
+                    answers
+                })
+            });
 
-        body:JSON.stringify({
-          answers
-        })
+        if (!response.ok) {
 
-      });
+            console.warn(
+                "AI endpoint returned:",
+                response.status
+            );
 
+            return null;
+        }
 
-    if(!response.ok){
+        const data =
+            await response.json();
 
-      console.warn(
-        "AI endpoint returned:",
-        response.status
-      );
+        return data.profile || null;
 
-      return null;
+    } catch (error) {
+
+        console.warn(
+            "AI endpoint unavailable:",
+            error
+        );
+
+        return null;
+    }
+}
+
+/* ---------------------------------------------------------
+   HTML ESCAPE
+--------------------------------------------------------- */
+
+function escapeHTML(value) {
+
+    if (value === null || value === undefined) {
+        return "";
     }
 
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
-    const result =
-      await response.json();
+/* ---------------------------------------------------------
+   TOOL HELPERS
+--------------------------------------------------------- */
 
+function getTool(item) {
 
-    if(
-      result &&
-      result.success &&
-      result.profile
-    ){
+    return item?.tool || item;
+}
 
-      return result.profile;
+function getToolName(item) {
 
-    }
+    const tool = getTool(item);
 
+    return tool?.name ||
+           "Strumento";
+}
 
-    return null;
+function getToolCategory(item) {
 
-  }catch(error){
+    const tool = getTool(item);
 
-    console.warn(
-      "AI analysis unavailable:",
-      error
+    return tool?.category ||
+           "Software";
+}
+
+function getToolDescription(item) {
+
+    const tool = getTool(item);
+
+    return tool?.description ||
+           "Strumento selezionato dal Decision Engine.";
+}
+
+function getScore(item) {
+
+    return Number(
+        item?.score ||
+        0
     );
-
-    return null;
-
-  }
-
 }
 
+/* ---------------------------------------------------------
+   FORMAT MONEY
+--------------------------------------------------------- */
 
-/* ------------------------------------------------------------
-   RENDER HELPERS
------------------------------------------------------------- */
+function formatMoney(value) {
 
-function escapeHTML(value){
+    const number =
+        Number(value);
 
-  if(value === null || value === undefined){
+    if (!Number.isFinite(number)) {
+        return "€0";
+    }
 
-    return "";
-
-  }
-
-  return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
+    return new Intl.NumberFormat(
+        "it-IT",
+        {
+            style: "currency",
+            currency: "EUR",
+            maximumFractionDigits: 0
+        }
+    ).format(number);
 }
 
-
-function getName(item){
-
-  return (
-    item?.name ||
-    item?.software?.name ||
-    "Software"
-  );
-
-}
-
-
-function getCategory(item){
-
-  return (
-    item?.category ||
-    item?.software?.category ||
-    "Software"
-  );
-
-}
-
-
-function getDescription(item){
-
-  return (
-    item?.description ||
-    item?.software?.description ||
-    item?.reason ||
-    item?.why ||
-    "Strumento selezionato in base alla compatibilità con le tue esigenze."
-  );
-
-}
-
-
-function getScore(item){
-
-  const score =
-    item?.compatibilityScore ??
-    item?.score ??
-    item?.compatibility ??
-    item?.software?.score ??
-    0;
-
-  return Math.max(
-    0,
-    Math.min(
-      100,
-      Math.round(Number(score) || 0)
-    )
-  );
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER TOP SOFTWARE
------------------------------------------------------------- */
-
-function renderTopSoftware(items){
-
-  const container =
-    document.getElementById("topSoftware");
-
-  if(!container) return;
-
-
-  if(!Array.isArray(items) || items.length === 0){
-
-    container.innerHTML = `
-      <div class="simple-item">
-        <strong>Nessun risultato disponibile</strong>
-        Riprova l'analisi.
-      </div>
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    items
-      .slice(0,5)
-      .map(item=>{
-
-        const name =
-          escapeHTML(getName(item));
-
-        const category =
-          escapeHTML(getCategory(item));
-
-        const description =
-          escapeHTML(getDescription(item));
-
-        const score =
-          getScore(item);
-
-
-        return `
-
-          <div class="software-card">
-
-            <div class="software-top">
-
-              <div>
-
-                <div class="software-name">
-                  ${name}
-                </div>
-
-                <div class="software-category">
-                  ${category}
-                </div>
-
-              </div>
-
-              <div class="score">
-
-                <strong>${score}</strong>
-
-                <span>/ 100</span>
-
-              </div>
-
-            </div>
-
-            <div class="software-description">
-              ${description}
-            </div>
-
-            <div class="score-bar">
-              <div
-                class="score-fill"
-                style="width:${score}%"
-              ></div>
-            </div>
-
-          </div>
-
-        `;
-
-      })
-      .join("");
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER STACK
------------------------------------------------------------- */
-
-function renderStack(stack){
-
-  const container =
-    document.getElementById("stack");
-
-  if(!container) return;
-
-
-  if(!Array.isArray(stack) || stack.length === 0){
-
-    container.innerHTML = `
-      <div class="stack-item">
-        <div class="stack-name">
-          Stack non disponibile
-        </div>
-      </div>
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    stack.map((item,index)=>{
-
-      const name =
-        escapeHTML(getName(item));
-
-      const reason =
-        escapeHTML(
-          item?.reason ||
-          item?.why ||
-          item?.description ||
-          "Parte del sistema consigliato."
-        );
-
-
-      return `
-
-        <div class="stack-item">
-
-          <div class="stack-index">
-            TOOL ${String(index+1).padStart(2,"0")}
-          </div>
-
-          <div class="stack-name">
-            ${name}
-          </div>
-
-          <div class="stack-reason">
-            ${reason}
-          </div>
-
-        </div>
-
-      `;
-
-    }).join("");
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER LIST
------------------------------------------------------------- */
-
-function renderList(id, items, emptyText){
-
-  const container =
-    document.getElementById(id);
-
-  if(!container) return;
-
-
-  if(!Array.isArray(items) || items.length === 0){
-
-    container.innerHTML = `
-      <div class="simple-item">
-        ${escapeHTML(emptyText)}
-      </div>
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    items.map(item=>{
-
-      if(typeof item === "string"){
-
-        return `
-          <div class="simple-item">
-            ${escapeHTML(item)}
-          </div>
-        `;
-
-      }
-
-
-      const title =
-        escapeHTML(
-          item?.name ||
-          item?.title ||
-          item?.need ||
-          "Elemento"
-        );
-
-      const text =
-        escapeHTML(
-          item?.description ||
-          item?.reason ||
-          item?.why ||
-          ""
-        );
-
-
-      return `
-        <div class="simple-item">
-          <strong>${title}</strong>
-          ${text}
-        </div>
-      `;
-
-    }).join("");
-
-}
-
-
-/* ------------------------------------------------------------
-   TIME VALUE
------------------------------------------------------------- */
-
-function renderTimeValue(value){
-
-  const element =
-    document.getElementById("timeValue");
-
-  if(!element) return;
-
-
-  if(
-    value === null ||
-    value === undefined ||
-    value === "" ||
-    value === 0
-  ){
-
-    element.innerHTML =
-      `<small>Da stimare</small>`;
-
-    return;
-
-  }
-
-
-  if(typeof value === "number"){
-
-    element.innerHTML =
-      `€${Math.round(value).toLocaleString("it-IT")}<small>/mese</small>`;
-
-    return;
-
-  }
-
-
-  element.textContent =
-    String(value);
-
-}
-
-
-/* ------------------------------------------------------------
+/* ---------------------------------------------------------
    RENDER RESULTS
------------------------------------------------------------- */
+--------------------------------------------------------- */
 
-function renderResults(result){
+function renderResults(result) {
 
-  console.log(
-    "PROJECT-X result:",
-    result
-  );
+    console.log(
+        "PROJECT-X result:",
+        result
+    );
 
+    const ranked =
+        result?.rankedTools ||
+        result?.rankedSoftware ||
+        result?.topSoftware ||
+        result?.recommendations ||
+        result?.ranked ||
+        [];
 
-  /*
-    Il motore può restituire strutture leggermente differenti.
-    Cerchiamo automaticamente i campi più comuni.
-  */
+    const toolList =
+        document.getElementById("toolList");
 
-  const topSoftware =
-    result?.rankedSoftware ||
-    result?.topSoftware ||
-    result?.recommendations ||
-    result?.ranked ||
-    result?.software ||
-    [];
+    toolList.innerHTML = "";
 
+    if (!ranked.length) {
 
-  const stack =
-    result?.stack ||
-    result?.recommendedStack ||
-    result?.system ||
-    [];
+        toolList.innerHTML = `
+            <div class="tool">
+                <h3>Nessuno strumento trovato</h3>
+                <p>
+                    Prova a fornire maggiori dettagli sulle tue esigenze.
+                </p>
+            </div>
+        `;
 
+    } else {
 
-  const missing =
-    result?.missingNeeds ||
-    result?.missing ||
-    [];
+        ranked.slice(0, 6).forEach((item, index) => {
 
+            const name =
+                getToolName(item);
 
-  const automations =
-    result?.automations ||
-    result?.automationIdeas ||
-    [];
+            const category =
+                getToolCategory(item);
 
+            const description =
+                getToolDescription(item);
 
-  const timeValue =
-    result?.monthlyTimeValue ??
-    result?.timeValue ??
-    result?.potentialTimeValue ??
-    result?.value ??
-    null;
+            const score =
+                getScore(item);
 
+            const coverage =
+                Number(item?.coverage || 0);
 
-  renderTopSoftware(topSoftware);
+            const matchedNeeds =
+                Array.isArray(item?.matchedNeeds)
+                    ? item.matchedNeeds
+                    : [];
 
-  renderStack(stack);
+            const tags =
+                matchedNeeds
+                    .slice(0, 5)
+                    .map(need =>
+                        `<span class="tag">${escapeHTML(need)}</span>`
+                    )
+                    .join("");
 
-  renderList(
-    "missingNeeds",
-    missing,
-    "Il tuo stack copre le principali esigenze rilevate."
-  );
+            toolList.innerHTML += `
 
-  renderList(
-    "automations",
-    automations,
-    "Non sono state rilevate automazioni prioritarie."
-  );
+                <div class="tool">
 
-  renderTimeValue(timeValue);
+                    <div class="tool-top">
 
+                        <div>
+                            <div class="card-number">
+                                #${index + 1} ·
+                                ${escapeHTML(category)}
+                            </div>
+
+                            <h3>
+                                ${escapeHTML(name)}
+                            </h3>
+                        </div>
+
+                        <div class="score">
+                            ${Math.round(score)}/100
+                        </div>
+
+                    </div>
+
+                    <p>
+                        ${escapeHTML(description)}
+                    </p>
+
+                    ${
+                        coverage
+                            ? `<div class="tag">
+                                Copertura ${Math.round(coverage)}%
+                               </div>`
+                            : ""
+                    }
+
+                    ${tags}
+
+                </div>
+            `;
+        });
+    }
+
+    /* -----------------------------------------------------
+       MISSING NEEDS
+    ----------------------------------------------------- */
+
+    const missingList =
+        document.getElementById("missingList");
+
+    const missing =
+        result?.missingNeeds || [];
+
+    if (!missing.length) {
+
+        missingList.innerHTML =
+            "<li>Il tuo stack copre tutte le esigenze principali.</li>";
+
+    } else {
+
+        missingList.innerHTML =
+            missing
+                .slice(0, 8)
+                .map(item =>
+                    `<li>${escapeHTML(item)}</li>`
+                )
+                .join("");
+    }
+
+    /* -----------------------------------------------------
+       AUTOMATIONS
+    ----------------------------------------------------- */
+
+    const automationList =
+        document.getElementById("automationList");
+
+    const automations =
+        result?.automations || [];
+
+    if (!automations.length) {
+
+        automationList.innerHTML =
+            "<li>Nessuna automazione specifica disponibile.</li>";
+
+    } else {
+
+        automationList.innerHTML =
+            automations
+                .slice(0, 8)
+                .map(item => {
+
+                    const text =
+                        typeof item === "string"
+                            ? item
+                            : item?.title ||
+                              item?.description ||
+                              item?.name ||
+                              "Automazione";
+
+                    return `<li>${escapeHTML(text)}</li>`;
+                })
+                .join("");
+    }
+
+    /* -----------------------------------------------------
+       TIME VALUE
+    ----------------------------------------------------- */
+
+    const monthlyValue =
+        result?.valueEstimate?.monthlyValue ??
+        result?.monthlyTimeValue ??
+        result?.timeValue ??
+        result?.potentialTimeValue ??
+        result?.value ??
+        0;
+
+    const numericValue =
+        Number(monthlyValue);
+
+    if (
+        Number.isFinite(numericValue) &&
+        numericValue > 0
+    ) {
+
+        document.getElementById(
+            "valueNumber"
+        ).textContent =
+            formatMoney(numericValue);
+
+        document.getElementById(
+            "valueBox"
+        ).style.display = "block";
+    }
 }
 
-
-/* ------------------------------------------------------------
+/* ---------------------------------------------------------
    ANALYZE
------------------------------------------------------------- */
+--------------------------------------------------------- */
 
-async function analyze(){
+async function analyze() {
 
-  const button =
-    document.getElementById("analyzeButton");
+    errorBox.style.display = "none";
 
+    const answers =
+        collectAnswers();
 
-  const answers =
-    collectAnswers();
+    console.log(
+        "PROJECT-X answers:",
+        answers
+    );
 
+    questionnaire.parentElement.style.display =
+        "none";
 
-  console.log(
-    "PROJECT-X answers:",
-    answers
-  );
+    loading.style.display =
+        "block";
 
+    try {
 
-  /*
-    Nascondi questionario
-  */
+        /* AI IS OPTIONAL:
+           if /api/analyze returns 429,
+           the deterministic engine still works. */
 
-  document
-    .getElementById("questionnaire")
-    .parentElement
-    .style.display = "none";
+        const aiProfile =
+            await getAIProfile(answers);
 
+        let result;
 
-  /*
-    Mostra loading
-  */
+        if (
+            window.ProjectXEngine &&
+            typeof window.ProjectXEngine.analyze === "function"
+        ) {
 
-  document
-    .getElementById("loading")
-    .style.display = "block";
+            result =
+                window.ProjectXEngine.analyze(
+                    answers,
+                    aiProfile
+                );
 
+        } else if (
+            window.ProjectXEngine &&
+            typeof window.ProjectXEngine.run === "function"
+        ) {
 
-  document
-    .getElementById("loading")
-    .scrollIntoView({
-      behavior:"smooth"
-    });
+            result =
+                window.ProjectXEngine.run(
+                    answers,
+                    aiProfile
+                );
 
+        } else {
 
-  if(button){
+            throw new Error(
+                "PROJECT-X Decision Engine non trovato."
+            );
+        }
 
-    button.disabled = true;
-    button.textContent = "Analisi in corso...";
+        renderResults(result);
 
-  }
+        loading.style.display =
+            "none";
 
+        results.style.display =
+            "block";
 
-  try{
+        results.scrollIntoView({
+            behavior: "smooth"
+        });
 
-    /*
-      Prima proviamo l'AI.
-      Se l'API non risponde, il motore locale
-      continua comunque a funzionare.
-    */
+    } catch (error) {
 
-    const aiProfile =
-      await getAIProfile(answers);
-
-
-    let result;
-
-
-    if(
-      window.ProjectXEngine &&
-      typeof window.ProjectXEngine.analyzeAnswers === "function"
-    ){
-
-      result =
-        window.ProjectXEngine.analyzeAnswers(
-          answers,
-          aiProfile
+        console.error(
+            "PROJECT-X error:",
+            error
         );
 
-    }else{
+        loading.style.display =
+            "none";
 
-      throw new Error(
-        "ProjectXEngine non disponibile."
-      );
+        questionnaire.parentElement.style.display =
+            "block";
 
+        errorBox.textContent =
+            "Si è verificato un errore durante l'analisi. Controlla la Console del browser per maggiori dettagli.";
+
+        errorBox.style.display =
+            "block";
     }
-
-
-    /*
-      Risultati
-    */
-
-    renderResults(result);
-
-
-    document
-      .getElementById("loading")
-      .style.display = "none";
-
-
-    document
-      .getElementById("results")
-      .style.display = "block";
-
-
-    document
-      .getElementById("results")
-      .scrollIntoView({
-        behavior:"smooth"
-      });
-
-
-  }catch(error){
-
-    console.error(
-      "PROJECT-X analysis error:",
-      error
-    );
-
-
-    document
-      .getElementById("loading")
-      .style.display = "none";
-
-
-    document
-      .getElementById("questionnaire")
-      .parentElement
-      .style.display = "block";
-
-
-    if(button){
-
-      button.disabled = false;
-      button.textContent = "Analizza il mio lavoro ✦";
-
-    }
-
-
-    alert(
-      "Si è verificato un problema durante l'analisi. Controlla la console del browser."
-    );
-
-  }
-
 }
 
-
-/* ------------------------------------------------------------
+/* ---------------------------------------------------------
    FORM SUBMIT
------------------------------------------------------------- */
+--------------------------------------------------------- */
 
-document
-  .getElementById("questionnaireForm")
-  .addEventListener(
+form.addEventListener(
     "submit",
-    function(event){
+    async event => {
 
-      event.preventDefault();
+        event.preventDefault();
 
-      if(!validateCurrentStep()) return;
+        if (!validateStep()) {
+            return;
+        }
 
-      analyze();
-
+        await analyze();
     }
-  );
+);
 
-
-/* ------------------------------------------------------------
+/* ---------------------------------------------------------
    INITIALIZE
------------------------------------------------------------- */
+--------------------------------------------------------- */
 
 showStep(1);
 
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT-X — Build the right system</title>
-<meta name="description" content="Descrivi il tuo lavoro. PROJECT-X costruisce il sistema software più adatto alle tue esigenze.">
-
-<style>
-:root{
-  --bg:#07070a;
-  --bg2:#0b0b10;
-  --panel:#111116;
-  --panel2:#15151c;
-  --line:rgba(255,255,255,.09);
-  --text:#f7f7fb;
-  --muted:#9494a4;
-  --muted2:#676775;
-  --accent:#8b5cf6;
-  --accent2:#c084fc;
-  --green:#34d399;
-  --blue:#60a5fa;
-  --orange:#f59e0b;
-  --red:#fb7185;
-  --radius:24px;
-}
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:
-    radial-gradient(circle at 50% -10%,rgba(139,92,246,.16),transparent 34%),
-    radial-gradient(circle at 90% 20%,rgba(96,165,250,.07),transparent 25%),
-    var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.035;
-  background-image:
-    linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);
-  background-size:70px 70px;
-  mask-image:linear-gradient(to bottom,black,transparent 80%);
-}
-
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
-button,
-select,
-input,
-textarea{
-  font:inherit;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-header{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:100;
-  height:76px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  background:rgba(7,7,10,.72);
-  backdrop-filter:blur(20px);
-}
-
-.nav{
-  max-width:1180px;
-  height:100%;
-  margin:auto;
-  padding:0 24px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:11px;
-  font-size:17px;
-  font-weight:750;
-  letter-spacing:-.03em;
-}
-
-.logo-mark{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:
-    linear-gradient(135deg,#a78bfa,#7c3aed);
-  display:grid;
-  place-items:center;
-  box-shadow:0 0 28px rgba(139,92,246,.35);
-}
-
-.logo-mark:before{
-  content:"✦";
-  font-size:16px;
-  color:white;
-}
-
-.logo span{
-  color:#858591;
-  font-weight:500;
-}
-
-.nav-right{
-  display:flex;
-  align-items:center;
-  gap:20px;
-  color:#858591;
-  font-size:13px;
-}
-
-.nav-pill{
-  border:1px solid var(--line);
-  padding:8px 13px;
-  border-radius:999px;
-  background:rgba(255,255,255,.035);
-}
-
-/* =========================
-   HERO
-========================= */
-
-.hero{
-  max-width:1180px;
-  margin:0 auto;
-  padding:150px 24px 85px;
-  text-align:center;
-  position:relative;
-}
-
-.hero-orb{
-  position:absolute;
-  width:520px;
-  height:520px;
-  left:50%;
-  top:40px;
-  transform:translateX(-50%);
-  background:radial-gradient(circle,rgba(139,92,246,.13),transparent 65%);
-  pointer-events:none;
-  filter:blur(10px);
-}
-
-.eyebrow{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  border:1px solid rgba(167,139,250,.22);
-  background:rgba(139,92,246,.07);
-  padding:8px 13px;
-  border-radius:999px;
-  color:#c4b5fd;
-  font-size:12px;
-  font-weight:650;
-  letter-spacing:.02em;
-  position:relative;
-}
-
-.eyebrow-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#a78bfa;
-  box-shadow:0 0 12px #a78bfa;
-}
-
-.hero h1{
-  max-width:900px;
-  margin:28px auto 22px;
-  font-size:clamp(48px,7vw,86px);
-  line-height:.98;
-  letter-spacing:-.065em;
-  font-weight:800;
-  position:relative;
-}
-
-.gradient-text{
-  background:linear-gradient(
-    100deg,
-    #fff 0%,
-    #fff 28%,
-    #c4b5fd 58%,
-    #8b5cf6 100%
-  );
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-.hero-description{
-  max-width:620px;
-  margin:auto;
-  color:#9999a8;
-  font-size:18px;
-  line-height:1.65;
-}
-
-.hero-actions{
-  margin-top:36px;
-  display:flex;
-  justify-content:center;
-  gap:12px;
-}
-
-.primary-btn{
-  border:0;
-  color:white;
-  cursor:pointer;
-  padding:15px 23px;
-  border-radius:13px;
-  font-weight:700;
-  font-size:14px;
-  background:linear-gradient(135deg,#8b5cf6,#6d28d9);
-  box-shadow:
-    0 10px 35px rgba(109,40,217,.28),
-    inset 0 1px rgba(255,255,255,.22);
-  transition:.2s ease;
-}
-
-.primary-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:
-    0 16px 45px rgba(109,40,217,.38),
-    inset 0 1px rgba(255,255,255,.22);
-}
-
-.secondary-btn{
-  border:1px solid var(--line);
-  color:#dddde5;
-  cursor:pointer;
-  padding:15px 23px;
-  border-radius:13px;
-  font-weight:650;
-  font-size:14px;
-  background:rgba(255,255,255,.035);
-  transition:.2s ease;
-}
-
-.secondary-btn:hover{
-  background:rgba(255,255,255,.07);
-}
-
-/* =========================
-   VISUAL ENGINE
-========================= */
-
-.engine-visual{
-  max-width:760px;
-  margin:70px auto 0;
-  position:relative;
-}
-
-.engine-box{
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:28px;
-  padding:20px;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
-  box-shadow:
-    0 30px 100px rgba(0,0,0,.45),
-    inset 0 1px rgba(255,255,255,.06);
-}
-
-.engine-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:2px 3px 17px;
-  color:#777784;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-}
-
-.live{
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-.live i{
-  width:6px;
-  height:6px;
-  background:var(--green);
-  border-radius:50%;
-  box-shadow:0 0 12px var(--green);
-}
-
-.engine-flow{
-  display:grid;
-  grid-template-columns:1fr 80px 1fr;
-  align-items:center;
-  gap:12px;
-}
-
-.flow-card{
-  min-height:120px;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:rgba(0,0,0,.22);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-}
-
-.flow-icon{
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  border-radius:13px;
-  background:rgba(139,92,246,.13);
-  color:#c4b5fd;
-  font-size:19px;
-}
-
-.flow-title{
-  font-size:13px;
-  font-weight:700;
-}
-
-.flow-sub{
-  color:#666674;
-  font-size:10px;
-}
-
-.flow-center{
-  text-align:center;
-  color:#8b5cf6;
-  font-size:25px;
-}
-
-.flow-center small{
-  display:block;
-  margin-top:5px;
-  font-size:8px;
-  letter-spacing:.12em;
-  color:#666674;
-}
-
-/* =========================
-   SECTION
-========================= */
-
-.section{
-  max-width:980px;
-  margin:0 auto;
-  padding:70px 24px;
-}
-
-.section-header{
-  margin-bottom:28px;
-}
-
-.section-kicker{
-  color:#8b5cf6;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.16em;
-  font-weight:750;
-  margin-bottom:10px;
-}
-
-.section-title{
-  font-size:32px;
-  letter-spacing:-.045em;
-}
-
-.section-subtitle{
-  margin-top:8px;
-  color:#777784;
-  font-size:14px;
-}
-
-/* =========================
-   QUESTIONNAIRE
-========================= */
-
-#questionnaire{
-  scroll-margin-top:100px;
-}
-
-.questionnaire{
-  border:1px solid var(--line);
-  border-radius:30px;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
-  overflow:hidden;
-  box-shadow:0 30px 90px rgba(0,0,0,.35);
-}
-
-.questionnaire-head{
-  padding:28px 30px 24px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-}
-
-.q-head-title{
-  font-size:20px;
-  font-weight:750;
-  letter-spacing:-.03em;
-}
-
-.q-head-sub{
-  color:#70707d;
-  font-size:12px;
-  margin-top:5px;
-}
-
-.step-counter{
-  white-space:nowrap;
-  color:#aaaab7;
-  font-size:12px;
-  font-weight:650;
-}
-
-.progress-wrap{
-  height:3px;
-  background:rgba(255,255,255,.05);
-}
-
-.progress{
-  height:100%;
-  width:10%;
-  background:linear-gradient(90deg,#7c3aed,#c084fc);
-  transition:.3s ease;
-}
-
-.form{
-  padding:32px;
-}
-
-.form-step{
-  display:none;
-  animation:fadeIn .25s ease;
-}
-
-.form-step.active{
-  display:block;
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.step-number{
-  color:#777784;
-  font-size:11px;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  margin-bottom:10px;
-}
-
-.step-question{
-  font-size:25px;
-  line-height:1.2;
-  letter-spacing:-.04em;
-  font-weight:750;
-  max-width:650px;
-}
-
-.step-help{
-  margin-top:8px;
-  color:#777784;
-  font-size:13px;
-  line-height:1.5;
-}
-
-.options{
-  margin-top:25px;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.option{
-  position:relative;
-}
-
-.option input{
-  position:absolute;
-  opacity:0;
-  pointer-events:none;
-}
-
-.option label{
-  min-height:58px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:15px 17px;
-  background:rgba(255,255,255,.025);
-  display:flex;
-  align-items:center;
-  cursor:pointer;
-  color:#bcbcc7;
-  font-size:13px;
-  font-weight:600;
-  transition:.18s ease;
-}
-
-.option label:hover{
-  border-color:rgba(167,139,250,.35);
-  background:rgba(139,92,246,.05);
-}
-
-.option input:checked + label{
-  border-color:rgba(139,92,246,.7);
-  background:rgba(139,92,246,.12);
-  color:white;
-  box-shadow:inset 0 0 0 1px rgba(139,92,246,.18);
-}
-
-.text-input,
-.select-input{
-  width:100%;
-  margin-top:25px;
-  padding:17px 18px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  outline:none;
-  color:white;
-  background:#0c0c11;
-  transition:.2s;
-}
-
-.text-input:focus,
-.select-input:focus{
-  border-color:rgba(139,92,246,.65);
-  box-shadow:0 0 0 4px rgba(139,92,246,.08);
-}
-
-textarea.text-input{
-  min-height:140px;
-  resize:vertical;
-  line-height:1.55;
-}
-
-.text-input::placeholder{
-  color:#555561;
-}
-
-select option{
-  background:#111116;
-  color:white;
-}
-
-.form-nav{
-  margin-top:30px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.back-btn{
-  background:transparent;
-  border:0;
-  color:#777784;
-  cursor:pointer;
-  padding:12px 4px;
-  font-size:13px;
-  font-weight:600;
-}
-
-.back-btn:hover{
-  color:white;
-}
-
-.next-btn{
-  margin-left:auto;
-}
-
-/* =========================
-   LOADING
-========================= */
-
-#loading{
-  display:none;
-  max-width:980px;
-  margin:0 auto;
-  padding:90px 24px 130px;
-}
-
-.loading-card{
-  border:1px solid var(--line);
-  border-radius:30px;
-  padding:70px 30px;
-  text-align:center;
-  background:rgba(255,255,255,.025);
-}
-
-.loader{
-  width:52px;
-  height:52px;
-  margin:0 auto 28px;
-  border:2px solid rgba(255,255,255,.08);
-  border-top-color:#a78bfa;
-  border-radius:50%;
-  animation:spin .9s linear infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-.loading-card h2{
-  font-size:27px;
-  letter-spacing:-.04em;
-}
-
-.loading-card p{
-  margin-top:9px;
-  color:#777784;
-}
-
-/* =========================
-   RESULTS
-========================= */
-
-#results{
-  display:none;
-  max-width:1180px;
-  margin:0 auto;
-  padding:110px 24px 100px;
-}
-
-.results-hero{
-  padding-bottom:45px;
-  border-bottom:1px solid var(--line);
-}
-
-.results-eyebrow{
-  color:#a78bfa;
-  text-transform:uppercase;
-  font-size:11px;
-  font-weight:750;
-  letter-spacing:.15em;
-}
-
-.results-title{
-  max-width:760px;
-  margin-top:13px;
-  font-size:clamp(38px,5vw,62px);
-  line-height:1;
-  letter-spacing:-.055em;
-}
-
-.results-description{
-  margin-top:16px;
-  color:#858592;
-  max-width:620px;
-  line-height:1.6;
-}
-
-.results-grid{
-  margin-top:35px;
-  display:grid;
-  grid-template-columns:1.5fr .8fr;
-  gap:16px;
-}
-
-.result-panel{
-  border:1px solid var(--line);
-  border-radius:25px;
-  background:rgba(255,255,255,.025);
-  overflow:hidden;
-}
-
-.panel-head{
-  padding:21px 23px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.panel-title{
-  font-size:14px;
-  font-weight:750;
-}
-
-.panel-meta{
-  font-size:11px;
-  color:#666674;
-}
-
-.panel-body{
-  padding:18px;
-}
-
-/* SOFTWARE CARDS */
-
-.software-card{
-  padding:20px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:19px;
-  background:rgba(0,0,0,.18);
-  margin-bottom:10px;
-}
-
-.software-card:last-child{
-  margin-bottom:0;
-}
-
-.software-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.software-name{
-  font-size:16px;
-  font-weight:750;
-}
-
-.software-category{
-  margin-top:5px;
-  color:#676775;
-  font-size:11px;
-}
-
-.score{
-  min-width:56px;
-  height:56px;
-  border-radius:16px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  background:rgba(139,92,246,.1);
-  border:1px solid rgba(139,92,246,.18);
-}
-
-.score strong{
-  font-size:17px;
-  color:#c4b5fd;
-}
-
-.score span{
-  color:#686876;
-  font-size:8px;
-  text-transform:uppercase;
-}
-
-.software-description{
-  margin-top:15px;
-  color:#8b8b98;
-  font-size:12px;
-  line-height:1.55;
-}
-
-.score-bar{
-  margin-top:17px;
-  height:4px;
-  background:#202027;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.score-fill{
-  height:100%;
-  background:linear-gradient(90deg,#7c3aed,#c084fc);
-  border-radius:10px;
-}
-
-/* VALUE */
-
-.value-card{
-  min-height:100%;
-  padding:27px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  background:
-    radial-gradient(circle at 80% 15%,rgba(139,92,246,.18),transparent 40%),
-    linear-gradient(145deg,#14111d,#0d0d12);
-}
-
-.value-label{
-  color:#898895;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-}
-
-.value-number{
-  margin-top:25px;
-  font-size:45px;
-  line-height:1;
-  letter-spacing:-.06em;
-  font-weight:800;
-}
-
-.value-number small{
-  font-size:17px;
-  color:#888895;
-  letter-spacing:-.02em;
-}
-
-.value-text{
-  margin-top:13px;
-  color:#858592;
-  font-size:12px;
-  line-height:1.55;
-}
-
-.value-note{
-  margin-top:35px;
-  padding-top:18px;
-  border-top:1px solid var(--line);
-  color:#666674;
-  font-size:10px;
-  line-height:1.5;
-}
-
-/* STACK */
-
-.stack-section{
-  margin-top:16px;
-}
-
-.stack-grid{
-  padding:18px;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-
-.stack-item{
-  padding:20px;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:#0d0d12;
-}
-
-.stack-index{
-  color:#5f5f6b;
-  font-size:10px;
-  margin-bottom:14px;
-}
-
-.stack-name{
-  font-size:15px;
-  font-weight:750;
-}
-
-.stack-reason{
-  color:#70707c;
-  font-size:11px;
-  line-height:1.5;
-  margin-top:7px;
-}
-
-/* OTHER RESULTS */
-
-.extra-grid{
-  margin-top:16px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-.simple-list{
-  padding:18px;
-}
-
-.simple-item{
-  padding:15px 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  color:#90909d;
-  font-size:12px;
-  line-height:1.5;
-}
-
-.simple-item:first-child{
-  padding-top:0;
-}
-
-.simple-item:last-child{
-  border-bottom:0;
-  padding-bottom:0;
-}
-
-.simple-item strong{
-  display:block;
-  color:#e0e0e7;
-  font-size:13px;
-  margin-bottom:4px;
-}
-
-/* BLUEPRINT */
-
-.blueprint{
-  margin-top:16px;
-  border:1px solid rgba(139,92,246,.25);
-  border-radius:25px;
-  padding:30px;
-  background:
-    radial-gradient(circle at 85% 20%,rgba(139,92,246,.14),transparent 35%),
-    rgba(139,92,246,.035);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:25px;
-}
-
-.blueprint h3{
-  font-size:23px;
-  letter-spacing:-.035em;
-}
-
-.blueprint p{
-  color:#777784;
-  font-size:12px;
-  line-height:1.5;
-  margin-top:7px;
-  max-width:580px;
-}
-
-.price{
-  margin-top:13px;
-  color:#c4b5fd;
-  font-size:13px;
-  font-weight:750;
-}
-
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-  border-top:1px solid var(--line);
-  padding:35px 24px;
-}
-
-.footer-inner{
-  max-width:1180px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-}
-
-.footer-brand{
-  color:#777784;
-  font-size:12px;
-}
-
-.footer-links{
-  display:flex;
-  gap:18px;
-  color:#656570;
-  font-size:11px;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:760px){
-
-  header{
-    height:66px;
-  }
-
-  .nav{
-    padding:0 17px;
-  }
-
-  .nav-right{
-    display:none;
-  }
-
-  .hero{
-    padding:120px 18px 55px;
-  }
-
-  .hero h1{
-    font-size:49px;
-  }
-
-  .hero-description{
-    font-size:15px;
-  }
-
-  .hero-actions{
-    flex-direction:column;
-  }
-
-  .primary-btn,
-  .secondary-btn{
-    width:100%;
-  }
-
-  .engine-visual{
-    margin-top:45px;
-  }
-
-  .engine-flow{
-    grid-template-columns:1fr;
-  }
-
-  .flow-center{
-    transform:rotate(90deg);
-  }
-
-  .section{
-    padding:50px 15px;
-  }
-
-  .questionnaire-head{
-    padding:22px 20px;
-  }
-
-  .form{
-    padding:22px 18px;
-  }
-
-  .options{
-    grid-template-columns:1fr;
-  }
-
-  .step-question{
-    font-size:22px;
-  }
-
-  #results{
-    padding:95px 15px 70px;
-  }
-
-  .results-title{
-    font-size:42px;
-  }
-
-  .results-grid,
-  .extra-grid{
-    grid-template-columns:1fr;
-  }
-
-  .stack-grid{
-    grid-template-columns:1fr;
-  }
-
-  .blueprint{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  .blueprint .primary-btn{
-    width:auto;
-  }
-
-  .footer-inner{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <div class="nav">
-    <a href="#" class="logo">
-      <div class="logo-mark"></div>
-      PROJECT-X <span>/ AI Decision Engine</span>
-    </a>
-
-    <div class="nav-right">
-      <div class="nav-pill">AI powered</div>
-      <div>Il tuo stack, deciso meglio.</div>
-    </div>
-  </div>
-</header>
-
-
-<!-- =========================
-     HERO
-========================= -->
-
-<section class="hero">
-
-  <div class="hero-orb"></div>
-
-  <div class="eyebrow">
-    <span class="eyebrow-dot"></span>
-    AI-powered Software Decision Engine
-  </div>
-
-  <h1>
-    Smetti di cercare strumenti.
-    <span class="gradient-text">Costruisci il sistema giusto.</span>
-  </h1>
-
-  <p class="hero-description">
-    Raccontaci cosa fai, cosa ti fa perdere tempo e cosa vuoi ottenere.
-    PROJECT-X analizza le tue esigenze e costruisce uno stack software
-    personalizzato.
-  </p>
-
-  <div class="hero-actions">
-    <button class="primary-btn" onclick="startQuestionnaire()">
-      Costruisci il mio sistema →
-    </button>
-
-    <button class="secondary-btn" onclick="document.getElementById('how').scrollIntoView()">
-      Come funziona
-    </button>
-  </div>
-
-  <div class="engine-visual">
-    <div class="engine-box">
-
-      <div class="engine-top">
-        <span>Decision engine</span>
-
-        <span class="live">
-          <i></i>
-          System ready
-        </span>
-      </div>
-
-      <div class="engine-flow">
-
-        <div class="flow-card">
-          <div class="flow-icon">✦</div>
-          <div class="flow-title">Il tuo problema</div>
-          <div class="flow-sub">Esigenze reali</div>
-        </div>
-
-        <div class="flow-center">
-          →
-          <small>ANALYZE</small>
-        </div>
-
-        <div class="flow-card">
-          <div class="flow-icon">⌘</div>
-          <div class="flow-title">Il tuo sistema</div>
-          <div class="flow-sub">Stack + automazioni</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-</section>
-
-
-<!-- =========================
-     HOW
-========================= -->
-
-<section class="section" id="how">
-
-  <div class="section-header">
-    <div class="section-kicker">Il processo</div>
-    <h2 class="section-title">Da problema a sistema.</h2>
-    <p class="section-subtitle">
-      Non devi sapere quali software esistono. Devi solo dirci cosa vuoi ottenere.
-    </p>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-
-    <div class="result-panel" style="padding:24px;">
-      <div class="section-kicker">01</div>
-      <h3 style="font-size:18px;margin-top:10px;">Descrivi il lavoro</h3>
-      <p style="color:#777784;font-size:12px;line-height:1.6;margin-top:8px;">
-        Ci racconti attività, obiettivi, strumenti attuali e ciò che ti fa perdere tempo.
-      </p>
-    </div>
-
-    <div class="result-panel" style="padding:24px;">
-      <div class="section-kicker">02</div>
-      <h3 style="font-size:18px;margin-top:10px;">Analizziamo le esigenze</h3>
-      <p style="color:#777784;font-size:12px;line-height:1.6;margin-top:8px;">
-        L'AI interpreta il problema. Il motore decisionale confronta compatibilità,
-        budget, integrazioni e semplicità.
-      </p>
-    </div>
-
-    <div class="result-panel" style="padding:24px;">
-      <div class="section-kicker">03</div>
-      <h3 style="font-size:18px;margin-top:10px;">Costruiamo lo stack</h3>
-      <p style="color:#777784;font-size:12px;line-height:1.6;margin-top:8px;">
-        Ricevi una combinazione di strumenti pensata per lavorare insieme,
-        evitando software inutilmente duplicati.
-      </p>
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     QUESTIONNAIRE
-========================= -->
-
-<section class="section" id="questionnaire">
-
-  <div class="questionnaire">
-
-    <div class="questionnaire-head">
-      <div>
-        <div class="q-head-title">Costruiamo il tuo sistema</div>
-        <div class="q-head-sub">Rispondi alle domande. Il resto lo facciamo noi.</div>
-      </div>
-
-      <div class="step-counter">
-        <span id="currentStep">1</span> / 10
-      </div>
-    </div>
-
-    <div class="progress-wrap">
-      <div class="progress" id="progress"></div>
-    </div>
-
-
-    <form id="questionnaireForm" class="form">
-
-
-      <!-- STEP 1 -->
-
-      <div class="form-step active" data-step="1">
-
-        <div class="step-number">01 / Attività</div>
-
-        <h2 class="step-question">
-          Che tipo di attività gestisci?
-        </h2>
-
-        <p class="step-help">
-          Questo ci aiuta a capire il contesto in cui lavorano i tuoi strumenti.
-        </p>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt1" value="Professionista">
-            <label for="bt1">Professionista</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt2" value="Impresa di servizi">
-            <label for="bt2">Impresa di servizi</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt3" value="E-commerce">
-            <label for="bt3">E-commerce</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt4" value="Agenzia">
-            <label for="bt4">Agenzia</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt5" value="Ristorante / attività locale">
-            <label for="bt5">Ristorante / attività locale</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt6" value="Startup">
-            <label for="bt6">Startup</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt7" value="Azienda">
-            <label for="bt7">Azienda</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="businessType" id="bt8" value="Altro">
-            <label for="bt8">Altro</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">
-            Continua →
-          </button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 2 -->
-
-      <div class="form-step" data-step="2">
-
-        <div class="step-number">02 / Team</div>
-
-        <h2 class="step-question">
-          Quante persone lavorano nel tuo team?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts1" value="Solo io">
-            <label for="ts1">Solo io</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts2" value="2–5">
-            <label for="ts2">2–5 persone</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts3" value="6–20">
-            <label for="ts3">6–20 persone</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts4" value="21–50">
-            <label for="ts4">21–50 persone</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="teamSize" id="ts5" value="50+">
-            <label for="ts5">50+ persone</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 3 -->
-
-      <div class="form-step" data-step="3">
-
-        <div class="step-number">03 / Obiettivi</div>
-
-        <h2 class="step-question">
-          Cosa vuoi ottenere?
-        </h2>
-
-        <p class="step-help">
-          Puoi indicare più obiettivi.
-        </p>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g1" value="Clienti">
-            <label for="g1">Acquisire clienti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g2" value="Vendite">
-            <label for="g2">Aumentare le vendite</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g3" value="Preventivi">
-            <label for="g3">Gestire preventivi</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g4" value="Email">
-            <label for="g4">Gestire email</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g5" value="Appuntamenti">
-            <label for="g5">Gestire appuntamenti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g6" value="Marketing">
-            <label for="g6">Marketing</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g7" value="Documenti">
-            <label for="g7">Documenti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g8" value="Progetti">
-            <label for="g8">Gestione progetti</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g9" value="Automazioni">
-            <label for="g9">Automazioni</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g10" value="AI">
-            <label for="g10">AI</label>
-          </div>
-
-          <div class="option">
-            <input type="checkbox" name="goals" id="g11" value="E-commerce">
-            <label for="g11">E-commerce</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 4 -->
-
-      <div class="form-step" data-step="4">
-
-        <div class="step-number">04 / Il problema</div>
-
-        <h2 class="step-question">
-          Cosa ti fa perdere più tempo?
-        </h2>
-
-        <p class="step-help">
-          Scrivilo come lo diresti a una persona. Non servono termini tecnici.
-        </p>
-
-        <textarea
-          class="text-input"
-          id="painPoint"
-          name="painPoint"
-          placeholder="Es. Passo troppo tempo a rispondere alle email, preparare preventivi e ricordarmi di ricontattare i clienti..."
-        ></textarea>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 5 -->
-
-      <div class="form-step" data-step="5">
-
-        <div class="step-number">05 / Budget</div>
-
-        <h2 class="step-question">
-          Quanto vuoi investire ogni mese?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="budget" id="b1" value="€0">
-            <label for="b1">€0</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b2" value="€1–30">
-            <label for="b2">€1–30 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b3" value="€31–50">
-            <label for="b3">€31–50 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b4" value="€51–100">
-            <label for="b4">€51–100 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b5" value="€101–250">
-            <label for="b5">€101–250 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b6" value="€251–500">
-            <label for="b6">€251–500 / mese</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="budget" id="b7" value="€500+">
-            <label for="b7">€500+ / mese</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 6 -->
-
-      <div class="form-step" data-step="6">
-
-        <div class="step-number">06 / Tecnologia</div>
-
-        <h2 class="step-question">
-          Quanto sei pratico con la tecnologia?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="tech" id="t1" value="Base">
-            <label for="t1">Base — voglio cose semplici</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="tech" id="t2" value="Medio">
-            <label for="t2">Medio — me la cavo</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="tech" id="t3" value="Avanzato">
-            <label for="t3">Avanzato — posso configurare sistemi complessi</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 7 -->
-
-      <div class="form-step" data-step="7">
-
-        <div class="step-number">07 / Automazione</div>
-
-        <h2 class="step-question">
-          Quanto vuoi automatizzare?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="automation" id="a1" value="Semplice">
-            <label for="a1">Semplice — poche automazioni</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="automation" id="a2" value="Smart">
-            <label for="a2">Smart — voglio far lavorare i software insieme</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="automation" id="a3" value="AI Mode">
-            <label for="a3">AI Mode 🤖 — voglio spingere al massimo l'automazione</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 8 -->
-
-      <div class="form-step" data-step="8">
-
-        <div class="step-number">08 / Tempo</div>
-
-        <h2 class="step-question">
-          Quante ore alla settimana perdi in queste attività?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="hours" id="h1" value="<1">
-            <label for="h1">Meno di 1 ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h2" value="1–3">
-            <label for="h2">1–3 ore</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h3" value="4–7">
-            <label for="h3">4–7 ore</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h4" value="8–15">
-            <label for="h4">8–15 ore</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hours" id="h5" value="15+">
-            <label for="h5">Più di 15 ore</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 9 -->
-
-      <div class="form-step" data-step="9">
-
-        <div class="step-number">09 / Valore del tempo</div>
-
-        <h2 class="step-question">
-          Quanto vale, indicativamente, un'ora del tuo lavoro?
-        </h2>
-
-        <div class="options">
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv1" value="€10">
-            <label for="hv1">€10 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv2" value="€20">
-            <label for="hv2">€20 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv3" value="€30">
-            <label for="hv3">€30 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv4" value="€50">
-            <label for="hv4">€50 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv5" value="€75">
-            <label for="hv5">€75 / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv6" value="€100+">
-            <label for="hv6">€100+ / ora</label>
-          </div>
-
-          <div class="option">
-            <input type="radio" name="hourlyValue" id="hv7" value="Non so">
-            <label for="hv7">Non lo so</label>
-          </div>
-
-        </div>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-          <button type="button" class="primary-btn next-btn" onclick="nextStep()">Continua →</button>
-        </div>
-
-      </div>
-
-
-      <!-- STEP 10 -->
-
-      <div class="form-step" data-step="10">
-
-        <div class="step-number">10 / Strumenti attuali</div>
-
-        <h2 class="step-question">
-          Cosa stai già utilizzando?
-        </h2>
-
-        <p class="step-help">
-          Scrivi anche gli strumenti che non vuoi sostituire. Cercheremo di costruire intorno a quelli.
-        </p>
-
-        <textarea
-          class="text-input"
-          id="existingTools"
-          name="existingTools"
-          placeholder="Es. Microsoft 365, Outlook, Excel, WhatsApp, Gmail, Shopify..."
-        ></textarea>
-
-        <div class="form-nav">
-          <button type="button" class="back-btn" onclick="prevStep()">← Indietro</button>
-
-          <button
-            type="submit"
-            class="primary-btn next-btn"
-            id="analyzeButton"
-          >
-            Analizza il mio lavoro ✦
-          </button>
-        </div>
-
-      </div>
-
-    </form>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     LOADING
-========================= -->
-
-<section id="loading">
-
-  <div class="loading-card">
-
-    <div class="loader"></div>
-
-    <h2>Stiamo costruendo il tuo sistema...</h2>
-
-    <p>
-      Analizziamo esigenze, compatibilità, strumenti e automazioni.
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     RESULTS
-========================= -->
-
-<section id="results">
-
-  <div class="results-hero">
-
-    <div class="results-eyebrow">
-      Your system is ready
-    </div>
-
-    <h1 class="results-title">
-      Ecco come potresti <span class="gradient-text">lavorare meglio.</span>
-    </h1>
-
-    <p class="results-description">
-      Abbiamo confrontato gli strumenti in base alle tue esigenze.
-      Non conta quale software è più famoso: conta quale sistema è più adatto a te.
-    </p>
-
-  </div>
-
-
-  <div class="results-grid">
-
-    <div class="result-panel">
-
-      <div class="panel-head">
-        <div class="panel-title">Migliori strumenti per te</div>
-        <div class="panel-meta">Compatibility score</div>
-      </div>
-
-      <div class="panel-body" id="topSoftware">
-        <!-- popolato da JS -->
-      </div>
-
-    </div>
-
-
-    <div class="result-panel">
-
-      <div class="value-card">
-
-        <div>
-          <div class="value-label">
-            Valore potenziale del tempo
-          </div>
-
-          <div class="value-number" id="timeValue">
-            —
-          </div>
-
-          <div class="value-text">
-            Valore potenziale mensile del tempo che potresti recuperare
-            attraverso automazioni e sistemi più efficienti.
-          </div>
-        </div>
-
-        <div class="value-note">
-          Non è una promessa di risparmio o ROI.
-          È una stima indicativa basata sulle informazioni che hai fornito.
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- STACK -->
-
-  <div class="result-panel stack-section">
-
-    <div class="panel-head">
-      <div>
-        <div class="panel-title">Il tuo sistema</div>
-        <div class="panel-meta">Stack consigliato</div>
-      </div>
-    </div>
-
-    <div class="stack-grid" id="stack">
-      <!-- popolato da JS -->
-    </div>
-
-  </div>
-
-
-  <!-- EXTRA -->
-
-  <div class="extra-grid">
-
-    <div class="result-panel">
-
-      <div class="panel-head">
-        <div class="panel-title">Esigenze ancora scoperte</div>
-      </div>
-
-      <div class="simple-list" id="missingNeeds">
-        <!-- popolato da JS -->
-      </div>
-
-    </div>
-
-
-    <div class="result-panel">
-
-      <div class="panel-head">
-        <div class="panel-title">Automazioni da valutare</div>
-      </div>
-
-      <div class="simple-list" id="automations">
-        <!-- popolato da JS -->
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- BLUEPRINT -->
-
-  <div class="blueprint">
-
-    <div>
-
-      <div class="section-kicker">Next step</div>
-
-      <h3>Vuoi sapere esattamente come configurarlo?</h3>
-
-      <p>
-        Il Blueprint trasforma il tuo stack in un piano operativo:
-        cosa configurare, cosa collegare, cosa automatizzare e in quale ordine.
-      </p>
-
-      <div class="price">
-        Blueprint personalizzato · €29
-      </div>
-
-    </div>
-
-    <button class="primary-btn" onclick="alert('Blueprint in arrivo')">
-      Crea il Blueprint →
-    </button>
-
-  </div>
-
-</section>
-
-
-<footer>
-
-  <div class="footer-inner">
-
-    <div class="footer-brand">
-      © 2026 PROJECT-X · Software Decision Engine
-    </div>
-
-    <div class="footer-links">
-      <a href="#">Privacy</a>
-      <a href="#">Termini</a>
-      <a href="#">Contatti</a>
-    </div>
-
-  </div>
-
-</footer>
-
-
-<!-- DATABASE + ENGINE -->
-
-<script src="database.js"></script>
-<script src="engine.js"></script>
-
-
-<script>
-
-/* ============================================================
-   PROJECT-X FRONTEND
-============================================================ */
-
-console.log("PROJECT-X: premium frontend loaded");
-console.log("Database:", typeof window.SOFTWARE_DATABASE);
-console.log("Decision Engine:", typeof window.ProjectXEngine);
-
-
-/* ------------------------------------------------------------
-   STATE
------------------------------------------------------------- */
-
-let currentStep = 1;
-const totalSteps = 10;
-
-
-/* ------------------------------------------------------------
-   START
------------------------------------------------------------- */
-
-function startQuestionnaire(){
-
-  document
-    .getElementById("questionnaire")
-    .scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
-
-}
-
-
-/* ------------------------------------------------------------
-   STEP UI
------------------------------------------------------------- */
-
-function showStep(step){
-
-  currentStep = step;
-
-  document.querySelectorAll(".form-step").forEach(el=>{
-    el.classList.remove("active");
-  });
-
-  const target = document.querySelector(
-    `.form-step[data-step="${step}"]`
-  );
-
-  if(target){
-    target.classList.add("active");
-  }
-
-  document.getElementById("currentStep").textContent = step;
-
-  const progress =
-    document.getElementById("progress");
-
-  progress.style.width =
-    `${(step / totalSteps) * 100}%`;
-
-  document
-    .getElementById("questionnaire")
-    .scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
-}
-
-
-/* ------------------------------------------------------------
-   VALIDATION
------------------------------------------------------------- */
-
-function validateCurrentStep(){
-
-  const step =
-    document.querySelector(
-      `.form-step[data-step="${currentStep}"]`
-    );
-
-  if(!step) return true;
-
-
-  if(currentStep === 4){
-
-    const value =
-      document.getElementById("painPoint").value.trim();
-
-    if(!value){
-
-      alert("Descrivi brevemente cosa ti fa perdere più tempo.");
-
-      return false;
-    }
-
-    return true;
-  }
-
-
-  if(currentStep === 10){
-
-    return true;
-  }
-
-
-  const inputs =
-    step.querySelectorAll(
-      'input[type="radio"]:checked'
-    );
-
-  if(inputs.length === 0){
-
-    /*
-      Step 3 usa checkbox e quindi viene gestito separatamente.
-    */
-
-    if(currentStep === 3){
-
-      const checked =
-        step.querySelectorAll(
-          'input[type="checkbox"]:checked'
-        );
-
-      if(checked.length === 0){
-
-        alert("Seleziona almeno un obiettivo.");
-
-        return false;
-      }
-
-      return true;
-    }
-
-    alert("Seleziona una risposta per continuare.");
-
-    return false;
-  }
-
-  return true;
-}
-
-
-/* ------------------------------------------------------------
-   NEXT / BACK
------------------------------------------------------------- */
-
-function nextStep(){
-
-  if(!validateCurrentStep()) return;
-
-  if(currentStep < totalSteps){
-
-    showStep(currentStep + 1);
-
-  }
-
-}
-
-
-function prevStep(){
-
-  if(currentStep > 1){
-
-    showStep(currentStep - 1);
-
-  }
-
-}
-
-
-/* ------------------------------------------------------------
-   COLLECT ANSWERS
------------------------------------------------------------- */
-
-function collectAnswers(){
-
-  const form =
-    document.getElementById("questionnaireForm");
-
-  const data =
-    new FormData(form);
-
-
-  const goals =
-    Array.from(
-      document.querySelectorAll(
-        'input[name="goals"]:checked'
-      )
-    ).map(input=>input.value);
-
-
-  return {
-
-    businessType:
-      data.get("businessType") || "",
-
-    teamSize:
-      data.get("teamSize") || "",
-
-    goals,
-
-    painPoint:
-      data.get("painPoint") || "",
-
-    budget:
-      data.get("budget") || "",
-
-    tech:
-      data.get("tech") || "",
-
-    automation:
-      data.get("automation") || "",
-
-    hours:
-      data.get("hours") || "",
-
-    hourlyValue:
-      data.get("hourlyValue") || "",
-
-    existingTools:
-      data.get("existingTools") || ""
-
-  };
-
-}
-
-
-/* ------------------------------------------------------------
-   AI ANALYSIS
------------------------------------------------------------- */
-
-async function getAIProfile(answers){
-
-  try{
-
-    const response =
-      await fetch("/api/analyze",{
-
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-          answers
-        })
-
-      });
-
-
-    if(!response.ok){
-
-      console.warn(
-        "AI endpoint returned:",
-        response.status
-      );
-
-      return null;
-    }
-
-
-    const result =
-      await response.json();
-
-
-    if(
-      result &&
-      result.success &&
-      result.profile
-    ){
-
-      return result.profile;
-
-    }
-
-
-    return null;
-
-  }catch(error){
-
-    console.warn(
-      "AI analysis unavailable:",
-      error
-    );
-
-    return null;
-
-  }
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER HELPERS
------------------------------------------------------------- */
-
-function escapeHTML(value){
-
-  if(value === null || value === undefined){
-
-    return "";
-
-  }
-
-  return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-function getName(item){
-
-  return (
-    item?.name ||
-    item?.software?.name ||
-    "Software"
-  );
-
-}
-
-
-function getCategory(item){
-
-  return (
-    item?.category ||
-    item?.software?.category ||
-    "Software"
-  );
-
-}
-
-
-function getDescription(item){
-
-  return (
-    item?.description ||
-    item?.software?.description ||
-    item?.reason ||
-    item?.why ||
-    "Strumento selezionato in base alla compatibilità con le tue esigenze."
-  );
-
-}
-
-
-function getScore(item){
-
-  const score =
-    item?.compatibilityScore ??
-    item?.score ??
-    item?.compatibility ??
-    item?.software?.score ??
-    0;
-
-  return Math.max(
-    0,
-    Math.min(
-      100,
-      Math.round(Number(score) || 0)
-    )
-  );
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER TOP SOFTWARE
------------------------------------------------------------- */
-
-function renderTopSoftware(items){
-
-  const container =
-    document.getElementById("topSoftware");
-
-  if(!container) return;
-
-
-  if(!Array.isArray(items) || items.length === 0){
-
-    container.innerHTML = `
-      <div class="simple-item">
-        <strong>Nessun risultato disponibile</strong>
-        Riprova l'analisi.
-      </div>
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    items
-      .slice(0,5)
-      .map(item=>{
-
-        const name =
-          escapeHTML(getName(item));
-
-        const category =
-          escapeHTML(getCategory(item));
-
-        const description =
-          escapeHTML(getDescription(item));
-
-        const score =
-          getScore(item);
-
-
-        return `
-
-          <div class="software-card">
-
-            <div class="software-top">
-
-              <div>
-
-                <div class="software-name">
-                  ${name}
-                </div>
-
-                <div class="software-category">
-                  ${category}
-                </div>
-
-              </div>
-
-              <div class="score">
-
-                <strong>${score}</strong>
-
-                <span>/ 100</span>
-
-              </div>
-
-            </div>
-
-            <div class="software-description">
-              ${description}
-            </div>
-
-            <div class="score-bar">
-              <div
-                class="score-fill"
-                style="width:${score}%"
-              ></div>
-            </div>
-
-          </div>
-
-        `;
-
-      })
-      .join("");
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER STACK
------------------------------------------------------------- */
-
-function renderStack(stack){
-
-  const container =
-    document.getElementById("stack");
-
-  if(!container) return;
-
-
-  if(!Array.isArray(stack) || stack.length === 0){
-
-    container.innerHTML = `
-      <div class="stack-item">
-        <div class="stack-name">
-          Stack non disponibile
-        </div>
-      </div>
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    stack.map((item,index)=>{
-
-      const name =
-        escapeHTML(getName(item));
-
-      const reason =
-        escapeHTML(
-          item?.reason ||
-          item?.why ||
-          item?.description ||
-          "Parte del sistema consigliato."
-        );
-
-
-      return `
-
-        <div class="stack-item">
-
-          <div class="stack-index">
-            TOOL ${String(index+1).padStart(2,"0")}
-          </div>
-
-          <div class="stack-name">
-            ${name}
-          </div>
-
-          <div class="stack-reason">
-            ${reason}
-          </div>
-
-        </div>
-
-      `;
-
-    }).join("");
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER LIST
------------------------------------------------------------- */
-
-function renderList(id, items, emptyText){
-
-  const container =
-    document.getElementById(id);
-
-  if(!container) return;
-
-
-  if(!Array.isArray(items) || items.length === 0){
-
-    container.innerHTML = `
-      <div class="simple-item">
-        ${escapeHTML(emptyText)}
-      </div>
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    items.map(item=>{
-
-      if(typeof item === "string"){
-
-        return `
-          <div class="simple-item">
-            ${escapeHTML(item)}
-          </div>
-        `;
-
-      }
-
-
-      const title =
-        escapeHTML(
-          item?.name ||
-          item?.title ||
-          item?.need ||
-          "Elemento"
-        );
-
-      const text =
-        escapeHTML(
-          item?.description ||
-          item?.reason ||
-          item?.why ||
-          ""
-        );
-
-
-      return `
-        <div class="simple-item">
-          <strong>${title}</strong>
-          ${text}
-        </div>
-      `;
-
-    }).join("");
-
-}
-
-
-/* ------------------------------------------------------------
-   TIME VALUE
------------------------------------------------------------- */
-
-function renderTimeValue(value){
-
-  const element =
-    document.getElementById("timeValue");
-
-  if(!element) return;
-
-
-  if(
-    value === null ||
-    value === undefined ||
-    value === "" ||
-    value === 0
-  ){
-
-    element.innerHTML =
-      `<small>Da stimare</small>`;
-
-    return;
-
-  }
-
-
-  if(typeof value === "number"){
-
-    element.innerHTML =
-      `€${Math.round(value).toLocaleString("it-IT")}<small>/mese</small>`;
-
-    return;
-
-  }
-
-
-  element.textContent =
-    String(value);
-
-}
-
-
-/* ------------------------------------------------------------
-   RENDER RESULTS
------------------------------------------------------------- */
-
-function renderResults(result){
-
-  console.log(
-    "PROJECT-X result:",
-    result
-  );
-
-
-  /*
-    Il motore può restituire strutture leggermente differenti.
-    Cerchiamo automaticamente i campi più comuni.
-  */
-
-  const topSoftware =
-    result?.rankedSoftware ||
-    result?.topSoftware ||
-    result?.recommendations ||
-    result?.ranked ||
-    result?.software ||
-    [];
-
-
-  const stack =
-    result?.stack ||
-    result?.recommendedStack ||
-    result?.system ||
-    [];
-
-
-  const missing =
-    result?.missingNeeds ||
-    result?.missing ||
-    [];
-
-
-  const automations =
-    result?.automations ||
-    result?.automationIdeas ||
-    [];
-
-
-  const timeValue =
-    result?.monthlyTimeValue ??
-    result?.timeValue ??
-    result?.potentialTimeValue ??
-    result?.value ??
-    null;
-
-
-  renderTopSoftware(topSoftware);
-
-  renderStack(stack);
-
-  renderList(
-    "missingNeeds",
-    missing,
-    "Il tuo stack copre le principali esigenze rilevate."
-  );
-
-  renderList(
-    "automations",
-    automations,
-    "Non sono state rilevate automazioni prioritarie."
-  );
-
-  renderTimeValue(timeValue);
-
-}
-
-
-/* ------------------------------------------------------------
-   ANALYZE
------------------------------------------------------------- */
-
-async function analyze(){
-
-  const button =
-    document.getElementById("analyzeButton");
-
-
-  const answers =
-    collectAnswers();
-
-
-  console.log(
-    "PROJECT-X answers:",
-    answers
-  );
-
-
-  /*
-    Nascondi questionario
-  */
-
-  document
-    .getElementById("questionnaire")
-    .parentElement
-    .style.display = "none";
-
-
-  /*
-    Mostra loading
-  */
-
-  document
-    .getElementById("loading")
-    .style.display = "block";
-
-
-  document
-    .getElementById("loading")
-    .scrollIntoView({
-      behavior:"smooth"
-    });
-
-
-  if(button){
-
-    button.disabled = true;
-    button.textContent = "Analisi in corso...";
-
-  }
-
-
-  try{
-
-    /*
-      Prima proviamo l'AI.
-      Se l'API non risponde, il motore locale
-      continua comunque a funzionare.
-    */
-
-    const aiProfile =
-      await getAIProfile(answers);
-
-
-    let result;
-
-
-    if(
-      window.ProjectXEngine &&
-      typeof window.ProjectXEngine.analyzeAnswers === "function"
-    ){
-
-      result =
-        window.ProjectXEngine.analyzeAnswers(
-          answers,
-          aiProfile
-        );
-
-    }else{
-
-      throw new Error(
-        "ProjectXEngine non disponibile."
-      );
-
-    }
-
-
-    /*
-      Risultati
-    */
-
-    renderResults(result);
-
-
-    document
-      .getElementById("loading")
-      .style.display = "none";
-
-
-    document
-      .getElementById("results")
-      .style.display = "block";
-
-
-    document
-      .getElementById("results")
-      .scrollIntoView({
-        behavior:"smooth"
-      });
-
-
-  }catch(error){
-
-    console.error(
-      "PROJECT-X analysis error:",
-      error
-    );
-
-
-    document
-      .getElementById("loading")
-      .style.display = "none";
-
-
-    document
-      .getElementById("questionnaire")
-      .parentElement
-      .style.display = "block";
-
-
-    if(button){
-
-      button.disabled = false;
-      button.textContent = "Analizza il mio lavoro ✦";
-
-    }
-
-
-    alert(
-      "Si è verificato un problema durante l'analisi. Controlla la console del browser."
-    );
-
-  }
-
-}
-
-
-/* ------------------------------------------------------------
-   FORM SUBMIT
------------------------------------------------------------- */
-
-document
-  .getElementById("questionnaireForm")
-  .addEventListener(
-    "submit",
-    function(event){
-
-      event.preventDefault();
-
-      if(!validateCurrentStep()) return;
-
-      analyze();
-
-    }
-  );
-
-
-/* ------------------------------------------------------------
-   INITIALIZE
------------------------------------------------------------- */
-
-showStep(1);
+console.log(
+    "PROJECT-X frontend caricato correttamente."
+);
+
+console.log(
+    "SOFTWARE_DATABASE:",
+    typeof window.SOFTWARE_DATABASE
+);
+
+console.log(
+    "ProjectXEngine:",
+    typeof window.ProjectXEngine
+);
 
 </script>
 
