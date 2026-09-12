@@ -1,5 +1,6 @@
 // ==========================================
 // PROJECT-X — DECISION ENGINE
+// VERSIONE 0.2 — SMART RANKING
 // ==========================================
 
 (function () {
@@ -31,36 +32,51 @@
     const NEED_LABELS = {
 
         crm: "Gestione clienti",
-
         automation: "Automazioni",
-
         email: "Email",
-
         followup: "Follow-up",
-
         sales: "Vendite",
-
         quotes: "Preventivi",
-
         excel: "Excel / dati",
-
         marketing: "Marketing",
-
         projects: "Gestione progetti",
-
         documents: "Documenti",
-
         appointments: "Appuntamenti",
-
         ecommerce: "E-commerce",
-
         ai: "AI"
 
     };
 
 
     // ==========================================
-    // 2. UTILITÀ
+    // 2. CONFIGURAZIONE ENGINE
+    // ==========================================
+
+    const CONFIG = {
+
+        MAX_STACK_TOOLS: 4,
+
+        MIN_STACK_COMPATIBILITY: 55,
+
+        MIN_PRIMARY_COMPATIBILITY: 50,
+
+        MIN_COMPLEMENTARY_COVERAGE: 18,
+
+        MAX_REDUNDANCY_PENALTY: 30,
+
+        CATEGORY_REDUNDANCY_PENALTY: 14,
+
+        STRONG_CATEGORY_REDUNDANCY_PENALTY: 20,
+
+        EXISTING_TOOL_MAX_BONUS: 15,
+
+        PRESERVE_TOOL_MAX_BONUS: 15
+
+    };
+
+
+    // ==========================================
+    // 3. UTILITÀ
     // ==========================================
 
     function clamp(value, min, max) {
@@ -84,13 +100,79 @@
         return String(value || "")
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "");
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim();
+
+    }
+
+
+    function tokenize(value) {
+
+        return normalizeText(value)
+            .replace(/[^\w\s-]/g, " ")
+            .split(/\s+/)
+            .filter(Boolean);
+
+    }
+
+
+    function uniqueArray(array) {
+
+        return [
+            ...new Set(
+                (Array.isArray(array) ? array : [])
+                    .filter(Boolean)
+                    .map(value => String(value))
+            )
+        ];
 
     }
 
 
     // ==========================================
-    // 3. INTERPRETAZIONE OBIETTIVI
+    // 4. NORMALIZZAZIONE VALORI DATABASE
+    // ==========================================
+
+    /*
+     * Il motore supporta sia:
+     *
+     * 0–100
+     *
+     * sia:
+     *
+     * 0–10
+     *
+     * Questo evita problemi se il database
+     * viene modificato in futuro.
+     */
+
+    function normalizeToolNeed(value) {
+
+        const number = Number(value);
+
+        if (Number.isNaN(number)) {
+            return 0;
+        }
+
+        if (number <= 10) {
+            return clamp(
+                number * 10,
+                0,
+                100
+            );
+        }
+
+        return clamp(
+            number,
+            0,
+            100
+        );
+
+    }
+
+
+    // ==========================================
+    // 5. INTERPRETAZIONE OBIETTIVI
     // ==========================================
 
     function interpretGoals(goals) {
@@ -238,7 +320,7 @@
 
 
     // ==========================================
-    // 4. INTERPRETAZIONE PROBLEMA
+    // 6. INTERPRETAZIONE PROBLEMA
     // ==========================================
 
     function interpretPainPoint(painPoint) {
@@ -457,7 +539,7 @@
 
 
     // ==========================================
-    // 5. PROFILO COMPLESSIVO
+    // 7. PROFILO COMPLESSIVO
     // ==========================================
 
     function buildNeedsProfile(
@@ -510,8 +592,8 @@
 
 
         /*
-         * Se l'utente chiede automazioni,
-         * aumentiamo leggermente il peso.
+         * Se l'utente vuole automazioni
+         * Smart o AI, aumentiamo il peso.
          */
 
         const automationText =
@@ -540,23 +622,190 @@
 
 
     // ==========================================
-    // 6. STRUMENTI GIÀ UTILIZZATI
+    // 8. STRUMENTI ESISTENTI
     // ==========================================
 
     function getExistingTools(
         existingTools
     ) {
 
-        const text =
-            normalizeText(
-                existingTools
-            );
-
-
-        return text;
+        return normalizeText(
+            existingTools
+        );
 
     }
 
+
+    function getPreservedTools(
+        answers
+    ) {
+
+        const values = [];
+
+        if (!answers) {
+            return values;
+        }
+
+
+        const sources = [
+
+            answers.doNotChange,
+
+            answers.doNotReplace,
+
+            answers.keepTools,
+
+            answers.toolsToKeep,
+
+            answers.existingTools
+
+        ];
+
+
+        sources.forEach(source => {
+
+            if (Array.isArray(source)) {
+
+                source.forEach(item => {
+
+                    if (item) {
+                        values.push(
+                            normalizeText(item)
+                        );
+                    }
+
+                });
+
+            } else if (source) {
+
+                values.push(
+                    normalizeText(source)
+                );
+
+            }
+
+        });
+
+
+        return uniqueArray(
+            values
+        );
+
+    }
+
+
+    function toolMentionedInText(
+        tool,
+        text
+    ) {
+
+        const normalizedText =
+            normalizeText(text);
+
+
+        if (!normalizedText) {
+            return false;
+        }
+
+
+        const name =
+            normalizeText(
+                tool.name
+            );
+
+
+        if (
+            name &&
+            normalizedText.includes(name)
+        ) {
+
+            return true;
+
+        }
+
+
+        const aliases = {
+
+            "microsoft 365": [
+                "microsoft",
+                "office 365",
+                "m365",
+                "ms 365"
+            ],
+
+            "microsoft office": [
+                "office",
+                "microsoft"
+            ],
+
+            "google workspace": [
+                "google workspace",
+                "workspace",
+                "g suite"
+            ],
+
+            "power automate": [
+                "power automate",
+                "powerautomate"
+            ],
+
+            "chatgpt": [
+                "chatgpt",
+                "openai"
+            ],
+
+            "woocommerce": [
+                "woocommerce",
+                "woo commerce"
+            ],
+
+            "monday.com": [
+                "monday",
+                "monday.com"
+            ],
+
+            "clickup": [
+                "clickup",
+                "click up"
+            ],
+
+            "pipedrive": [
+                "pipedrive"
+            ],
+
+            "hubspot": [
+                "hubspot"
+            ],
+
+            "make": [
+                "make.com",
+                "make"
+            ],
+
+            "zapier": [
+                "zapier"
+            ]
+
+        };
+
+
+        const toolAliases =
+            aliases[name] || [];
+
+
+        return toolAliases.some(
+            alias =>
+                normalizedText.includes(
+                    normalizeText(alias)
+                )
+        );
+
+    }
+
+
+    // ==========================================
+    // 9. BONUS STRUMENTI ESISTENTI
+    // ==========================================
 
     function existingToolBonus(
         tool,
@@ -577,19 +826,11 @@
         let bonus = 0;
 
 
-        const toolName =
-            normalizeText(
-                tool.name
-            );
-
-
-        /*
-         * Corrispondenze dirette.
-         */
-
         if (
-            toolName &&
-            text.includes(toolName)
+            toolMentionedInText(
+                tool,
+                text
+            )
         ) {
 
             bonus += 12;
@@ -597,8 +838,40 @@
         }
 
 
+        const toolName =
+            normalizeText(
+                tool.name
+            );
+
+
         /*
-         * Microsoft ecosystem
+         * Ecosistema Microsoft.
+         */
+
+        if (
+            (
+                text.includes("microsoft") ||
+                text.includes("office 365") ||
+                text.includes("microsoft 365") ||
+                text.includes("outlook") ||
+                text.includes("excel") ||
+                text.includes("teams")
+            ) &&
+            (
+                toolName.includes("power automate") ||
+                toolName.includes("microsoft 365") ||
+                toolName.includes("excel")
+            )
+        ) {
+
+            bonus += 4;
+
+        }
+
+
+        /*
+         * Strumenti che normalmente
+         * si integrano bene con Microsoft.
          */
 
         if (
@@ -613,8 +886,11 @@
                 toolName.includes("hubspot") ||
                 toolName.includes("pipedrive") ||
                 toolName.includes("make") ||
+                toolName.includes("zapier") ||
                 toolName.includes("monday") ||
-                toolName.includes("clickup")
+                toolName.includes("clickup") ||
+                toolName.includes("notion") ||
+                toolName.includes("airtable")
             )
         ) {
 
@@ -624,7 +900,32 @@
 
 
         /*
-         * Shopify
+         * Ecosistema Google.
+         */
+
+        if (
+            (
+                text.includes("google workspace") ||
+                text.includes("google drive") ||
+                text.includes("gmail")
+            ) &&
+            (
+                toolName.includes("google workspace") ||
+                toolName.includes("make") ||
+                toolName.includes("zapier") ||
+                toolName.includes("airtable") ||
+                toolName.includes("hubspot") ||
+                toolName.includes("pipedrive")
+            )
+        ) {
+
+            bonus += 3;
+
+        }
+
+
+        /*
+         * Shopify.
          */
 
         if (
@@ -640,14 +941,60 @@
         return clamp(
             bonus,
             0,
-            15
+            CONFIG.EXISTING_TOOL_MAX_BONUS
         );
 
     }
 
 
     // ==========================================
-    // 7. COPERTURA DEL TOOL
+    // 10. BONUS STRUMENTI DA NON SOSTITUIRE
+    // ==========================================
+
+    function preserveExistingTools(
+        tool,
+        answers
+    ) {
+
+        const preserved =
+            getPreservedTools(
+                answers
+            );
+
+
+        if (
+            preserved.length === 0
+        ) {
+
+            return 0;
+
+        }
+
+
+        const matched =
+            preserved.some(
+                item =>
+                    toolMentionedInText(
+                        tool,
+                        item
+                    )
+            );
+
+
+        if (!matched) {
+
+            return 0;
+
+        }
+
+
+        return CONFIG.PRESERVE_TOOL_MAX_BONUS;
+
+    }
+
+
+    // ==========================================
+    // 11. COPERTURA DEL TOOL
     // ==========================================
 
     function calculateCoverage(
@@ -662,7 +1009,9 @@
         NEEDS.forEach(need => {
 
             const importance =
-                Number(profile[need] || 0);
+                Number(
+                    profile[need] || 0
+                );
 
 
             if (importance <= 0) {
@@ -670,26 +1019,32 @@
             }
 
 
-            weightedNeed += importance;
+            weightedNeed +=
+                importance;
 
 
             const toolValue =
-                Number(
+                normalizeToolNeed(
                     tool.needs &&
                     tool.needs[need]
-                    || 0
                 );
 
 
             weightedCovered +=
                 importance *
-                (toolValue / 100);
+                (
+                    toolValue / 100
+                );
 
         });
 
 
-        if (weightedNeed === 0) {
+        if (
+            weightedNeed === 0
+        ) {
+
             return 0;
+
         }
 
 
@@ -706,7 +1061,7 @@
 
 
     // ==========================================
-    // 8. COMPATIBILITÀ TEAM
+    // 12. PUNTEGGIO TEAM
     // ==========================================
 
     function teamScore(
@@ -736,26 +1091,52 @@
                 : [tool.team];
 
 
-        const matches =
+        const exactMatch =
             toolTeam.some(
                 value =>
-                    normalizeText(value)
-                        .includes(selected) ||
-                    selected.includes(
-                        normalizeText(value)
-                    )
+                    normalizeText(value) ===
+                    selected
             );
 
 
-        return matches
-            ? 100
-            : 70;
+        if (exactMatch) {
+            return 100;
+        }
+
+
+        const partialMatch =
+            toolTeam.some(
+                value => {
+
+                    const normalized =
+                        normalizeText(value);
+
+                    return (
+                        normalized.includes(selected) ||
+                        selected.includes(normalized)
+                    );
+
+                }
+            );
+
+
+        if (partialMatch) {
+            return 90;
+        }
+
+
+        /*
+         * Compatibilità ragionevole
+         * ma non perfetta.
+         */
+
+        return 65;
 
     }
 
 
     // ==========================================
-    // 9. TECNOLOGIA
+    // 13. TECNOLOGIA
     // ==========================================
 
     function techScore(
@@ -785,26 +1166,95 @@
                 : [tool.tech];
 
 
-        const match =
-            values.some(
+        const normalizedValues =
+            values.map(
                 value =>
                     normalizeText(value)
-                        .includes(selected) ||
-                    selected.includes(
-                        normalizeText(value)
-                    )
             );
 
 
-        return match
-            ? 100
-            : 70;
+        if (
+            normalizedValues.includes(
+                selected
+            )
+        ) {
+
+            return 100;
+
+        }
+
+
+        /*
+         * Utente Base:
+         * preferiamo strumenti dichiaratamente
+         * semplici, ma non escludiamo quelli medi.
+         */
+
+        if (
+            selected.includes("base")
+        ) {
+
+            if (
+                normalizedValues.includes("medio")
+            ) {
+
+                return 70;
+
+            }
+
+            if (
+                normalizedValues.includes("avanzato")
+            ) {
+
+                return 50;
+
+            }
+
+        }
+
+
+        /*
+         * Utente Medio:
+         * quasi tutto è utilizzabile.
+         */
+
+        if (
+            selected.includes("medio")
+        ) {
+
+            if (
+                normalizedValues.includes("avanzato")
+            ) {
+
+                return 75;
+
+            }
+
+            return 90;
+
+        }
+
+
+        /*
+         * Utente Avanzato.
+         */
+
+        if (
+            selected.includes("avanzato")
+        ) {
+
+            return 100;
+
+        }
+
+
+        return 70;
 
     }
 
 
     // ==========================================
-    // 10. AUTOMATION SCORE
+    // 14. AUTOMATION SCORE
     // ==========================================
 
     function automationScore(
@@ -831,6 +1281,99 @@
             tool.automation;
 
 
+        /*
+         * Il database può contenere:
+         *
+         * 0–100
+         *
+         * oppure:
+         *
+         * "Semplice", "Smart", "AI Mode 🤖"
+         */
+
+        if (
+            typeof toolAutomation === "string"
+        ) {
+
+            const normalized =
+                normalizeText(
+                    toolAutomation
+                );
+
+
+            if (
+                selected.includes("ai")
+            ) {
+
+                if (
+                    normalized.includes("ai")
+                ) {
+
+                    return 100;
+
+                }
+
+                if (
+                    normalized.includes("smart")
+                ) {
+
+                    return 80;
+
+                }
+
+                return 55;
+
+            }
+
+
+            if (
+                selected.includes("smart")
+            ) {
+
+                if (
+                    normalized.includes("smart") ||
+                    normalized.includes("ai")
+                ) {
+
+                    return 100;
+
+                }
+
+                return 65;
+
+            }
+
+
+            if (
+                selected.includes("semplice")
+            ) {
+
+                if (
+                    normalized.includes("semplice")
+                ) {
+
+                    return 100;
+
+                }
+
+                if (
+                    normalized.includes("smart")
+                ) {
+
+                    return 80;
+
+                }
+
+                return 65;
+
+            }
+
+
+            return 70;
+
+        }
+
+
         if (
             toolAutomation === undefined ||
             toolAutomation === null
@@ -852,6 +1395,7 @@
 
         }
 
+
         if (
             selected.includes("smart")
         ) {
@@ -859,6 +1403,7 @@
             desired = 70;
 
         }
+
 
         if (
             selected.includes("ai")
@@ -884,9 +1429,16 @@
         }
 
 
+        const normalizedActual =
+            actual <= 10
+                ? actual * 10
+                : actual;
+
+
         const difference =
             Math.abs(
-                desired - actual
+                desired -
+                normalizedActual
             );
 
 
@@ -900,7 +1452,7 @@
 
 
     // ==========================================
-    // 11. COMPATIBILITÀ COMPLESSIVA
+    // 15. COMPATIBILITÀ COMPLESSIVA
     // ==========================================
 
     function toolCompatibility(
@@ -944,6 +1496,13 @@
             );
 
 
+        const preserved =
+            preserveExistingTools(
+                tool,
+                answers
+            );
+
+
         /*
          * PESI:
          *
@@ -951,7 +1510,7 @@
          * team           10%
          * tecnologia     10%
          * automazione    10%
-         * strumenti      15%
+         * strumenti      bonus
          */
 
         let score =
@@ -967,15 +1526,8 @@
             (
                 automation * 0.10
             ) +
-            (
-                existing * 1
-            );
-
-
-        /*
-         * existing bonus è già espresso
-         * direttamente in punti.
-         */
+            existing +
+            preserved;
 
 
         score =
@@ -1004,9 +1556,13 @@
                 Math.round(automation),
 
             existingBonus:
-                Math.round(existing),
+                Math.round(
+                    existing +
+                    preserved
+                ),
 
-            redundancyPenalty: 0
+            redundancyPenalty:
+                0
 
         };
 
@@ -1014,7 +1570,7 @@
 
 
     // ==========================================
-    // 12. RIDUZIONE RIDONDANZA
+    // 16. REDONDANZA
     // ==========================================
 
     function calculateRedundancy(
@@ -1032,6 +1588,10 @@
         }
 
 
+        const candidateTool =
+            candidate.tool || candidate;
+
+
         let penalty = 0;
 
 
@@ -1041,14 +1601,78 @@
                 item.tool || item;
 
 
+            /*
+             * Stessa categoria:
+             * probabile sovrapposizione.
+             */
+
             if (
                 tool.category &&
-                candidate.category &&
-                normalizeText(tool.category) ===
-                normalizeText(candidate.category)
+                candidateTool.category &&
+                normalizeText(
+                    tool.category
+                ) ===
+                normalizeText(
+                    candidateTool.category
+                )
             ) {
 
-                penalty += 12;
+                penalty +=
+                    CONFIG.CATEGORY_REDUNDANCY_PENALTY;
+
+            }
+
+
+            /*
+             * Sovrapposizione funzionale.
+             *
+             * Contiamo quante esigenze importanti
+             * vengono coperte fortemente da entrambi.
+             */
+
+            let overlappingNeeds = 0;
+
+
+            NEEDS.forEach(need => {
+
+                const first =
+                    normalizeToolNeed(
+                        tool.needs &&
+                        tool.needs[need]
+                    );
+
+
+                const second =
+                    normalizeToolNeed(
+                        candidateTool.needs &&
+                        candidateTool.needs[need]
+                    );
+
+
+                if (
+                    first >= 70 &&
+                    second >= 70
+                ) {
+
+                    overlappingNeeds++;
+
+                }
+
+            });
+
+
+            if (
+                overlappingNeeds >= 5
+            ) {
+
+                penalty +=
+                    CONFIG.STRONG_CATEGORY_REDUNDANCY_PENALTY;
+
+            } else if (
+                overlappingNeeds >= 3
+            ) {
+
+                penalty += 6;
 
             }
 
@@ -1058,14 +1682,88 @@
         return clamp(
             penalty,
             0,
-            30
+            CONFIG.MAX_REDUNDANCY_PENALTY
         );
 
     }
 
 
     // ==========================================
-    // 13. CLASSIFICAZIONE
+    // 17. VALORE NUOVO PORTATO DAL TOOL
+    // ==========================================
+
+    function calculateNewCoverage(
+        candidate,
+        profile,
+        covered
+    ) {
+
+        const tool =
+            candidate.tool || candidate;
+
+
+        let newCoverage = 0;
+
+
+        NEEDS.forEach(need => {
+
+            const importance =
+                Number(
+                    profile[need] || 0
+                );
+
+
+            if (
+                importance <= 0
+            ) {
+
+                return;
+
+            }
+
+
+            const toolCoverage =
+                normalizeToolNeed(
+                    tool.needs &&
+                    tool.needs[need]
+                );
+
+
+            const alreadyCovered =
+                Number(
+                    covered[need] || 0
+                );
+
+
+            /*
+             * Calcoliamo solo il valore
+             * che il nuovo strumento aggiunge.
+             */
+
+            const improvement =
+                Math.max(
+                    0,
+                    toolCoverage -
+                    alreadyCovered
+                );
+
+
+            newCoverage +=
+                importance *
+                (
+                    improvement / 100
+                );
+
+        });
+
+
+        return newCoverage;
+
+    }
+
+
+    // ==========================================
+    // 18. CLASSIFICAZIONE
     // ==========================================
 
     function rankTools(
@@ -1099,20 +1797,48 @@
                     ...scores,
 
                     businessScore:
-                        null
+                        null,
+
+                    newCoverage:
+                        0,
+
+                    recommendationRole:
+                        "candidate"
 
                 };
 
             });
 
 
+        /*
+         * Prima ordiniamo per compatibilità.
+         */
+
         ranked.sort(
             (
                 a,
                 b
-            ) =>
-                b.compatibilityScore -
-                a.compatibilityScore
+            ) => {
+
+                if (
+                    b.compatibilityScore !==
+                    a.compatibilityScore
+                ) {
+
+                    return (
+                        b.compatibilityScore -
+                        a.compatibilityScore
+                    );
+
+                }
+
+
+                return (
+                    b.coverage -
+                    a.coverage
+                );
+
+            }
         );
 
 
@@ -1122,7 +1848,7 @@
 
 
     // ==========================================
-    // 14. COSTRUZIONE STACK
+    // 19. COSTRUZIONE STACK INTELLIGENTE
     // ==========================================
 
     function buildStack(
@@ -1142,12 +1868,69 @@
         );
 
 
+        const MAX_TOOLS =
+            CONFIG.MAX_STACK_TOOLS;
+
+
         /*
-         * Massimo 4 strumenti.
+         * ======================================
+         * FASE 1 — TOOL PRINCIPALE
+         * ======================================
          */
 
-        const MAX_TOOLS = 4;
+        let primary =
+            rankedTools.find(
+                candidate =>
+                    candidate.compatibilityScore >=
+                    CONFIG.MIN_PRIMARY_COMPATIBILITY
+            );
 
+
+        if (!primary && rankedTools.length > 0) {
+            primary = rankedTools[0];
+        }
+
+
+        if (primary) {
+
+            primary.redundancyPenalty =
+                0;
+
+            primary.recommendationRole =
+                "primary";
+
+
+            selected.push(
+                primary
+            );
+
+
+            NEEDS.forEach(need => {
+
+                const value =
+                    normalizeToolNeed(
+                        primary.tool.needs &&
+                        primary.tool.needs[need]
+                    );
+
+
+                if (value >= 40) {
+
+                    covered[need] =
+                        value;
+
+                }
+
+            });
+
+        }
+
+
+        /*
+         * ======================================
+         * FASE 2 — STRUMENTI COMPLEMENTARI
+         * ======================================
+         */
 
         for (
             const candidate of rankedTools
@@ -1163,8 +1946,27 @@
             }
 
 
-            const tool =
-                candidate.tool;
+            if (
+                selected.includes(candidate)
+            ) {
+
+                continue;
+
+            }
+
+
+            /*
+             * Non inseriamo software troppo deboli.
+             */
+
+            if (
+                candidate.compatibilityScore <
+                CONFIG.MIN_STACK_COMPATIBILITY
+            ) {
+
+                continue;
+
+            }
 
 
             const penalty =
@@ -1174,80 +1976,31 @@
                 );
 
 
-            /*
-             * Calcoliamo quanto nuovo valore
-             * porta questo strumento.
-             */
-
-            let newCoverage = 0;
-
-
-            NEEDS.forEach(need => {
-
-                const importance =
-                    Number(
-                        profile[need] || 0
-                    );
+            const newCoverage =
+                calculateNewCoverage(
+                    candidate,
+                    profile,
+                    covered
+                );
 
 
-                const toolCoverage =
-                    Number(
-                        tool.needs &&
-                        tool.needs[need]
-                        || 0
-                    );
-
-
-                if (
-                    importance > 0 &&
-                    toolCoverage > 0 &&
-                    !covered[need]
-                ) {
-
-                    newCoverage +=
-                        importance *
-                        (
-                            toolCoverage / 100
-                        );
-
-                }
-
-            });
+            candidate.newCoverage =
+                Math.round(
+                    newCoverage
+                );
 
 
             /*
-             * Il primo strumento entra sempre.
+             * Se è fortemente ridondante
+             * e non porta nuovo valore,
+             * viene scartato.
              */
 
             if (
-                selected.length === 0
+                penalty >= 20 &&
+                newCoverage <
+                CONFIG.MIN_COMPLEMENTARY_COVERAGE
             ) {
-
-                candidate.redundancyPenalty =
-                    0;
-
-                selected.push(candidate);
-
-
-                NEEDS.forEach(need => {
-
-                    const value =
-                        Number(
-                            tool.needs &&
-                            tool.needs[need]
-                            || 0
-                        );
-
-
-                    if (value >= 50) {
-
-                        covered[need] =
-                            value;
-
-                    }
-
-                });
-
 
                 continue;
 
@@ -1255,12 +2008,31 @@
 
 
             /*
-             * Evitiamo strumenti quasi inutili.
+             * Se ha stessa categoria
+             * e aggiunge pochissimo,
+             * non lo inseriamo.
              */
 
             if (
-                newCoverage < 25 &&
-                penalty > 0
+                penalty >=
+                CONFIG.CATEGORY_REDUNDANCY_PENALTY &&
+                newCoverage <
+                CONFIG.MIN_COMPLEMENTARY_COVERAGE
+            ) {
+
+                continue;
+
+            }
+
+
+            /*
+             * Il tool deve portare valore nuovo.
+             */
+
+            if (
+                newCoverage <
+                CONFIG.MIN_COMPLEMENTARY_COVERAGE &&
+                selected.length >= 2
             ) {
 
                 continue;
@@ -1281,20 +2053,25 @@
                 );
 
 
-            selected.push(candidate);
+            candidate.recommendationRole =
+                "complementary";
+
+
+            selected.push(
+                candidate
+            );
 
 
             NEEDS.forEach(need => {
 
                 const value =
-                    Number(
-                        tool.needs &&
-                        tool.needs[need]
-                        || 0
+                    normalizeToolNeed(
+                        candidate.tool.needs &&
+                        candidate.tool.needs[need]
                     );
 
 
-                if (value >= 50) {
+                if (value >= 40) {
 
                     covered[need] =
                         Math.max(
@@ -1309,13 +2086,72 @@
         }
 
 
+        /*
+         * ======================================
+         * FASE 3 — RIORDINO
+         * ======================================
+         *
+         * Il principale deve rimanere primo.
+         */
+
+        if (
+            selected.length > 1
+        ) {
+
+            const first =
+                selected[0];
+
+            const rest =
+                selected.slice(1);
+
+
+            rest.sort(
+                (
+                    a,
+                    b
+                ) => {
+
+                    const scoreA =
+                        (
+                            a.compatibilityScore * 0.65
+                        ) +
+                        (
+                            a.newCoverage * 0.35
+                        );
+
+
+                    const scoreB =
+                        (
+                            b.compatibilityScore * 0.65
+                        ) +
+                        (
+                            b.newCoverage * 0.35
+                        );
+
+
+                    return scoreB - scoreA;
+
+                }
+            );
+
+
+            selected.splice(
+                0,
+                selected.length,
+                first,
+                ...rest
+            );
+
+        }
+
+
         return selected;
 
     }
 
 
     // ==========================================
-    // 15. ESIGENZE MANCANTI
+    // 20. ESIGENZE MANCANTI
     // ==========================================
 
     function getMissingNeeds(
@@ -1334,8 +2170,17 @@
                 );
 
 
-            if (importance < 50) {
+            /*
+             * Consideriamo solo esigenze
+             * realmente importanti.
+             */
+
+            if (
+                importance < 50
+            ) {
+
                 return;
+
             }
 
 
@@ -1349,10 +2194,9 @@
 
 
                 const value =
-                    Number(
+                    normalizeToolNeed(
                         tool.needs &&
                         tool.needs[need]
-                        || 0
                     );
 
 
@@ -1379,6 +2223,11 @@
                     importance:
                         Math.round(
                             importance
+                        ),
+
+                    coverage:
+                        Math.round(
+                            bestCoverage
                         )
 
                 });
@@ -1389,7 +2238,10 @@
 
 
         missing.sort(
-            (a, b) =>
+            (
+                a,
+                b
+            ) =>
                 b.importance -
                 a.importance
         );
@@ -1401,7 +2253,7 @@
 
 
     // ==========================================
-    // 16. STIMA DEL VALORE DEL TEMPO
+    // 21. STIMA DEL VALORE DEL TEMPO
     // ==========================================
 
     function parseHours(
@@ -1469,27 +2321,12 @@
         value
     ) {
 
-        const match =
-            String(value || "")
-                .match(
-                    /[\d]+/
-                );
-
-
-        if (!match) {
-            return 0;
-        }
-
-
-        const number =
-            Number(
-                match[0]
-            );
+        const text =
+            String(value || "");
 
 
         if (
-            String(value)
-                .includes("100+")
+            text.includes("100+")
         ) {
 
             return 100;
@@ -1497,7 +2334,20 @@
         }
 
 
-        return number;
+        const match =
+            text.match(
+                /[\d]+/
+            );
+
+
+        if (!match) {
+            return 0;
+        }
+
+
+        return Number(
+            match[0]
+        );
 
     }
 
@@ -1575,7 +2425,7 @@
 
 
     // ==========================================
-    // 17. IDEE DI AUTOMAZIONE
+    // 22. IDEE DI AUTOMAZIONE
     // ==========================================
 
     function automationIdeas(
@@ -1734,7 +2584,57 @@
 
 
     // ==========================================
-    // 18. FUNZIONE PRINCIPALE
+    // 23. BUSINESS SCORE
+    // ==========================================
+
+    /*
+     * IMPORTANTE:
+     *
+     * Il Business Score rimane separato
+     * dalla compatibilità utente.
+     *
+     * In questa fase non influenza il ranking
+     * perché gli affiliateUrl del database
+     * sono ancora vuoti.
+     *
+     * Lo attiveremo quando inseriremo
+     * commissioni, cookie, recurring ecc.
+     */
+
+    function calculateBusinessScore(
+        tool
+    ) {
+
+        if (!tool) {
+            return null;
+        }
+
+
+        /*
+         * Se in futuro il database avrà:
+         *
+         * tool.business
+         *
+         * userCompatibility
+         * affiliateCommission
+         * recurring
+         * conversion
+         * productPrice
+         * cookie
+         * reliability
+         *
+         * questa funzione potrà usarli.
+         *
+         * Per ora NON inventiamo dati commerciali.
+         */
+
+        return null;
+
+    }
+
+
+    // ==========================================
+    // 24. ANALISI COMPLESSIVA
     // ==========================================
 
     function analyzeAnswers(
@@ -1765,6 +2665,22 @@
             );
 
 
+        /*
+         * Business Score separato.
+         */
+
+        rankedTools.forEach(
+            candidate => {
+
+                candidate.businessScore =
+                    calculateBusinessScore(
+                        candidate.tool
+                    );
+
+            }
+        );
+
+
         const stack =
             buildStack(
                 rankedTools,
@@ -1792,6 +2708,17 @@
             );
 
 
+        /*
+         * Informazioni utili anche per
+         * le future versioni della UI.
+         */
+
+        const primaryTool =
+            stack.length > 0
+                ? stack[0].tool
+                : null;
+
+
         return {
 
             profile,
@@ -1799,6 +2726,8 @@
             rankedTools,
 
             stack,
+
+            primaryTool,
 
             missingNeeds,
 
@@ -1813,7 +2742,7 @@
 
 
     // ==========================================
-    // 19. ESPOSIZIONE GLOBALE
+    // 25. ESPOSIZIONE GLOBALE
     // ==========================================
 
     window.ProjectXEngine = {
@@ -1838,7 +2767,11 @@
 
         estimateValue,
 
-        automationIdeas
+        automationIdeas,
+
+        calculateCoverage,
+
+        calculateRedundancy
 
     };
 
@@ -1852,7 +2785,7 @@
 
 
     console.log(
-        "PROJECT-X Decision Engine caricato correttamente."
+        "PROJECT-X Decision Engine v0.2 caricato correttamente."
     );
 
 
