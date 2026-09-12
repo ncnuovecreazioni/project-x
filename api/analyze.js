@@ -1,77 +1,100 @@
+/* =========================================================
+   PROJECT-X — AI ANALYZER
+   ---------------------------------------------------------
+   Obiettivo:
+   - interpretare il problema dell'utente
+   - trasformarlo in un profilo strutturato
+   - NON scegliere software
+   - NON influenzare direttamente il ranking
+   - funzionare come livello AI opzionale
+
+   Endpoint:
+   POST /api/analyze
+
+   Env:
+   OPENAI_API_KEY
+   ========================================================= */
+
 export default async function handler(req, res) {
 
-    // ==========================================
-    // PROJECT-X — AI ANALYZER
-    // ==========================================
+  /* =======================================================
+     1. METODO HTTP
+     ======================================================= */
 
-    if (req.method !== "POST") {
+  if (req.method !== "POST") {
 
-        return res.status(405).json({
-            error: "Metodo non consentito"
-        });
+    return res.status(405).json({
+      success: false,
+      error: "Method Not Allowed"
+    });
 
-    }
-
-
-    try {
-
-        // ------------------------------------------
-        // Controllo API KEY
-        // ------------------------------------------
-
-        const apiKey =
-            process.env.OPENAI_API_KEY;
+  }
 
 
-        if (!apiKey) {
+  /* =======================================================
+     2. API KEY
+     ======================================================= */
 
-            return res.status(500).json({
-                error:
-                    "OPENAI_API_KEY non configurata."
-            });
-
-        }
+  const apiKey =
+    process.env.OPENAI_API_KEY;
 
 
-        // ------------------------------------------
-        // Leggi le risposte
-        // ------------------------------------------
+  if (!apiKey) {
 
-        const answers =
-            req.body;
-
-
-        if (!answers) {
-
-            return res.status(400).json({
-                error:
-                    "Nessuna risposta ricevuta."
-            });
-
-        }
+    console.error(
+      "PROJECT-X AI: OPENAI_API_KEY mancante."
+    );
 
 
-        // ------------------------------------------
-        // Prompt
-        // ------------------------------------------
+    return res.status(200).json({
 
-        const systemPrompt = `
+      success: false,
+
+      aiAvailable: false,
+
+      profile: null,
+
+      error:
+        "OPENAI_API_KEY non configurata."
+    });
+
+  }
+
+
+  /* =======================================================
+     3. RISPOSTE
+     ======================================================= */
+
+  const body =
+    req.body || {};
+
+
+  const answers =
+    body.answers || {};
+
+
+  /* =======================================================
+     4. PROMPT
+     ======================================================= */
+
+  const systemPrompt = `
 Sei il modulo AI di PROJECT-X.
 
-Il tuo compito è esclusivamente interpretare
-le esigenze dell'utente.
+Il tuo unico compito è INTERPRETARE le esigenze dell'utente.
 
-NON devi consigliare software.
-NON devi scegliere strumenti.
-NON devi fare ranking.
-NON devi parlare di affiliate.
+NON devi:
+- scegliere software;
+- consigliare software;
+- confrontare marchi;
+- considerare commissioni affiliate;
+- inventare prezzi;
+- inventare integrazioni;
+- determinare il ranking finale.
 
-Devi trasformare le risposte dell'utente
-in un profilo strutturato di esigenze.
+Devi trasformare le risposte dell'utente in un profilo strutturato
+di bisogni.
 
-Valuta ogni esigenza da 0 a 100.
-
-Le esigenze possibili sono:
+Usa esclusivamente questi bisogni:
 
 crm
 automation
@@ -87,396 +110,741 @@ appointments
 ecommerce
 ai
 
+Assegna a ogni bisogno un valore da 0 a 100.
+
 Regole:
+- 0 = non richiesto
+- 20 = marginale
+- 40 = interesse debole
+- 60 = importante
+- 80 = molto importante
+- 100 = esigenza centrale
 
-0 = esigenza praticamente assente
-25 = esigenza bassa
-50 = esigenza moderata
-75 = esigenza importante
-100 = esigenza fondamentale
+Interpreta soprattutto:
+1. attività;
+2. obiettivi;
+3. problema descritto liberamente;
+4. livello di automazione desiderato;
+5. uso dell'AI;
+6. attività ripetitive;
+7. attività commerciali;
+8. gestione clienti;
+9. documenti;
+10. dati/Excel;
+11. appuntamenti;
+12. e-commerce.
 
-Considera sia gli obiettivi dichiarati
-sia il problema descritto dall'utente.
-
-Non inventare esigenze non supportate
-dalle risposte.
-
-Rispondi esclusivamente con JSON valido.
+Non creare campi aggiuntivi.
+Restituisci esclusivamente il JSON richiesto dallo schema.
 `;
 
 
-        // ------------------------------------------
-        // Dati utente
-        // ------------------------------------------
+  /* =======================================================
+     5. USER INPUT
+     ======================================================= */
 
-        const userPrompt = `
-Analizza queste risposte dell'utente:
+  const userInput = {
 
-${JSON.stringify(
-    answers,
-    null,
-    2
-)}
+    businessType:
+      answers.businessType || "",
 
-Restituisci esclusivamente il profilo
-numerico delle esigenze.
-`;
+    teamSize:
+      answers.teamSize || "",
 
-
-        // ------------------------------------------
-        // Chiamata OpenAI Responses API
-        // ------------------------------------------
-
-        const response =
-            await fetch(
-                "https://api.openai.com/v1/responses",
-                {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Authorization":
-                            `Bearer ${apiKey}`
-
-                    },
-
-                    body: JSON.stringify({
-
-                        model:
-                            "gpt-5.6-luna",
-
-                        reasoning: {
-                            effort: "low"
-                        },
-
-                        input: [
-                            {
-                                role:
-                                    "system",
-
-                                content:
-                                    systemPrompt
-                            },
-                            {
-                                role:
-                                    "user",
-
-                                content:
-                                    userPrompt
-                            }
-                        ],
-
-                        text: {
-
-                            format: {
-
-                                type:
-                                    "json_schema",
-
-                                name:
-                                    "project_x_needs",
-
-                                strict:
-                                    true,
-
-                                schema: {
-
-                                    type:
-                                        "object",
-
-                                    properties: {
-
-                                        crm: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        automation: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        email: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        followup: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        sales: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        quotes: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        excel: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        marketing: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        projects: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        documents: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        appointments: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        ecommerce: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        },
-
-                                        ai: {
-                                            type:
-                                                "integer",
-                                            minimum:
-                                                0,
-                                            maximum:
-                                                100
-                                        }
-
-                                    },
-
-                                    required: [
-
-                                        "crm",
-                                        "automation",
-                                        "email",
-                                        "followup",
-                                        "sales",
-                                        "quotes",
-                                        "excel",
-                                        "marketing",
-                                        "projects",
-                                        "documents",
-                                        "appointments",
-                                        "ecommerce",
-                                        "ai"
-
-                                    ],
-
-                                    additionalProperties:
-                                        false
-
-                                }
-
-                            }
-
-                        }
-
-                    })
-
-                }
-            );
-
-
-        // ------------------------------------------
-        // Controllo risposta OpenAI
-        // ------------------------------------------
-
-        if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
-
-            console.error(
-                "OpenAI API error:",
-                errorText
-            );
-
-
-            return res.status(
-                response.status
-            ).json({
-
-                error:
-                    "Errore nella chiamata AI.",
-
-                details:
-                    errorText
-
-            });
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        // ------------------------------------------
-        // Estrai output
-        // ------------------------------------------
-
-        let outputText = "";
-
-
-        if (
-            Array.isArray(data.output)
-        ) {
-
-            for (
-                const item of data.output
-            ) {
-
-                if (
-                    item.type ===
-                    "message"
-                ) {
-
-                    if (
-                        Array.isArray(
-                            item.content
-                        )
-                    ) {
-
-                        for (
-                            const content
-                            of item.content
-                        ) {
-
-                            if (
-                                content.type ===
-                                "output_text"
-                            ) {
-
-                                outputText +=
-                                    content.text;
-
-                            }
-
-                        }
-
-                    }
-
-                }
+    goals:
+      Array.isArray(answers.goals)
+        ? answers.goals
+        : [],
 
+    painPoint:
+      answers.painPoint || "",
+
+    budget:
+      answers.budget || "",
+
+    techLevel:
+      answers.techLevel || "",
+
+    automationLevel:
+      answers.automationLevel || "",
+
+    hours:
+      answers.hours || "",
+
+    hourlyValue:
+      answers.hourlyValue || "",
+
+    existingTools:
+      Array.isArray(answers.existingTools)
+        ? answers.existingTools
+        : [],
+
+    doNotChange:
+      Array.isArray(answers.doNotChange)
+        ? answers.doNotChange
+        : []
+
+  };
+
+
+  /* =======================================================
+     6. REQUEST OPENAI
+     ======================================================= */
+
+  const requestBody = {
+
+    model:
+      "gpt-5.6-luna",
+
+    reasoning: {
+      effort: "low"
+    },
+
+    input: [
+
+      {
+        role: "system",
+
+        content: [
+          {
+            type: "input_text",
+            text: systemPrompt
+          }
+        ]
+
+      },
+
+      {
+        role: "user",
+
+        content: [
+          {
+            type: "input_text",
+
+            text:
+              JSON.stringify(
+                userInput,
+                null,
+                2
+              )
+          }
+        ]
+
+      }
+
+    ],
+
+    text: {
+
+      format: {
+
+        type:
+          "json_schema",
+
+        name:
+          "project_x_needs_profile",
+
+        strict:
+          true,
+
+        schema: {
+
+          type:
+            "object",
+
+          additionalProperties:
+            false,
+
+          properties: {
+
+            crm: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            automation: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            email: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            followup: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            sales: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            quotes: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            excel: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            marketing: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            projects: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            documents: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            appointments: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            ecommerce: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
+            },
+
+            ai: {
+              type: "number",
+              minimum: 0,
+              maximum: 100
             }
 
+          },
+
+          required: [
+
+            "crm",
+            "automation",
+            "email",
+            "followup",
+            "sales",
+            "quotes",
+            "excel",
+            "marketing",
+            "projects",
+            "documents",
+            "appointments",
+            "ecommerce",
+            "ai"
+
+          ]
+
         }
 
+      }
 
-        if (!outputText) {
+    },
 
-            throw new Error(
-                "La risposta AI è vuota."
-            );
+    max_output_tokens:
+      500,
+
+    store:
+      false
+
+  };
+
+
+  /* =======================================================
+     7. CHIAMATA API
+     ======================================================= */
+
+  let response;
+
+
+  try {
+
+    response =
+      await fetch(
+        "https://api.openai.com/v1/responses",
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              `Bearer ${apiKey}`
+
+          },
+
+          body:
+            JSON.stringify(
+              requestBody
+            )
 
         }
+      );
+
+  } catch (networkError) {
+
+    console.error(
+      "PROJECT-X AI network error:",
+      networkError
+    );
 
 
-        const aiProfile =
-            JSON.parse(
-                outputText
-            );
+    return res.status(200).json({
+
+      success: false,
+
+      aiAvailable: false,
+
+      profile: null,
+
+      error:
+        "Impossibile raggiungere OpenAI."
+
+    });
+
+  }
 
 
-        // ------------------------------------------
-        // Risposta al frontend
-        // ------------------------------------------
+  /* =======================================================
+     8. HEADER DIAGNOSTICI
+     ======================================================= */
 
-        return res.status(200).json({
+  const requestId =
+    response.headers.get(
+      "x-request-id"
+    );
 
-            success:
-                true,
+  const remainingRequests =
+    response.headers.get(
+      "x-ratelimit-remaining-requests"
+    );
 
-            profile:
-                aiProfile
+  const remainingTokens =
+    response.headers.get(
+      "x-ratelimit-remaining-tokens"
+    );
 
-        });
+  const resetRequests =
+    response.headers.get(
+      "x-ratelimit-reset-requests"
+    );
 
+  const resetTokens =
+    response.headers.get(
+      "x-ratelimit-reset-tokens"
+    );
+
+
+  /* =======================================================
+     9. RISPOSTA NON OK
+     ======================================================= */
+
+  if (!response.ok) {
+
+    let errorData = null;
+
+    try {
+
+      errorData =
+        await response.json();
 
     } catch (error) {
 
-        console.error(
-            "PROJECT-X AI error:",
-            error
+      errorData = null;
+
+    }
+
+
+    console.error(
+      "PROJECT-X AI OpenAI error:",
+      {
+        status:
+          response.status,
+
+        requestId,
+
+        error:
+          errorData,
+
+        remainingRequests,
+
+        remainingTokens,
+
+        resetRequests,
+
+        resetTokens
+      }
+    );
+
+
+    /*
+     * Il frontend riceve 200.
+     *
+     * In questo modo un problema dell'AI
+     * NON blocca mai PROJECT-X.
+     */
+
+    let message =
+      "AI non disponibile.";
+
+
+    if (
+      response.status === 429
+    ) {
+
+      message =
+        "Limite o quota OpenAI raggiunti.";
+
+    }
+
+    else if (
+      response.status === 401
+    ) {
+
+      message =
+        "OPENAI_API_KEY non valida o non autorizzata.";
+
+    }
+
+    else if (
+      response.status === 403
+    ) {
+
+      message =
+        "Richiesta OpenAI non autorizzata.";
+
+    }
+
+    else if (
+      response.status >= 500
+    ) {
+
+      message =
+        "Servizio OpenAI temporaneamente non disponibile.";
+
+    }
+
+
+    return res.status(200).json({
+
+      success:
+        false,
+
+      aiAvailable:
+        false,
+
+      profile:
+        null,
+
+      upstreamStatus:
+        response.status,
+
+      requestId:
+        requestId || null,
+
+      error:
+        message,
+
+      diagnostics: {
+
+        remainingRequests:
+          remainingRequests || null,
+
+        remainingTokens:
+          remainingTokens || null,
+
+        resetRequests:
+          resetRequests || null,
+
+        resetTokens:
+          resetTokens || null
+
+      }
+
+    });
+
+  }
+
+
+  /* =======================================================
+     10. PARSING RISPOSTA
+     ======================================================= */
+
+  let data;
+
+
+  try {
+
+    data =
+      await response.json();
+
+  } catch (error) {
+
+    console.error(
+      "PROJECT-X AI invalid JSON response:",
+      error
+    );
+
+
+    return res.status(200).json({
+
+      success:
+        false,
+
+      aiAvailable:
+        false,
+
+      profile:
+        null,
+
+      error:
+        "Risposta OpenAI non valida."
+
+    });
+
+  }
+
+
+  /* =======================================================
+     11. ESTRAZIONE OUTPUT TESTUALE
+     ======================================================= */
+
+  let outputText =
+    "";
+
+
+  if (
+    typeof data.output_text ===
+    "string"
+  ) {
+
+    outputText =
+      data.output_text.trim();
+
+  }
+
+
+  /*
+   * Fallback per eventuali strutture
+   * di output differenti.
+   */
+
+  if (
+    !outputText &&
+    Array.isArray(data.output)
+  ) {
+
+    for (
+      const item of data.output
+    ) {
+
+      if (
+        item &&
+        item.type ===
+          "message" &&
+        Array.isArray(
+          item.content
+        )
+      ) {
+
+        for (
+          const content of
+          item.content
+        ) {
+
+          if (
+            content &&
+            typeof content.text ===
+              "string"
+          ) {
+
+            outputText =
+              content.text.trim();
+
+            break;
+
+          }
+
+        }
+
+      }
+
+
+      if (outputText) {
+        break;
+      }
+
+    }
+
+  }
+
+
+  if (!outputText) {
+
+    console.error(
+      "PROJECT-X AI: output vuoto.",
+      data
+    );
+
+
+    return res.status(200).json({
+
+      success:
+        false,
+
+      aiAvailable:
+        false,
+
+      profile:
+        null,
+
+      error:
+        "OpenAI non ha restituito un profilo."
+
+    });
+
+  }
+
+
+  /* =======================================================
+     12. PARSING JSON
+     ======================================================= */
+
+  let profile;
+
+
+  try {
+
+    profile =
+      JSON.parse(
+        outputText
+      );
+
+  } catch (error) {
+
+    console.error(
+      "PROJECT-X AI JSON parse error:",
+      {
+        outputText,
+        error
+      }
+    );
+
+
+    return res.status(200).json({
+
+      success:
+        false,
+
+      aiAvailable:
+        false,
+
+      profile:
+        null,
+
+      error:
+        "Profilo AI non interpretabile."
+
+    });
+
+  }
+
+
+  /* =======================================================
+     13. NORMALIZZAZIONE PROFILO
+     ======================================================= */
+
+  const NEEDS = [
+
+    "crm",
+    "automation",
+    "email",
+    "followup",
+    "sales",
+    "quotes",
+    "excel",
+    "marketing",
+    "projects",
+    "documents",
+    "appointments",
+    "ecommerce",
+    "ai"
+
+  ];
+
+
+  const normalizedProfile = {};
+
+
+  NEEDS.forEach(
+    function (need) {
+
+      const value =
+        Number(
+          profile &&
+          profile[need]
         );
 
 
-        return res.status(500).json({
-
-            error:
-                "Errore interno del modulo AI.",
-
-            message:
-                error.message
-
-        });
+      normalizedProfile[need] =
+        Number.isFinite(value)
+          ? Math.max(
+              0,
+              Math.min(
+                100,
+                Math.round(
+                  value
+                )
+              )
+            )
+          : 0;
 
     }
+  );
+
+
+  /* =======================================================
+     14. RISPOSTA FINALE
+     ======================================================= */
+
+  return res.status(200).json({
+
+    success:
+      true,
+
+    aiAvailable:
+      true,
+
+    profile:
+      normalizedProfile,
+
+    requestId:
+      requestId || null
+
+  });
 
 }
