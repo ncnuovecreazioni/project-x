@@ -1136,17 +1136,16 @@
       wanted.includes("2") ||
       wanted.includes("5")
     ) {
-      if (
+            if (
         available.some(function (x) {
           return x.includes("solo") ||
             x.includes("2") ||
             x.includes("5") ||
-            x.includes("20")
-        )
+            x.includes("20");
+        })
       ) {
         return 90;
       }
-    }
 
 
     return 65;
