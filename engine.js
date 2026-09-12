@@ -176,7 +176,9 @@
       return Number.isFinite(value) ? value : null;
     }
 
-    const match = String(value || "").replace(",", ".").match(/-?\d+(?:\.\d+)?/);
+    const match = String(value || "")
+      .replace(",", ".")
+      .match(/-?\d+(?:\.\d+)?/);
 
     return match ? Number(match[0]) : null;
   }
@@ -639,7 +641,6 @@
 
 
     if (
-      automationMode.includes("smart") ||
       automationMode.includes("smart")
     ) {
       profile.automation = Math.max(
@@ -1136,7 +1137,7 @@
       wanted.includes("2") ||
       wanted.includes("5")
     ) {
-            if (
+      if (
         available.some(function (x) {
           return x.includes("solo") ||
             x.includes("2") ||
@@ -1146,6 +1147,7 @@
       ) {
         return 90;
       }
+    }
 
 
     return 65;
@@ -1189,7 +1191,7 @@
     ) {
       if (
         available.some(function (x) {
-          return x.includes("base")
+          return x.includes("base");
         })
       ) {
         return 100;
@@ -1197,7 +1199,7 @@
 
       if (
         available.some(function (x) {
-          return x.includes("medio")
+          return x.includes("medio");
         })
       ) {
         return 70;
@@ -1212,7 +1214,7 @@
     ) {
       if (
         available.some(function (x) {
-          return x.includes("medio")
+          return x.includes("medio");
         })
       ) {
         return 100;
@@ -1220,7 +1222,7 @@
 
       if (
         available.some(function (x) {
-          return x.includes("avanz")
+          return x.includes("avanz");
         })
       ) {
         return 75;
