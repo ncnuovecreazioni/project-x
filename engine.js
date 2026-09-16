@@ -1,20 +1,68 @@
-const PROJECTX_ENGINE_VERSION = "1.2.0";
-
-/* ============================================================
-   PROJECT-X — SOFTWARE DECISION ENGINE
-   Versione 1.2.0
-
+/* =========================================================
+   PROJECT-X — DECISION ENGINE
+   Versione 1.3.0
+   ---------------------------------------------------------
    Obiettivo:
-   1. capire il problema dominante dell'utente
-   2. scegliere il Primary più adatto
-   3. identificare le lacune reali del Primary
-   4. aggiungere complementi solo quando colmano una lacuna importante
-   5. mantenere separate le alternative
-   6. evitare stack pieni di strumenti che fanno la stessa cosa
-   ============================================================ */
+   - interpretare i bisogni dell'utente
+   - individuare il bisogno dominante
+   - scegliere un Primary coerente
+   - analizzare le lacune del Primary
+   - aggiungere Complementary solo quando necessario
+   - separare Alternative e Complementary
+   - calcolare Compatibility Score
+   - calcolare Stack Score
+   - evitare strumenti ridondanti
+   - valorizzare ecosistema e integrazioni
+   - spiegare il perché delle scelte
+   - stimare il valore potenziale del tempo recuperabile
+   - generare automazioni suggerite
+
+   V1.3.0
+   ---------------------------------------------------------
+   ARCHITETTURA:
+
+   1. Profilazione bisogni
+   2. Ranking individuale
+   3. Scelta Primary
+   4. Gap Analysis del Primary
+   5. Ricerca Complementary
+   6. Costruzione Stack
+   7. Alternative separate
+   8. Stack Compatibility
+   9. Missing Needs
+   10. Automazioni
+   11. Value Estimate
+
+   PRINCIPIO CENTRALE:
+
+   Compatibility Score
+   =
+   quanto un software è adatto all'utente.
+
+   Stack Score
+   =
+   quanto un software è utile
+   all'interno dello specifico sistema.
+
+   Un Complementary viene aggiunto
+   SOLO se risolve una necessità importante
+   che il Primary non copre abbastanza bene.
+
+   Se non esiste una lacuna significativa:
+
+   STACK = PRIMARY
+
+   Le alternative con lo stesso ruolo
+   NON entrano nello stack.
+   ========================================================= */
 
 (function () {
   "use strict";
+
+
+  /* =========================================================
+     1. NEEDS
+     ========================================================= */
 
   const NEEDS = [
     "crm",
@@ -32,6 +80,7 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
     "ai"
   ];
 
+
   const NEED_LABELS = {
     crm: "Gestione clienti",
     automation: "Automazioni",
@@ -48,277 +97,555 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
     ai: "AI"
   };
 
+
+  /* =========================================================
+     2. CONFIGURAZIONE
+     ========================================================= */
+
   const CONFIG = {
-    VERSION: "1.2.0",
+
+    VERSION: "1.3.0",
+
+    /* ---------------------------------------------------------
+       STACK
+       --------------------------------------------------------- */
 
     MAX_STACK_TOOLS: 4,
 
+    /*
+      Un Primary con compatibilità inferiore a questa
+      soglia non viene considerato una soluzione forte.
+    */
     MIN_PRIMARY_COMPATIBILITY: 50,
+
+    /*
+      Compatibilità minima teorica dello stack.
+      Viene utilizzata come riferimento, non come media.
+    */
     MIN_STACK_COMPATIBILITY: 55,
 
+    /*
+      Copertura minima richiesta per un complemento.
+    */
     MIN_COMPLEMENTARY_COVERAGE: 12,
+
+    /*
+      Nuova copertura minima.
+    */
     MIN_NEW_COVERAGE: 12,
-    MIN_PRIMARY_GAP: 12,
+
+    /*
+      Gap minimo che un complemento deve risolvere
+      rispetto al Primary / Stack.
+    */
+    MIN_PRIMARY_GAP: 20,
+
+    /*
+      Un bisogno viene considerato "importante"
+      quando la richiesta dell'utente raggiunge almeno 50.
+    */
+    IMPORTANT_NEED_THRESHOLD: 50,
+
+    /*
+      Un bisogno viene considerato realmente dominante
+      quando raggiunge almeno 60.
+    */
+    DOMINANT_NEED_THRESHOLD: 60,
+
+
+    /* ---------------------------------------------------------
+       CATEGORIE
+       --------------------------------------------------------- */
+
+    /*
+      Normalmente non vogliamo due strumenti
+      della stessa categoria nello stesso stack.
+
+      Eccezione:
+      strumenti esplicitamente già utilizzati/preservati.
+    */
+    MAX_SAME_CATEGORY_TOOLS: 1,
+
+
+    /* ---------------------------------------------------------
+       RIDONDANZA
+       --------------------------------------------------------- */
 
     MAX_REDUNDANCY_PENALTY: 30,
 
-    CATEGORY_REDUNDANCY_PENALTY: 18,
-    STRONG_CATEGORY_REDUNDANCY_PENALTY: 24,
-    VERY_HIGH_OVERLAP_PENALTY: 30,
+    CATEGORY_REDUNDANCY_PENALTY: 14,
+
+    STRONG_CATEGORY_REDUNDANCY_PENALTY: 20,
+
+    VERY_HIGH_OVERLAP_PENALTY: 24,
 
     SAME_CATEGORY_OVERLAP_THRESHOLD: 0.55,
 
-    MAX_SAME_CATEGORY_TOOLS: 1,
+    HIGH_OVERLAP_THRESHOLD: 0.80,
+
+
+    /* ---------------------------------------------------------
+       ECOSISTEMA
+       --------------------------------------------------------- */
 
     EXISTING_TOOL_MAX_BONUS: 15,
+
     PRESERVE_TOOL_MAX_BONUS: 15,
+
     INTEGRATION_MAX_BONUS: 10,
+
+
+    /* ---------------------------------------------------------
+       RANKING
+       --------------------------------------------------------- */
 
     COMPATIBILITY_TIE_THRESHOLD: 3,
 
+    RELEVANCE_TIE_THRESHOLD: 5,
+
+
+    /* ---------------------------------------------------------
+       COMPATIBILITY SCORE
+       --------------------------------------------------------- */
+
     WEIGHTS: {
+
       needs: 35,
+
       functionality: 15,
+
       budget: 15,
+
       integrations: 10,
+
       simplicity: 10,
+
       team: 5,
+
       countryLanguage: 5,
+
       scalability: 5
+
     },
 
-    STACK_WEIGHTS: {
-      gapCoverage: 45,
-      newCoverage: 25,
-      compatibility: 15,
-      integration: 5,
-      existing: 5,
-      categoryDiversity: 5
-    },
+
+    /* ---------------------------------------------------------
+       BUSINESS SCORE
+       --------------------------------------------------------- */
 
     BUSINESS_WEIGHTS: {
+
       commission: 25,
+
       recurring: 25,
+
       conversion: 20,
+
       productPrice: 10,
+
       attribution: 10,
+
       marketSize: 5,
+
       reliability: 5
+
     },
 
+
+    /* ---------------------------------------------------------
+       STACK SCORE
+       ---------------------------------------------------------
+
+       Il punteggio NON è una media dei software.
+
+       Valuta:
+
+       - gap realmente risolto
+       - nuova copertura
+       - compatibilità
+       - integrazione
+       - ecosistema
+       - diversità
+       - ridondanza
+
+       La ridondanza ha un peso negativo importante.
+       --------------------------------------------------------- */
+
+    STACK_WEIGHTS: {
+
+      gapCoverage: 45,
+
+      newCoverage: 25,
+
+      compatibility: 15,
+
+      integration: 5,
+
+      existing: 5,
+
+      categoryDiversity: 5
+
+    },
+
+
+    /* ---------------------------------------------------------
+       FILTRI
+       --------------------------------------------------------- */
+
     ENABLE_HARD_FILTERS: true,
+
     ALLOW_SOFT_FALLBACK: true,
 
+
+    /* ---------------------------------------------------------
+       DATABASE
+       --------------------------------------------------------- */
+
     DEFAULT_NEED_SCALE: 10
+
   };
 
-  /* ============================================================
-     UTILITY
-     ============================================================ */
+
+  /* =========================================================
+     3. UTILITY
+     ========================================================= */
 
   function clamp(value, min, max) {
+
     const n = Number(value);
 
     if (!Number.isFinite(n)) {
       return min;
     }
 
-    return Math.max(min, Math.min(max, n));
+    return Math.max(
+      min,
+      Math.min(max, n)
+    );
   }
 
+
   function normalizeText(value) {
+
     return String(value || "")
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^\w\s-]/g, " ")
+      .replace(/[^\w\s€+.-]/g, " ")
       .replace(/\s+/g, " ")
       .trim();
+
   }
+
 
   function tokenize(value) {
-    return uniqueArray(
-      normalizeText(value)
-        .split(/\s+/)
-        .filter(Boolean)
-    );
+
+    return normalizeText(value)
+      .split(/\s+/)
+      .filter(Boolean);
+
   }
 
-  function uniqueArray(values) {
-    return Array.from(new Set((values || []).filter(Boolean)));
+
+  function uniqueArray(array) {
+
+    return [
+      ...new Set(
+        (array || [])
+          .filter(Boolean)
+      )
+    ];
+
   }
+
 
   function toArray(value) {
+
     if (Array.isArray(value)) {
       return value;
     }
 
-    if (value === undefined || value === null || value === "") {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
       return [];
     }
 
     return [value];
+
   }
 
-  function firstNumber(value, fallback = 0) {
-    if (typeof value === "number" && Number.isFinite(value)) {
-      return value;
+
+  function firstNumber(value) {
+
+    if (typeof value === "number") {
+
+      return Number.isFinite(value)
+        ? value
+        : null;
+
     }
 
-    const match = String(value || "").match(/-?\d+(?:[.,]\d+)?/);
+    const match =
+      String(value || "")
+        .replace(",", ".")
+        .match(
+          /-?\d+(?:\.\d+)?/
+        );
 
-    if (!match) {
+    return match
+      ? Number(match[0])
+      : null;
+
+  }
+
+
+  function normalizeScore(
+    value,
+    fallback = 0
+  ) {
+
+    const n = Number(value);
+
+    if (!Number.isFinite(n)) {
       return fallback;
     }
 
-    const parsed = Number(match[0].replace(",", "."));
+    return clamp(
+      n,
+      0,
+      100
+    );
 
-    return Number.isFinite(parsed) ? parsed : fallback;
   }
 
-  function normalizeScore(value, fallback = 0) {
-    if (value === undefined || value === null || value === "") {
-      return fallback;
-    }
 
-    const n = firstNumber(value, fallback);
+  function getToolCategory(tool) {
 
-    if (n <= 1) {
-      return clamp(n * 100, 0, 100);
-    }
+    return normalizeText(
+      tool &&
+      tool.category
+        ? tool.category
+        : ""
+    );
 
-    return clamp(n, 0, 100);
   }
 
-  /* ============================================================
-     DATABASE
-     ============================================================ */
 
-  function getDatabase() {
-    if (
-      typeof window !== "undefined" &&
-      window.SOFTWARE_DATABASE
-    ) {
-      return window.SOFTWARE_DATABASE;
-    }
+  function getToolId(tool) {
 
-    if (
-      typeof SOFTWARE_DATABASE !== "undefined"
-    ) {
-      return SOFTWARE_DATABASE;
-    }
+    return String(
+      tool &&
+      (
+        tool.id ||
+        tool.name ||
+        ""
+      )
+    ).trim();
 
-    return [];
   }
+
+
+  /* =========================================================
+     4. NORMALIZZAZIONE DATABASE
+     ========================================================= */
 
   function normalizeToolNeed(value) {
+
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return 0;
+    }
+
     const n = Number(value);
 
     if (!Number.isFinite(n)) {
       return 0;
     }
 
-    if (n <= 10) {
-      return clamp(n * 10, 0, 100);
+    /*
+      Supporta sia:
+      0–10
+      sia:
+      0–100
+    */
+
+    if (
+      n >= 0 &&
+      n <= 10
+    ) {
+      return clamp(
+        n * 10,
+        0,
+        100
+      );
     }
 
-    return clamp(n, 0, 100);
+    return clamp(
+      n,
+      0,
+      100
+    );
+
   }
 
-  function normalizeTool(raw) {
-    const tool = raw || {};
 
-    const normalizedNeeds = {};
+  function normalizeTool(tool) {
 
-    NEEDS.forEach(function (need) {
-      normalizedNeeds[need] = normalizeToolNeed(
-        tool.needs && tool.needs[need]
-      );
-    });
+    if (!tool) {
+      return null;
+    }
 
-    return {
+    const normalized = {
+
       ...tool,
 
       id:
-        tool.id ||
-        normalizeText(tool.name).replace(/\s+/g, "-"),
+        String(
+          tool.id ||
+          tool.name ||
+          ""
+        ).trim(),
 
       name:
-        tool.name ||
-        tool.id ||
-        "Software",
+        String(
+          tool.name ||
+          tool.id ||
+          "Strumento"
+        ).trim(),
 
       category:
-        tool.category ||
-        "General",
+        String(
+          tool.category ||
+          ""
+        ).trim(),
 
       description:
-        tool.description || "",
+        String(
+          tool.description ||
+          ""
+        ).trim(),
 
       pricingUrl:
         tool.pricingUrl ||
-        tool.url ||
         "",
 
       affiliateUrl:
         tool.affiliateUrl ||
-        tool.affiliate ||
-        tool.pricingUrl ||
-        tool.url ||
         "",
 
-      needs: normalizedNeeds,
+      needs: {},
 
       team:
-        tool.team || {},
+        toArray(tool.team),
 
       tech:
-        tool.tech || {},
+        toArray(tool.tech),
 
       automation:
-        tool.automation || "simple",
+        toArray(tool.automation),
 
       integrations:
         toArray(tool.integrations),
 
       countries:
-        toArray(tool.countries),
+        toArray(
+          tool.countries ||
+          tool.country
+        ),
 
       languages:
-        toArray(tool.languages)
+        toArray(
+          tool.languages ||
+          tool.language
+        )
+
     };
+
+
+    NEEDS.forEach(
+      function (need) {
+
+        normalized.needs[need] =
+          normalizeToolNeed(
+            tool.needs
+              ? tool.needs[need]
+              : 0
+          );
+
+      }
+    );
+
+
+    return normalized;
+
   }
 
-  function getNormalizedDatabase() {
-    return getDatabase().map(normalizeTool);
+
+  function getDatabase() {
+
+    if (
+      typeof window !== "undefined" &&
+      Array.isArray(
+        window.SOFTWARE_DATABASE
+      )
+    ) {
+
+      return window.SOFTWARE_DATABASE
+        .map(normalizeTool)
+        .filter(Boolean);
+
+    }
+
+
+    if (
+      typeof SOFTWARE_DATABASE !== "undefined" &&
+      Array.isArray(
+        SOFTWARE_DATABASE
+      )
+    ) {
+
+      return SOFTWARE_DATABASE
+        .map(normalizeTool)
+        .filter(Boolean);
+
+    }
+
+
+    return [];
+
   }
 
-  /* ============================================================
-     GOAL KEYWORDS
-     ============================================================ */
+
+  /* =========================================================
+     5. INTERPRETAZIONE OBIETTIVI
+     ========================================================= */
 
   const GOAL_KEYWORDS = {
+
     crm: [
       "crm",
       "clienti",
       "cliente",
-      "clientela",
-      "contatti",
       "anagrafica",
       "gestione clienti",
-      "relazioni clienti"
+      "contatti",
+      "customer"
     ],
 
     automation: [
-      "automatizzare",
       "automazione",
       "automazioni",
+      "automatizzare",
       "automatico",
-      "automatizzare processi",
-      "ridurre lavoro manuale",
-      "processi manuali",
-      "ripetitivo",
-      "ripetitive"
+      "workflow",
+      "flusso",
+      "processo automatico"
     ],
 
     email: [
@@ -326,43 +653,38 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
       "mail",
       "newsletter",
       "posta",
-      "email marketing",
-      "comunicazioni"
+      "messaggi email"
     ],
 
     followup: [
       "follow up",
-      "follow-up",
+      "followup",
       "ricontattare",
-      "ricontatti",
+      "ricontatto",
       "promemoria",
-      "promemoria clienti",
       "solleciti",
       "sollecito",
-      "ricordare"
+      "non dimenticare clienti"
     ],
 
     sales: [
       "vendite",
       "vendere",
-      "sales",
-      "commerciale",
+      "vendita",
       "lead",
       "leads",
-      "pipeline",
-      "opportunita",
-      "opportunità"
+      "commerciale",
+      "conversioni",
+      "acquisizione clienti"
     ],
 
     quotes: [
-      "preventivi",
       "preventivo",
-      "offerte",
+      "preventivi",
       "offerta",
-      "quotazioni",
-      "quotation",
-      "proposal",
-      "proposte commerciali"
+      "offerte",
+      "quotazione",
+      "quotation"
     ],
 
     excel: [
@@ -371,33 +693,32 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
       "fogli",
       "spreadsheet",
       "dati",
+      "tabelle",
       "report",
-      "reporting",
-      "analisi dati",
-      "dashboard dati"
+      "csv"
     ],
 
     marketing: [
       "marketing",
       "pubblicita",
       "pubblicità",
-      "ads",
       "social",
       "campagne",
-      "acquisizione clienti",
-      "brand"
+      "ads",
+      "seo",
+      "contenuti",
+      "acquisizione"
     ],
 
     projects: [
-      "progetti",
       "progetto",
-      "task",
+      "progetti",
+      "project management",
       "attivita",
       "attività",
+      "task",
       "lavori",
-      "team",
-      "collaborazione",
-      "scadenze"
+      "team"
     ],
 
     documents: [
@@ -405,1539 +726,2318 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
       "documento",
       "pdf",
       "contratti",
-      "contratto",
-      "firme",
-      "firma",
-      "archivio"
+      "file",
+      "archiviazione",
+      "documentale"
     ],
 
     appointments: [
       "appuntamenti",
-      "appuntamento",
       "prenotazioni",
-      "prenotazione",
       "calendario",
       "agenda",
-      "booking"
+      "booking",
+      "riunioni",
+      "meeting"
     ],
 
     ecommerce: [
       "ecommerce",
-      "e-commerce",
+      "e commerce",
       "negozio online",
       "shop online",
-      "vendita online",
-      "prodotti online"
+      "prodotti online",
+      "vendere online"
     ],
 
     ai: [
       "ai",
       "intelligenza artificiale",
       "chatgpt",
-      "gpt",
-      "artificial intelligence",
-      "generative ai"
+      "claude",
+      "artificiale",
+      "generazione",
+      "generare contenuti"
     ]
+
   };
 
-  /* ============================================================
-     PAIN POINT RULES
-     ============================================================ */
 
-  const PAIN_RULES = [
-    {
-      regex: /\b(email|mail|posta elettronica|newsletter)\b/i,
-      boosts: {
-        email: 85,
-        automation: 60
+  function interpretGoals(goals) {
+
+    const result = {};
+
+    NEEDS.forEach(
+      function (need) {
+        result[need] = 0;
       }
-    },
-
-    {
-      regex: /\b(clienti|cliente|crm|contatti|anagrafica)\b/i,
-      boosts: {
-        crm: 90
-      }
-    },
-
-    {
-      regex: /\b(follow[\s-]?up|ricontattare|ricontatti|promemoria|solleciti|sollecito)\b/i,
-      boosts: {
-        followup: 95,
-        automation: 70,
-        crm: 55
-      }
-    },
-
-    {
-      regex: /\b(preventivi|preventivo|offerte|offerta|proposal|quotazioni)\b/i,
-      boosts: {
-        quotes: 95,
-        documents: 55,
-        automation: 55
-      }
-    },
-
-    {
-      regex: /\b(vendite|vendita|sales|lead|leads|commerciale|pipeline)\b/i,
-      boosts: {
-        sales: 90,
-        crm: 65,
-        marketing: 60
-      }
-    },
-
-    {
-      regex: /\b(excel|foglio|fogli|spreadsheet|dati|report|reporting)\b/i,
-      boosts: {
-        excel: 95,
-        automation: 65
-      }
-    },
-
-    {
-      regex: /\b(progetto|progetti|task|attivita|attività|lavori|team|scadenze)\b/i,
-      boosts: {
-        projects: 80
-      }
-    },
-
-    {
-      regex: /\b(appuntamenti|appuntamento|prenotazioni|prenotazione|calendario|agenda|booking)\b/i,
-      boosts: {
-        appointments: 90
-      }
-    },
-
-    {
-      regex: /\b(marketing|pubblicita|pubblicità|ads|campagne|social)\b/i,
-      boosts: {
-        marketing: 90
-      }
-    },
-
-    {
-      regex: /\b(documenti|documento|pdf|contratti|contratto|firma|firme)\b/i,
-      boosts: {
-        documents: 85
-      }
-    },
-
-    {
-      regex: /\b(ecommerce|e-commerce|negozio online|shop online|vendita online)\b/i,
-      boosts: {
-        ecommerce: 95
-      }
-    },
-
-    {
-      regex: /\b(ai|intelligenza artificiale|chatgpt|gpt)\b/i,
-      boosts: {
-        ai: 95,
-        automation: 75
-      }
-    },
-
-    {
-      regex: /\b(manuale|manuali|ripetitivo|ripetitive|perdo tempo|perdere tempo|tempo perso|lavoro manuale)\b/i,
-      boosts: {
-        automation: 90
-      }
-    }
-  ];
-
-  /* ============================================================
-     PROFILE
-     ============================================================ */
-
-  function buildGoalProfile(goalText) {
-    const text = normalizeText(goalText);
-    const profile = {};
-
-    NEEDS.forEach(function (need) {
-      profile[need] = 0;
-    });
-
-    if (!text) {
-      return profile;
-    }
-
-    Object.keys(GOAL_KEYWORDS).forEach(function (need) {
-      const keywords = GOAL_KEYWORDS[need] || [];
-
-      keywords.forEach(function (keyword) {
-        const normalizedKeyword = normalizeText(keyword);
-
-        if (
-          normalizedKeyword &&
-          text.indexOf(normalizedKeyword) !== -1
-        ) {
-          profile[need] = Math.max(
-            profile[need],
-            80
-          );
-        }
-      });
-    });
-
-    return profile;
-  }
-
-  function buildPainProfile(painText) {
-    const text = String(painText || "");
-    const profile = {};
-
-    NEEDS.forEach(function (need) {
-      profile[need] = 0;
-    });
-
-    if (!text) {
-      return profile;
-    }
-
-    PAIN_RULES.forEach(function (rule) {
-      if (rule.regex.test(text)) {
-        Object.keys(rule.boosts).forEach(function (need) {
-          profile[need] = Math.max(
-            profile[need],
-            rule.boosts[need]
-          );
-        });
-      }
-    });
-
-    return profile;
-  }
-
-  function buildNeedsProfile(answers) {
-    const input = answers || {};
-
-    const goalText =
-      input.goals ||
-      input.goal ||
-      input.objectives ||
-      input.obiettivi ||
-      "";
-
-    const painText =
-      input.painPoint ||
-      input.pain ||
-      input.problem ||
-      input.problemi ||
-      input.timeWasting ||
-      "";
-
-    const goalProfile = buildGoalProfile(goalText);
-    const painProfile = buildPainProfile(painText);
-
-    const profile = {};
-
-    NEEDS.forEach(function (need) {
-      profile[need] = Math.max(
-        goalProfile[need] || 0,
-        painProfile[need] || 0
-      );
-    });
-
-    const automationLevel = normalizeText(
-      input.automationLevel ||
-      input.automation ||
-      ""
     );
 
-    if (
-      automationLevel === "smart" ||
-      automationLevel === "intelligente"
-    ) {
-      profile.automation = Math.max(
-        profile.automation,
-        75
+
+    const text =
+      normalizeText(
+        Array.isArray(goals)
+          ? goals.join(" ")
+          : goals
       );
+
+
+    Object.keys(
+      GOAL_KEYWORDS
+    ).forEach(
+      function (need) {
+
+        const keywords =
+          GOAL_KEYWORDS[need];
+
+
+        keywords.forEach(
+          function (keyword) {
+
+            if (
+              text.includes(
+                normalizeText(keyword)
+              )
+            ) {
+
+              result[need] =
+                Math.max(
+                  result[need],
+                  80
+                );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+    return result;
+
+  }
+
+
+  /* =========================================================
+     6. INTERPRETAZIONE PAIN POINT
+     ========================================================= */
+
+  function interpretPainPoint(
+    painPoint
+  ) {
+
+    const text =
+      normalizeText(
+        painPoint
+      );
+
+
+    const result = {};
+
+    NEEDS.forEach(
+      function (need) {
+        result[need] = 0;
+      }
+    );
+
+
+    function boost(
+      need,
+      value
+    ) {
+
+      result[need] =
+        Math.max(
+          result[need],
+          value
+        );
+
     }
 
+
     if (
-      automationLevel === "ai" ||
-      automationLevel === "avanzato ai"
+      /email|mail|posta|messaggi/.test(text)
     ) {
-      profile.automation = Math.max(
-        profile.automation,
+
+      boost(
+        "email",
+        85
+      );
+
+      boost(
+        "automation",
+        60
+      );
+
+    }
+
+
+    if (
+      /cliente|clienti|contatt|anagrafic|crm/.test(text)
+    ) {
+
+      boost(
+        "crm",
         90
       );
 
-      profile.ai = Math.max(
-        profile.ai,
-        80
-      );
     }
 
-    return profile;
+
+    if (
+      /ricontatt|follow.?up|sollecit|promemoria|dimentic/.test(text)
+    ) {
+
+      boost(
+        "followup",
+        95
+      );
+
+      boost(
+        "automation",
+        70
+      );
+
+      boost(
+        "crm",
+        55
+      );
+
+    }
+
+
+    if (
+      /preventiv|offert|quotazion/.test(text)
+    ) {
+
+      boost(
+        "quotes",
+        95
+      );
+
+      boost(
+        "documents",
+        55
+      );
+
+      boost(
+        "automation",
+        55
+      );
+
+    }
+
+
+    if (
+      /vend|lead|commercial|acquisire clienti|nuovi clienti|conversion/.test(text)
+    ) {
+
+      boost(
+        "sales",
+        90
+      );
+
+      boost(
+        "crm",
+        65
+      );
+
+      boost(
+        "marketing",
+        60
+      );
+
+    }
+
+
+    if (
+      /excel|foglio|spreadsheet|tabell|dati|report|csv/.test(text)
+    ) {
+
+      boost(
+        "excel",
+        95
+      );
+
+      boost(
+        "automation",
+        65
+      );
+
+    }
+
+
+    if (
+      /progett|task|attivit|lavori|organizz|team/.test(text)
+    ) {
+
+      boost(
+        "projects",
+        80
+      );
+
+    }
+
+
+    if (
+      /appuntament|prenotaz|agenda|calendario|booking|meeting/.test(text)
+    ) {
+
+      boost(
+        "appointments",
+        90
+      );
+
+    }
+
+
+    if (
+      /marketing|social|pubblic|campagn|seo|ads|contenuti/.test(text)
+    ) {
+
+      boost(
+        "marketing",
+        90
+      );
+
+    }
+
+
+    if (
+      /document|pdf|contratt|file|archivi/.test(text)
+    ) {
+
+      boost(
+        "documents",
+        85
+      );
+
+    }
+
+
+    if (
+      /ecommerce|negozio online|shop online|prodotti online/.test(text)
+    ) {
+
+      boost(
+        "ecommerce",
+        95
+      );
+
+    }
+
+
+    if (
+      /\bai\b|intelligenza artificiale|chatgpt|claude|automatizzare con ai/.test(text)
+    ) {
+
+      boost(
+        "ai",
+        95
+      );
+
+      boost(
+        "automation",
+        75
+      );
+
+    }
+
+
+    if (
+      /manuale|ripetitiv|ripeto|perdo tempo|perdiamo tempo|faccio sempre/.test(text)
+    ) {
+
+      boost(
+        "automation",
+        90
+      );
+
+    }
+
+
+    return result;
+
   }
 
-  /* ============================================================
-     ACTIVE NEEDS
-     ============================================================ */
 
-  function getActiveNeeds(needsProfile, threshold = 50) {
-    return NEEDS.filter(function (need) {
-      return Number(needsProfile[need] || 0) >= threshold;
-    });
-  }
+  /* =========================================================
+     7. PROFILO BISOGNI
+     ========================================================= */
 
-  function getDominantNeeds(needsProfile) {
-    return NEEDS
-      .filter(function (need) {
-        return Number(needsProfile[need] || 0) > 0;
-      })
-      .sort(function (a, b) {
-        return (
-          Number(needsProfile[b] || 0) -
-          Number(needsProfile[a] || 0)
-        );
-      });
-  }
+  function buildNeedsProfile(
+    answers,
+    aiProfile
+  ) {
 
-  function getRequirement(needsProfile, need) {
-    return clamp(
-      Number(
-        needsProfile &&
-        needsProfile[need]
-      ) || 0,
-      0,
-      100
+    answers =
+      answers || {};
+
+
+    const goalsProfile =
+      interpretGoals(
+        answers.goals ||
+        answers.obiettivi ||
+        []
+      );
+
+
+    const painProfile =
+      interpretPainPoint(
+        answers.painPoint ||
+        answers.biggestTimeWaster ||
+        answers.problem ||
+        answers.timeWaster ||
+        ""
+      );
+
+
+    const profile = {};
+
+
+    NEEDS.forEach(
+      function (need) {
+
+        const fromGoals =
+          Number(
+            goalsProfile[need] ||
+            0
+          );
+
+
+        const fromPain =
+          Number(
+            painProfile[need] ||
+            0
+          );
+
+
+        const fromAI =
+          Number(
+            aiProfile &&
+            aiProfile[need]
+              ? aiProfile[need]
+              : 0
+          );
+
+
+        profile[need] =
+          Math.max(
+            fromGoals,
+            fromPain,
+            fromAI
+          );
+
+      }
     );
+
+
+    const automationMode =
+      normalizeText(
+        answers.automation ||
+        answers.automationLevel ||
+        ""
+      );
+
+
+    if (
+      automationMode.includes(
+        "smart"
+      )
+    ) {
+
+      profile.automation =
+        Math.max(
+          profile.automation,
+          75
+        );
+
+    }
+
+
+    if (
+      automationMode.includes(
+        "ai"
+      )
+    ) {
+
+      profile.automation =
+        Math.max(
+          profile.automation,
+          90
+        );
+
+      profile.ai =
+        Math.max(
+          profile.ai,
+          80
+        );
+
+    }
+
+
+    return profile;
+
   }
 
-  /* ============================================================
-     ALIASES
-     ============================================================ */
+
+  /* =========================================================
+     8. TOOL MATCHING / ALIAS
+     ========================================================= */
 
   const TOOL_ALIASES = {
+
     "microsoft 365": [
-      "microsoft365",
+      "microsoft 365",
       "office 365",
-      "office365",
-      "m365"
+      "m365",
+      "office"
     ],
 
-    outlook: [
-      "microsoft outlook",
-      "outlook mail"
+    "outlook": [
+      "outlook",
+      "microsoft outlook"
     ],
 
     "power automate": [
-      "powerautomate",
-      "microsoft power automate",
-      "power automate desktop"
+      "power automate",
+      "microsoft power automate"
     ],
 
     "google workspace": [
-      "google",
-      "workspace",
+      "google workspace",
       "g suite",
       "gsuite"
     ],
 
-    chatgpt: [
-      "openai",
-      "chat gpt"
+    "chatgpt": [
+      "chatgpt",
+      "openai"
     ],
 
     "monday.com": [
       "monday",
-      "mondaycom"
+      "monday.com"
     ],
 
-    clickup: [
+    "clickup": [
+      "clickup",
       "click up"
     ],
 
-    pipedrive: [
-      "pipedrive crm"
+    "pipedrive": [
+      "pipedrive"
     ],
 
-    hubspot: [
-      "hub spot"
+    "hubspot": [
+      "hubspot"
     ],
 
-    make: [
-      "make.com",
-      "integromat"
+    "salesforce": [
+      "salesforce"
     ],
 
-    zapier: [
-      "zapier automation"
-    ],
-
-    shopify: [
-      "shopify ecommerce",
-      "shopify e-commerce"
-    ],
-
-    woocommerce: [
-      "woo commerce"
-    ],
-
-    salesforce: [
-      "salesforce crm"
-    ],
-
-    freshsales: [
-      "freshsales crm",
+    "freshsales": [
+      "freshsales",
       "freshworks crm"
     ],
 
     "zoho crm": [
-      "zoho",
-      "zoho crm plus"
+      "zoho crm",
+      "zoho"
     ],
 
-    activecampaign: [
-      "active campaign"
+    "activecampaign": [
+      "activecampaign"
     ],
 
-    close: [
+    "close": [
+      "close",
       "close crm"
     ],
 
-    klaviyo: [
-      "klaviyo email"
+    "klaviyo": [
+      "klaviyo"
+    ],
+
+    "make": [
+      "make",
+      "make.com",
+      "integromat"
+    ],
+
+    "zapier": [
+      "zapier"
+    ],
+
+    "shopify": [
+      "shopify"
+    ],
+
+    "woocommerce": [
+      "woocommerce",
+      "woo commerce"
     ]
+
   };
 
-  function canonicalToolName(value) {
-    return normalizeText(value);
-  }
 
-  function toolMatchesName(tool, value) {
-    if (!tool || !value) {
-      return false;
-    }
+  function toolMentionedInText(
+    toolName,
+    text
+  ) {
 
-    const toolName = canonicalToolName(
-      tool.name || tool.id
-    );
+    const normalizedTool =
+      normalizeText(
+        toolName
+      );
 
-    const target = canonicalToolName(value);
 
-    if (!toolName || !target) {
-      return false;
-    }
+    const normalizedText =
+      normalizeText(
+        text
+      );
+
 
     if (
-      toolName === target ||
-      toolName.indexOf(target) !== -1 ||
-      target.indexOf(toolName) !== -1
+      normalizedText.includes(
+        normalizedTool
+      )
     ) {
       return true;
     }
 
+
     const aliases =
-      TOOL_ALIASES[toolName] || [];
+      TOOL_ALIASES[
+        normalizedTool
+      ] || [];
 
-    return aliases.some(function (alias) {
-      const normalizedAlias =
-        canonicalToolName(alias);
 
-      return (
-        normalizedAlias === target ||
-        normalizedAlias.indexOf(target) !== -1 ||
-        target.indexOf(normalizedAlias) !== -1
-      );
-    });
-  }
+    return aliases.some(
+      function (alias) {
 
-  function getAnswerToolList(answers, keys) {
-    const result = [];
+        return normalizedText.includes(
+          normalizeText(alias)
+        );
 
-    const input = answers || {};
-
-    keys.forEach(function (key) {
-      toArray(input[key]).forEach(function (item) {
-        if (typeof item === "string") {
-          result.push(item);
-        } else if (
-          item &&
-          typeof item === "object"
-        ) {
-          result.push(
-            item.name ||
-            item.id ||
-            item.value ||
-            ""
-          );
-        }
-      });
-    });
-
-    return uniqueArray(result);
-  }
-
-  function getExistingTools(answers) {
-    return getAnswerToolList(
-      answers,
-      [
-        "existingTools",
-        "currentTools",
-        "toolsAlreadyUse",
-        "software",
-        "strumentiEsistenti"
-      ]
+      }
     );
+
   }
 
-  function getPreservedTools(answers) {
-    return getAnswerToolList(
-      answers,
-      [
-        "doNotChange",
-        "doNotReplace",
-        "toolsToKeep",
-        "preserveTools",
-        "strumentiDaMantenere"
-      ]
-    );
-  }
 
-  function getExcludedTools(answers) {
-    return getAnswerToolList(
-      answers,
-      [
-        "excludedTools",
-        "notInterested",
-        "avoid",
-        "toolsToAvoid",
-        "strumentiDaEvitare"
-      ]
-    );
-  }
+  function getExistingTools(
+    answers
+  ) {
 
-  function isExistingTool(tool, answers) {
-    const existing =
-      getExistingTools(answers);
+    answers =
+      answers || {};
 
-    return existing.some(function (name) {
-      return toolMatchesName(tool, name);
-    });
-  }
 
-  function isPreservedTool(tool, answers) {
-    const preserved =
-      getPreservedTools(answers);
+    const value =
+      answers.existingTools ||
+      answers.currentTools ||
+      answers.toolsAlreadyUse ||
+      answers.software ||
+      "";
 
-    return preserved.some(function (name) {
-      return toolMatchesName(tool, name);
-    });
-  }
 
-  function isExcludedTool(tool, answers) {
-    const excluded =
-      getExcludedTools(answers);
+    return uniqueArray(
+      toArray(value)
+        .flatMap(
+          function (item) {
 
-    return excluded.some(function (name) {
-      return toolMatchesName(tool, name);
-    });
-  }
+            return String(item)
+              .split(",")
+              .map(
+                function (x) {
+                  return x.trim();
+                }
+              );
 
-  function calculateExistingBonus(tool, answers) {
-    if (!isExistingTool(tool, answers)) {
-      return 0;
-    }
-
-    return CONFIG.EXISTING_TOOL_MAX_BONUS;
-  }
-
-  function calculatePreservedBonus(tool, answers) {
-    if (!isPreservedTool(tool, answers)) {
-      return 0;
-    }
-
-    return CONFIG.PRESERVE_TOOL_MAX_BONUS;
-  }
-
-  /* ============================================================
-     ECOSYSTEM
-     ============================================================ */
-
-  function detectEcosystems(answers) {
-    const names = [
-      ...getExistingTools(answers),
-      ...getPreservedTools(answers)
-    ]
-      .map(canonicalToolName)
-      .join(" ");
-
-    return {
-      microsoft:
-        /microsoft|office 365|microsoft 365|outlook|power automate/.test(
-          names
-        ),
-
-      google:
-        /google|workspace|gmail/.test(
-          names
-        ),
-
-      shopify:
-        /shopify/.test(names),
-
-      ecommerce:
-        /shopify|woocommerce|ecommerce|e-commerce/.test(
-          names
+          }
         )
-    };
+        .filter(Boolean)
+    );
+
   }
 
-  function calculateEcosystemBonus(tool, answers) {
-    const ecosystems =
-      detectEcosystems(answers);
 
-    const name =
-      canonicalToolName(
-        tool.name || tool.id
+  function getPreservedTools(
+    answers
+  ) {
+
+    answers =
+      answers || {};
+
+
+    const value =
+      answers.doNotChange ||
+      answers.doNotReplace ||
+      answers.toolsToKeep ||
+      answers.preserveTools ||
+      "";
+
+
+    return uniqueArray(
+      toArray(value)
+        .flatMap(
+          function (item) {
+
+            return String(item)
+              .split(",")
+              .map(
+                function (x) {
+                  return x.trim();
+                }
+              );
+
+          }
+        )
+        .filter(Boolean)
+    );
+
+  }
+
+
+  function getExcludedTools(
+    answers
+  ) {
+
+    answers =
+      answers || {};
+
+
+    const value =
+      answers.excludedTools ||
+      answers.notInterested ||
+      answers.avoid ||
+      answers.toolsToAvoid ||
+      "";
+
+
+    return uniqueArray(
+      toArray(value)
+        .flatMap(
+          function (item) {
+
+            return String(item)
+              .split(",")
+              .map(
+                function (x) {
+                  return x.trim();
+                }
+              );
+
+          }
+        )
+        .filter(Boolean)
+    );
+
+  }
+
+
+  /* =========================================================
+     9. EXISTING / PRESERVED BONUS
+     ========================================================= */
+
+  function existingToolBonus(
+    tool,
+    answers
+  ) {
+
+    const existingTools =
+      getExistingTools(
+        answers
       );
 
-    let bonus = 0;
 
     if (
-      ecosystems.microsoft &&
-      (
-        name.indexOf("microsoft") !== -1 ||
-        name.indexOf("outlook") !== -1 ||
-        name.indexOf("power automate") !== -1 ||
-        name.indexOf("dynamics") !== -1
+      !existingTools.length
+    ) {
+      return 0;
+    }
+
+
+    const text =
+      existingTools.join(" ");
+
+
+    if (
+      toolMentionedInText(
+        tool.name,
+        text
       )
     ) {
-      bonus += 5;
+
+      return CONFIG
+        .EXISTING_TOOL_MAX_BONUS;
+
     }
 
+
+    const normalizedTool =
+      normalizeText(
+        tool.name
+      );
+
+
+    const microsoftTools = [
+      "power automate",
+      "microsoft 365",
+      "outlook"
+    ];
+
+
+    const googleTools = [
+      "google workspace"
+    ];
+
+
+    const shopifyTools = [
+      "shopify"
+    ];
+
+
     if (
-      ecosystems.google &&
-      (
-        name.indexOf("google") !== -1 ||
-        name.indexOf("workspace") !== -1
+      microsoftTools.includes(
+        normalizedTool
+      ) &&
+      /microsoft 365|office 365|outlook|office/.test(
+        normalizeText(text)
       )
     ) {
-      bonus += 5;
+      return 10;
     }
+
 
     if (
-      ecosystems.shopify &&
-      name.indexOf("shopify") !== -1
+      googleTools.includes(
+        normalizedTool
+      ) &&
+      /google workspace|g suite|gsuite/.test(
+        normalizeText(text)
+      )
     ) {
-      bonus += 5;
+      return 10;
     }
 
-    return clamp(
-      bonus,
-      0,
-      CONFIG.INTEGRATION_MAX_BONUS
-    );
+
+    if (
+      shopifyTools.includes(
+        normalizedTool
+      ) &&
+      /shopify/.test(
+        normalizeText(text)
+      )
+    ) {
+      return 10;
+    }
+
+
+    return 0;
+
   }
 
-  /* ============================================================
-     COVERAGE
-     ============================================================ */
+
+  function preserveExistingTools(
+    tool,
+    answers
+  ) {
+
+    const preserved =
+      getPreservedTools(
+        answers
+      );
+
+
+    if (
+      !preserved.length
+    ) {
+      return 0;
+    }
+
+
+    const text =
+      preserved.join(" ");
+
+
+    if (
+      toolMentionedInText(
+        tool.name,
+        text
+      )
+    ) {
+
+      return CONFIG
+        .PRESERVE_TOOL_MAX_BONUS;
+
+    }
+
+
+    return 0;
+
+  }
+
+
+  /* =========================================================
+     10. COVERAGE
+     ========================================================= */
 
   function calculateCoverage(
-    requirement,
-    capability
+    tool,
+    needsProfile
   ) {
-    const req =
-      Number(requirement) || 0;
 
-    const cap =
-      Number(capability) || 0;
+    const coverage = {};
 
-    if (req <= 0) {
-      return 0;
-    }
 
-    return clamp(
-      Math.min(req, cap),
-      0,
-      100
+    NEEDS.forEach(
+      function (need) {
+
+        const requirement =
+          Number(
+            needsProfile &&
+            needsProfile[need]
+              ? needsProfile[need]
+              : 0
+          );
+
+
+        const capability =
+          Number(
+            tool &&
+            tool.needs &&
+            tool.needs[need]
+              ? tool.needs[need]
+              : 0
+          );
+
+
+        if (
+          requirement <= 0
+        ) {
+
+          coverage[need] = 0;
+
+          return;
+        }
+
+
+        coverage[need] =
+          clamp(
+            Math.min(
+              requirement,
+              capability
+            ),
+            0,
+            100
+          );
+
+      }
     );
+
+
+    return coverage;
+
   }
+
 
   function calculateWeightedNeedsCoverage(
     tool,
     needsProfile
   ) {
-    let weightedCoverage = 0;
+
     let totalWeight = 0;
 
-    NEEDS.forEach(function (need) {
-      const requirement =
-        getRequirement(
-          needsProfile,
-          need
-        );
+    let totalScore = 0;
 
-      if (requirement <= 0) {
-        return;
+
+    NEEDS.forEach(
+      function (need) {
+
+        const requirement =
+          Number(
+            needsProfile[need] ||
+            0
+          );
+
+
+        if (
+          requirement <= 0
+        ) {
+          return;
+        }
+
+
+        const capability =
+          Number(
+            tool.needs[need] ||
+            0
+          );
+
+
+        const normalizedRequirement =
+          clamp(
+            requirement,
+            0,
+            100
+          );
+
+
+        const fit =
+          clamp(
+            capability /
+            Math.max(
+              normalizedRequirement,
+              1
+            ),
+            0,
+            1
+          );
+
+
+        totalWeight +=
+          normalizedRequirement;
+
+
+        totalScore +=
+          normalizedRequirement *
+          fit;
+
       }
+    );
 
-      const capability =
-        normalizeToolNeed(
-          tool.needs &&
-          tool.needs[need]
-        );
 
-      const fit =
-        clamp(
-          capability / requirement,
-          0,
-          1
-        );
-
-      weightedCoverage +=
-        requirement * fit;
-
-      totalWeight += requirement;
-    });
-
-    if (totalWeight <= 0) {
+    if (
+      !totalWeight
+    ) {
       return 50;
     }
 
+
     return clamp(
       (
-        weightedCoverage /
+        totalScore /
         totalWeight
       ) * 100,
       0,
       100
     );
+
   }
 
-  function getCoveredNeeds(
-    tool,
-    needsProfile,
-    threshold = 50
+
+  /* =========================================================
+     11. TEAM SCORE
+     ========================================================= */
+
+  function normalizeAnswerTeam(
+    team
   ) {
-    return NEEDS.filter(function (need) {
-      const requirement =
-        getRequirement(
-          needsProfile,
-          need
-        );
 
-      if (requirement < threshold) {
-        return false;
-      }
-
-      const capability =
-        normalizeToolNeed(
-          tool.needs &&
-          tool.needs[need]
-        );
-
-      return capability >= threshold;
-    });
-  }
-
-  /* ============================================================
-     TEAM SCORE
-     ============================================================ */
-
-  function getTeamValue(answers) {
-    const input = answers || {};
-
-    return (
-      input.teamSize ||
-      input.team ||
-      input.dimensioneTeam ||
-      ""
-    );
-  }
-
-  function teamScore(tool, answers) {
-    const requested =
+    const text =
       normalizeText(
-        getTeamValue(answers)
+        team
       );
 
-    if (!requested) {
+
+    if (
+      text.includes("solo")
+    ) {
+      return "Solo io";
+    }
+
+
+    if (
+      text.includes("2") &&
+      text.includes("5")
+    ) {
+      return "2–5";
+    }
+
+
+    if (
+      text.includes("6") &&
+      text.includes("20")
+    ) {
+      return "6–20";
+    }
+
+
+    if (
+      text.includes("21") &&
+      text.includes("50")
+    ) {
+      return "21–50";
+    }
+
+
+    if (
+      text.includes("50")
+    ) {
+      return "50+";
+    }
+
+
+    return team || "";
+
+  }
+
+
+  function teamScore(
+    tool,
+    team
+  ) {
+
+    if (!team) {
       return 75;
     }
 
-    const team =
-      tool.team || {};
 
-    const exactValues = [
-      team.size,
-      team.teamSize,
-      team.range,
-      team.label
-    ]
-      .filter(Boolean)
-      .map(normalizeText);
+    const wanted =
+      normalizeText(
+        normalizeAnswerTeam(
+          team
+        )
+      );
+
+
+    const available =
+      tool.team.map(
+        function (x) {
+          return normalizeText(x);
+        }
+      );
+
 
     if (
-      exactValues.some(function (value) {
-        return (
-          value === requested ||
-          value.indexOf(requested) !== -1 ||
-          requested.indexOf(value) !== -1
-        );
-      })
+      !available.length
+    ) {
+      return 75;
+    }
+
+
+    if (
+      available.some(
+        function (x) {
+          return x === wanted;
+        }
+      )
     ) {
       return 100;
     }
 
-    if (
-      Array.isArray(team.flexible) &&
-      team.flexible.some(function (value) {
-        const normalized =
-          normalizeText(value);
 
-        return (
-          normalized === requested ||
-          normalized.indexOf(requested) !== -1 ||
-          requested.indexOf(normalized) !== -1
-        );
-      })
+    if (
+      wanted.includes("solo")
     ) {
-      return 90;
+
+      if (
+        available.some(
+          function (x) {
+
+            return (
+              x.includes("solo") ||
+              x.includes("2") ||
+              x.includes("5")
+            );
+
+          }
+        )
+      ) {
+        return 90;
+      }
+
     }
+
+
+    if (
+      wanted.includes("2") ||
+      wanted.includes("5")
+    ) {
+
+      if (
+        available.some(
+          function (x) {
+
+            return (
+              x.includes("solo") ||
+              x.includes("2") ||
+              x.includes("5") ||
+              x.includes("20")
+            );
+
+          }
+        )
+      ) {
+        return 90;
+      }
+
+    }
+
 
     return 65;
+
   }
 
-  /* ============================================================
-     TECH SCORE
-     ============================================================ */
 
-  function getTechLevel(answers) {
-    const input = answers || {};
+  /* =========================================================
+     12. TECH SCORE
+     ========================================================= */
 
-    return normalizeText(
-      input.techLevel ||
-      input.tech ||
-      input.technologyLevel ||
-      ""
-    );
-  }
+  function techScore(
+    tool,
+    tech
+  ) {
 
-  function techScore(tool, answers) {
-    const requested =
-      getTechLevel(answers);
-
-    if (!requested) {
-      return 70;
+    if (!tech) {
+      return 75;
     }
 
-    const toolTech =
+
+    const wanted =
       normalizeText(
-        tool.tech &&
-        (
-          tool.tech.level ||
-          tool.tech.label ||
-          tool.tech
-        )
+        tech
       );
 
+
+    const available =
+      tool.tech.map(
+        function (x) {
+          return normalizeText(x);
+        }
+      );
+
+
     if (
-      requested === "base" ||
-      requested === "basic"
+      !available.length
     ) {
+      return 75;
+    }
+
+
+    if (
+      available.some(
+        function (x) {
+          return x === wanted;
+        }
+      )
+    ) {
+      return 100;
+    }
+
+
+    if (
+      wanted.includes("base")
+    ) {
+
       if (
-        toolTech === "base" ||
-        toolTech === "basic" ||
-        toolTech === "semplice"
+        available.some(
+          function (x) {
+            return x.includes("base");
+          }
+        )
       ) {
         return 100;
       }
 
+
       if (
-        toolTech === "medio" ||
-        toolTech === "medium"
+        available.some(
+          function (x) {
+            return x.includes("medio");
+          }
+        )
       ) {
         return 70;
       }
 
+
       return 50;
     }
 
+
     if (
-      requested === "medio" ||
-      requested === "medium"
+      wanted.includes("medio")
     ) {
+
       if (
-        toolTech === "medio" ||
-        toolTech === "medium"
+        available.some(
+          function (x) {
+            return x.includes("medio");
+          }
+        )
       ) {
         return 100;
       }
 
+
       if (
-        toolTech === "avanzato" ||
-        toolTech === "advanced"
+        available.some(
+          function (x) {
+            return x.includes("avanz");
+          }
+        )
       ) {
         return 75;
       }
 
+
       return 90;
     }
 
+
     if (
-      requested === "avanzato" ||
-      requested === "advanced"
+      wanted.includes("avanz")
     ) {
       return 100;
     }
 
+
     return 70;
+
   }
 
-  /* ============================================================
-     AUTOMATION SCORE
-     ============================================================ */
 
-  function automationScore(tool) {
-    const value =
-      tool.automation;
+  /* =========================================================
+     13. AUTOMATION SCORE
+     ========================================================= */
 
-    if (
-      typeof value === "number"
-    ) {
-      return clamp(
-        value,
-        0,
-        100
+  function automationScore(
+    tool,
+    automationLevel
+  ) {
+
+    if (!automationLevel) {
+      return 75;
+    }
+
+
+    const wanted =
+      normalizeText(
+        automationLevel
       );
-    }
 
-    const normalized =
-      normalizeText(value);
+
+    const values =
+      tool.automation.map(
+        function (value) {
+
+          if (
+            typeof value === "number"
+          ) {
+            return value;
+          }
+
+
+          const text =
+            normalizeText(
+              value
+            );
+
+
+          if (
+            text.includes("ai")
+          ) {
+            return 90;
+          }
+
+
+          if (
+            text.includes("smart")
+          ) {
+            return 75;
+          }
+
+
+          if (
+            text.includes("semplic")
+          ) {
+            return 55;
+          }
+
+
+          return 70;
+
+        }
+      );
+
 
     if (
-      normalized === "ai" ||
-      normalized === "advanced ai"
-    ) {
-      return 90;
-    }
-
-    if (
-      normalized === "smart" ||
-      normalized === "intelligente"
+      !values.length
     ) {
       return 75;
     }
 
+
     if (
-      normalized === "simple" ||
-      normalized === "semplice" ||
-      normalized === "basic" ||
-      normalized === "base"
+      wanted.includes("ai")
     ) {
-      return 55;
+
+      return Math.max.apply(
+        null,
+        values
+      );
+
     }
 
-    return 70;
+
+    if (
+      wanted.includes("smart")
+    ) {
+
+      return Math.min(
+        100,
+        Math.max.apply(
+          null,
+          values
+        ) + 5
+      );
+
+    }
+
+
+    if (
+      wanted.includes("semplic")
+    ) {
+      return 80;
+    }
+
+
+    return 75;
+
   }
 
-  /* ============================================================
-     BUDGET
-     ============================================================ */
 
-  function parseBudgetNumber(value) {
+  /* =========================================================
+     14. BUDGET
+     ========================================================= */
+
+  function parseBudgetNumber(
+    value
+  ) {
+
     if (
-      value === undefined ||
       value === null ||
+      value === undefined ||
       value === ""
     ) {
       return null;
     }
 
-    if (
-      typeof value === "number" &&
-      Number.isFinite(value)
-    ) {
-      return value;
-    }
 
     const text =
-      normalizeText(value);
+      normalizeText(
+        value
+      );
+
 
     if (
-      text.indexOf("gratis") !== -1 ||
-      text.indexOf("free") !== -1 ||
-      text === "0"
+      text.includes("500+")
     ) {
-      return 0;
+      return 500;
     }
 
-    const match =
-      String(value).match(
-        /(\d+(?:[.,]\d+)?)/ 
+
+    const n =
+      firstNumber(
+        value
       );
 
-    if (!match) {
-      return null;
-    }
 
-    const number =
-      Number(
-        match[1]
-          .replace(/\./g, "")
-          .replace(",", ".")
-      );
-
-    return Number.isFinite(number)
-      ? number
+    return Number.isFinite(n)
+      ? n
       : null;
+
   }
 
-  function getBudgetLimit(answers) {
-    const input = answers || {};
 
-    const raw =
-      input.monthlyBudget ||
-      input.budget ||
-      input.budgetMonthly ||
-      input.budgetMensile ||
-      "";
-
-    return parseBudgetNumber(raw);
-  }
-
-  function getToolMonthlyPrice(tool) {
-    const pricing =
-      tool.pricing ||
-      tool.price ||
-      tool.monthlyPrice ||
-      tool.monthly_price;
-
-    if (
-      typeof pricing === "number" &&
-      Number.isFinite(pricing)
-    ) {
-      return pricing;
-    }
-
-    if (
-      pricing &&
-      typeof pricing === "object"
-    ) {
-      return parseBudgetNumber(
-        pricing.monthly ||
-        pricing.month ||
-        pricing.starting ||
-        pricing.price
-      );
-    }
+  function getBudgetLimit(
+    answers
+  ) {
 
     return parseBudgetNumber(
-      tool.monthlyPrice ||
-      tool.priceMonthly ||
+      answers &&
+      (
+        answers.budget ||
+        answers.monthlyBudget ||
+        answers.maxBudget
+      )
+    );
+
+  }
+
+
+  function getToolMonthlyPrice(
+    tool
+  ) {
+
+    const candidates = [
+
+      tool.monthlyPrice,
+
+      tool.priceMonthly,
+
+      tool.price,
+
+      tool.minMonthlyPrice,
+
       tool.startingPrice
-    );
+
+    ];
+
+
+    for (
+      let i = 0;
+      i < candidates.length;
+      i++
+    ) {
+
+      const n =
+        firstNumber(
+          candidates[i]
+        );
+
+
+      if (
+        Number.isFinite(n)
+      ) {
+        return n;
+      }
+
+    }
+
+
+    return null;
+
   }
 
-  function toolHasFreePlan(tool) {
-    const pricingText =
-      normalizeText(
-        JSON.stringify(
-          tool.pricing ||
-          tool.price ||
-          ""
-        )
-      );
 
-    return (
-      tool.free === true ||
-      tool.freePlan === true ||
-      pricingText.indexOf("free") !== -1 ||
-      pricingText.indexOf("gratis") !== -1
-    );
-  }
-
-  function budgetScore(tool, answers) {
-    const limit =
-      getBudgetLimit(answers);
+  function toolHasFreePlan(
+    tool
+  ) {
 
     if (
-      limit === null ||
-      limit === undefined
+      tool.freePlan === true ||
+      tool.hasFreePlan === true
+    ) {
+      return true;
+    }
+
+
+    const text =
+      normalizeText(
+        tool.pricing ||
+        tool.pricingModel ||
+        tool.description ||
+        ""
+      );
+
+
+    return (
+      text.includes("free plan") ||
+      text.includes("piano gratuito") ||
+      text.includes("gratuito") ||
+      text.includes("free")
+    );
+
+  }
+
+
+  function budgetScore(
+    tool,
+    answers
+  ) {
+
+    const budget =
+      getBudgetLimit(
+        answers
+      );
+
+
+    if (
+      budget === null
     ) {
       return 75;
     }
 
+
     const price =
-      getToolMonthlyPrice(tool);
+      getToolMonthlyPrice(
+        tool
+      );
+
 
     if (
-      price === null ||
-      price === undefined
+      price === null
     ) {
-      if (limit <= 30 && toolHasFreePlan(tool)) {
+
+      if (
+        budget <= 30 &&
+        toolHasFreePlan(tool)
+      ) {
         return 90;
       }
 
+
       return 75;
     }
 
-    if (price <= limit) {
-      if (price === 0) {
-        return 100;
-      }
 
-      if (limit === 0) {
-        return 50;
-      }
-
+    if (
+      price <= budget
+    ) {
       return 100;
     }
 
-    if (
-      limit > 0 &&
-      price <= limit * 1.2
-    ) {
-      return 70;
-    }
 
     if (
-      limit > 0 &&
-      price <= limit * 1.5
+      budget > 0 &&
+      price <= budget * 1.20
     ) {
-      return 45;
+      return 75;
     }
+
+
+    if (
+      budget > 0 &&
+      price <= budget * 1.50
+    ) {
+      return 50;
+    }
+
 
     return 20;
+
   }
 
-  function passesBudgetFilter(tool, answers) {
-    const limit =
-      getBudgetLimit(answers);
+
+  /* =========================================================
+     15. HARD BUDGET FILTER
+     ========================================================= */
+
+  function passesBudgetFilter(
+    tool,
+    answers
+  ) {
+
+    const budget =
+      getBudgetLimit(
+        answers
+      );
+
 
     if (
-      limit === null ||
-      limit === undefined
+      budget === null
     ) {
       return true;
     }
+
 
     const price =
-      getToolMonthlyPrice(tool);
-
-    if (
-      price === null ||
-      price === undefined
-    ) {
-      return (
-        limit > 30 ||
-        toolHasFreePlan(tool)
+      getToolMonthlyPrice(
+        tool
       );
-    }
 
-    if (price <= limit) {
-      return true;
-    }
 
     if (
-      limit > 0 &&
-      price <= limit * 1.2
+      price === null
     ) {
       return true;
     }
 
-    return false;
-  }
 
-  /* ============================================================
-     COUNTRY / LANGUAGE
-     ============================================================ */
+    if (
+      price <= budget
+    ) {
+      return true;
+    }
 
-  function getUserCountry(answers) {
-    const input = answers || {};
 
-    return normalizeText(
-      input.country ||
-      input.paese ||
-      input.userCountry ||
-      "italy"
+    if (
+      budget <= 30 &&
+      toolHasFreePlan(tool)
+    ) {
+      return true;
+    }
+
+
+    return (
+      price <=
+      budget * 1.20
     );
+
   }
 
-  function getUserLanguage(answers) {
-    const input = answers || {};
 
-    return normalizeText(
-      input.language ||
-      input.lang ||
-      input.lingua ||
-      "italian"
-    );
+  /* =========================================================
+     16. COUNTRY / LANGUAGE
+     ========================================================= */
+
+  function getUserCountry(
+    answers
+  ) {
+
+    return String(
+      answers &&
+      (
+        answers.country ||
+        answers.nation ||
+        answers.countryCode ||
+        ""
+      )
+    ).trim();
+
   }
 
-  function countryLanguageScore(tool, answers) {
+
+  function getUserLanguage(
+    answers
+  ) {
+
+    return String(
+      answers &&
+      (
+        answers.language ||
+        answers.languages ||
+        ""
+      )
+    ).trim();
+
+  }
+
+
+  function countryLanguageScore(
+    tool,
+    answers
+  ) {
+
     const country =
-      getUserCountry(answers);
+      normalizeText(
+        getUserCountry(
+          answers
+        )
+      );
+
 
     const language =
-      getUserLanguage(answers);
+      normalizeText(
+        getUserLanguage(
+          answers
+        )
+      );
+
+
+    if (
+      !country &&
+      !language
+    ) {
+      return 75;
+    }
+
 
     let score = 75;
 
-    const countries =
-      toArray(tool.countries)
-        .map(normalizeText);
 
-    const languages =
-      toArray(tool.languages)
-        .map(normalizeText);
+    const toolCountries =
+      tool.countries.map(
+        normalizeText
+      );
 
-    if (countries.length) {
+
+    const toolLanguages =
+      tool.languages.map(
+        normalizeText
+      );
+
+
+    if (
+      country &&
+      toolCountries.length
+    ) {
+
       if (
-        countries.indexOf(country) !== -1 ||
-        countries.indexOf("global") !== -1 ||
-        countries.indexOf("worldwide") !== -1
+        toolCountries.includes(country) ||
+        toolCountries.includes("all") ||
+        toolCountries.includes("worldwide")
       ) {
         score += 15;
-      } else {
+      }
+
+      else {
         score -= 30;
       }
+
     }
 
-    if (languages.length) {
+
+    if (
+      language &&
+      toolLanguages.length
+    ) {
+
       if (
-        languages.indexOf(language) !== -1 ||
-        languages.indexOf("multi") !== -1 ||
-        languages.indexOf("multilingual") !== -1 ||
-        languages.indexOf("global") !== -1
+        toolLanguages.includes(language) ||
+        toolLanguages.includes("all")
       ) {
         score += 10;
-      } else {
+      }
+
+      else {
         score -= 15;
       }
+
     }
+
 
     return clamp(
       score,
       0,
       100
     );
+
   }
+
 
   function passesCountryLanguageFilter(
     tool,
     answers
   ) {
+
     const country =
-      getUserCountry(answers);
+      normalizeText(
+        getUserCountry(
+          answers
+        )
+      );
+
 
     const language =
-      getUserLanguage(answers);
+      normalizeText(
+        getUserLanguage(
+          answers
+        )
+      );
 
-    const countries =
-      toArray(tool.countries)
-        .map(normalizeText);
-
-    const languages =
-      toArray(tool.languages)
-        .map(normalizeText);
 
     if (
-      countries.length &&
-      countries.indexOf(country) === -1 &&
-      countries.indexOf("global") === -1 &&
-      countries.indexOf("worldwide") === -1
+      !country &&
+      !language
     ) {
-      return false;
+      return true;
     }
 
+
     if (
-      languages.length &&
-      languages.indexOf(language) === -1 &&
-      languages.indexOf("multi") === -1 &&
-      languages.indexOf("multilingual") === -1 &&
-      languages.indexOf("global") === -1
+      country &&
+      tool.countries.length
     ) {
-      return false;
+
+      const supported =
+        tool.countries.map(
+          normalizeText
+        );
+
+
+      const countryOK =
+        supported.includes(country) ||
+        supported.includes("all") ||
+        supported.includes("worldwide");
+
+
+      if (!countryOK) {
+        return false;
+      }
+
     }
+
+
+    if (
+      language &&
+      tool.languages.length
+    ) {
+
+      const supported =
+        tool.languages.map(
+          normalizeText
+        );
+
+
+      const languageOK =
+        supported.includes(language) ||
+        supported.includes("all");
+
+
+      if (!languageOK) {
+        return false;
+      }
+
+    }
+
 
     return true;
+
   }
 
-  /* ============================================================
-     INTEGRATIONS
-     ============================================================ */
+
+  /* =========================================================
+     17. INTEGRAZIONI / ECOSISTEMA
+     ========================================================= */
 
   function integrationMatchScore(
     tool,
     answers
   ) {
-    const existing =
-      getExistingTools(answers);
 
-    if (!existing.length) {
+    const existingTools =
+      getExistingTools(
+        answers
+      );
+
+
+    if (
+      !existingTools.length
+    ) {
       return 50;
     }
+
+
+    const existingText =
+      existingTools.join(" ");
+
 
     const integrations =
-      toArray(tool.integrations)
-        .map(normalizeText);
+      tool.integrations.map(
+        normalizeText
+      );
 
-    if (!integrations.length) {
+
+    if (
+      !integrations.length
+    ) {
       return 50;
     }
+
 
     let matches = 0;
 
-    existing.forEach(function (existingName) {
-      const normalizedExisting =
-        normalizeText(existingName);
 
-      if (
-        integrations.some(function (integration) {
-          return (
-            integration === normalizedExisting ||
-            integration.indexOf(normalizedExisting) !== -1 ||
-            normalizedExisting.indexOf(integration) !== -1
+    integrations.forEach(
+      function (integration) {
+
+        const integrationText =
+          normalizeText(
+            integration
           );
-        })
-      ) {
-        matches += 1;
+
+
+        if (
+          existingText.includes(
+            integrationText
+          )
+        ) {
+
+          matches++;
+
+          return;
+
+        }
+
+
+        Object.keys(
+          TOOL_ALIASES
+        ).forEach(
+          function (key) {
+
+            const aliases =
+              TOOL_ALIASES[key];
+
+
+            if (
+              aliases.some(
+                function (alias) {
+
+                  return (
+                    integrationText.includes(
+                      normalizeText(alias)
+                    ) &&
+                    existingText.includes(
+                      normalizeText(alias)
+                    )
+                  );
+
+                }
+              )
+            ) {
+              matches++;
+            }
+
+          }
+        );
+
       }
-    });
+    );
+
+
+    if (
+      !matches
+    ) {
+      return 50;
+    }
+
 
     return clamp(
-      60 + matches * 15,
+      60 +
+      matches * 15,
       0,
       100
     );
+
   }
+
 
   function calculateIntegrationBonus(
     tool,
     answers
   ) {
+
     const score =
       integrationMatchScore(
         tool,
         answers
       );
 
-    if (score <= 50) {
+
+    if (
+      score <= 50
+    ) {
       return 0;
     }
 
+
     return clamp(
       (
-        (score - 50) / 50
-      ) * CONFIG.INTEGRATION_MAX_BONUS,
+        (score - 50) /
+        50
+      ) *
+      CONFIG.INTEGRATION_MAX_BONUS,
       0,
       CONFIG.INTEGRATION_MAX_BONUS
     );
+
   }
 
-  /* ============================================================
-     SIMPLICITY
-     ============================================================ */
+
+  /* =========================================================
+     18. SEMPLICITÀ
+     ========================================================= */
 
   function simplicityScore(
     tool,
     answers
   ) {
-    if (
-      typeof tool.simplicity === "number"
-    ) {
-      return clamp(
-        tool.simplicity,
-        0,
-        100
-      );
-    }
 
     const tech =
-      getTechLevel(answers);
+      normalizeText(
+        answers &&
+        (
+          answers.tech ||
+          answers.technicalLevel ||
+          ""
+        )
+      );
+
+
+    const automation =
+      normalizeText(
+        answers &&
+        (
+          answers.automation ||
+          answers.automationLevel ||
+          ""
+        )
+      );
+
 
     if (
-      tech === "base" ||
-      tech === "basic"
+      tool.simplicity !== undefined
     ) {
-      return 80;
+
+      const value =
+        Number(
+          tool.simplicity
+        );
+
+
+      if (
+        Number.isFinite(value)
+      ) {
+
+        return clamp(
+          value <= 10
+            ? value * 10
+            : value,
+          0,
+          100
+        );
+
+      }
+
     }
+
+
+    let score = 75;
+
 
     if (
-      tech === "avanzato" ||
-      tech === "advanced"
+      tech.includes("base")
     ) {
-      return 90;
+      score = 80;
     }
+
 
     if (
-      automationScore(tool) >= 80
+      tech.includes("avanz")
     ) {
-      return 80;
+      score = 90;
     }
 
-    return 75;
+
+    if (
+      automation.includes("ai")
+    ) {
+
+      score =
+        Math.max(
+          score,
+          80
+        );
+
+    }
+
+
+    return score;
+
   }
 
-  /* ============================================================
-     SCALABILITY
-     ============================================================ */
+
+  /* =========================================================
+     19. SCALABILITÀ
+     ========================================================= */
 
   function scalabilityScore(
     tool,
     answers
   ) {
+
     if (
-      typeof tool.scalability === "number"
+      tool.scalability !== undefined
     ) {
-      return clamp(
-        tool.scalability,
-        0,
-        100
-      );
+
+      const value =
+        Number(
+          tool.scalability
+        );
+
+
+      if (
+        Number.isFinite(value)
+      ) {
+
+        return clamp(
+          value <= 10
+            ? value * 10
+            : value,
+          0,
+          100
+        );
+
+      }
+
     }
+
 
     const team =
       normalizeText(
-        getTeamValue(answers)
+        answers &&
+        (
+          answers.team ||
+          answers.teamSize ||
+          ""
+        )
       );
 
-    if (
-      team.indexOf("50") !== -1 ||
-      team.indexOf("+") !== -1
-    ) {
-      return 90;
-    }
+
+    let score = 75;
+
 
     if (
-      team.indexOf("solo") !== -1 ||
-      team.indexOf("solo io") !== -1
+      team.includes("50")
     ) {
-      return 70;
+      score = 90;
     }
 
-    return 75;
+
+    if (
+      team.includes("solo")
+    ) {
+      score = 70;
+    }
+
+
+    return score;
+
   }
 
-  /* ============================================================
-     FUNCTIONALITY
-     ============================================================ */
+
+  /* =========================================================
+     20. FUNCTIONALITY
+     ========================================================= */
 
   function functionalityScore(
     tool,
     needsProfile
   ) {
-    const coverage =
+
+    const weighted =
       calculateWeightedNeedsCoverage(
         tool,
         needsProfile
       );
 
+
     const activeNeeds =
-      getActiveNeeds(
-        needsProfile,
-        50
+      NEEDS.filter(
+        function (need) {
+
+          return Number(
+            needsProfile[need] ||
+            0
+          ) >= 40;
+
+        }
       );
 
-    if (!activeNeeds.length) {
-      return coverage;
+
+    if (
+      !activeNeeds.length
+    ) {
+      return 60;
     }
 
-    let bonus = 0;
 
-    activeNeeds.forEach(function (need) {
-      const requirement =
-        getRequirement(
-          needsProfile,
-          need
-        );
+    let strongMatches = 0;
 
-      const capability =
-        normalizeToolNeed(
-          tool.needs &&
-          tool.needs[need]
-        );
 
-      if (
-        capability >= requirement
-      ) {
-        bonus += 1;
+    activeNeeds.forEach(
+      function (need) {
+
+        if (
+          Number(
+            tool.needs[need] ||
+            0
+          ) >=
+          Number(
+            needsProfile[need] ||
+            0
+          )
+        ) {
+          strongMatches++;
+        }
+
       }
-    });
-
-    bonus = Math.min(
-      15,
-      bonus * 3
     );
 
+
+    const bonus =
+      (
+        strongMatches /
+        activeNeeds.length
+      ) * 15;
+
+
     return clamp(
-      coverage * 0.85 +
+      weighted * 0.85 +
       bonus,
       0,
       100
     );
+
   }
 
-  /* ============================================================
-     RELEVANCE
-     ============================================================ */
 
-  function calculateRelevance(
+  /* =========================================================
+     21. HARD FILTERS
+     ========================================================= */
+
+  function isExcluded(
     tool,
-    needsProfile
+    answers
   ) {
-    let total = 0;
-    let weight = 0;
 
-    NEEDS.forEach(function (need) {
-      const requirement =
-        getRequirement(
-          needsProfile,
-          need
-        );
+    const excluded =
+      getExcludedTools(
+        answers
+      );
 
-      if (requirement <= 0) {
-        return;
-      }
 
-      const capability =
-        normalizeToolNeed(
-          tool.needs &&
-          tool.needs[need]
-        );
-
-      total +=
-        requirement *
-        (capability / 100);
-
-      weight += requirement;
-    });
-
-    if (!weight) {
-      return 0;
+    if (
+      !excluded.length
+    ) {
+      return false;
     }
 
-    return clamp(
-      (total / weight) * 100,
-      0,
-      100
+
+    const text =
+      excluded.join(" ");
+
+
+    return toolMentionedInText(
+      tool.name,
+      text
     );
+
   }
 
-  /* ============================================================
-     HARD FILTERS
-     ============================================================ */
 
   function passesHardFilters(
     tool,
     answers,
     needsProfile
   ) {
+
     if (
-      isExcludedTool(
+      !CONFIG.ENABLE_HARD_FILTERS
+    ) {
+
+      return {
+        passed: true,
+        reasons: []
+      };
+
+    }
+
+
+    const reasons = [];
+
+
+    if (
+      isExcluded(
         tool,
         answers
       )
     ) {
-      return false;
+
+      reasons.push(
+        "Escluso esplicitamente dall'utente."
+      );
+
     }
+
 
     if (
       !passesBudgetFilter(
@@ -1945,8 +3045,13 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         answers
       )
     ) {
-      return false;
+
+      reasons.push(
+        "Fuori dal budget indicato."
+      );
+
     }
+
 
     if (
       !passesCountryLanguageFilter(
@@ -1954,44 +3059,69 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         answers
       )
     ) {
-      return false;
-    }
 
-    const activeNeeds =
-      getActiveNeeds(
-        needsProfile,
-        50
+      reasons.push(
+        "Non rispetta i requisiti di paese o lingua."
       );
 
-    if (activeNeeds.length) {
-      const relevance =
-        calculateRelevance(
-          tool,
-          needsProfile
-        );
-
-      if (relevance < 12) {
-        return false;
-      }
     }
 
-    return true;
-  }
 
-  /* ============================================================
-     COMPATIBILITY
-     ============================================================ */
-
-  function calculateCompatibility(
-    tool,
-    answers,
-    needsProfile
-  ) {
-    const coverage =
+    const relevance =
       calculateWeightedNeedsCoverage(
         tool,
         needsProfile
       );
+
+
+    if (
+      relevance < 12 &&
+      needsProfile &&
+      Object.values(
+        needsProfile
+      ).some(
+        function (x) {
+          return Number(x) >= 50;
+        }
+      )
+    ) {
+
+      reasons.push(
+        "Rilevanza troppo bassa rispetto ai bisogni."
+      );
+
+    }
+
+
+    return {
+
+      passed:
+        reasons.length === 0,
+
+      reasons:
+        reasons
+
+    };
+
+  }
+
+
+  /* =========================================================
+     22. COMPATIBILITY SCORE
+     ========================================================= */
+
+  function toolCompatibility(
+    tool,
+    answers,
+    needsProfile
+  ) {
+
+    const coverageScore =
+      calculateWeightedNeedsCoverage(
+        tool,
+        needsProfile
+      );
+
 
     const functionality =
       functionalityScore(
@@ -1999,11 +3129,13 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         needsProfile
       );
 
+
     const budget =
       budgetScore(
         tool,
         answers
       );
+
 
     const integrations =
       integrationMatchScore(
@@ -2011,17 +3143,21 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         answers
       );
 
+
     const simplicity =
       simplicityScore(
         tool,
         answers
       );
 
+
     const team =
       teamScore(
         tool,
-        answers
+        answers.team ||
+        answers.teamSize
       );
+
 
     const countryLanguage =
       countryLanguageScore(
@@ -2029,55 +3165,117 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         answers
       );
 
+
     const scalability =
       scalabilityScore(
         tool,
         answers
       );
 
-    let score =
-      coverage *
-        (CONFIG.WEIGHTS.needs / 100) +
-
-      functionality *
-        (CONFIG.WEIGHTS.functionality / 100) +
-
-      budget *
-        (CONFIG.WEIGHTS.budget / 100) +
-
-      integrations *
-        (CONFIG.WEIGHTS.integrations / 100) +
-
-      simplicity *
-        (CONFIG.WEIGHTS.simplicity / 100) +
-
-      team *
-        (CONFIG.WEIGHTS.team / 100) +
-
-      countryLanguage *
-        (CONFIG.WEIGHTS.countryLanguage / 100) +
-
-      scalability *
-        (CONFIG.WEIGHTS.scalability / 100);
 
     const automation =
-      automationScore(tool);
+      automationScore(
+        tool,
+        answers.automation ||
+        answers.automationLevel
+      );
+
+
+    const weights =
+      CONFIG.WEIGHTS;
+
+
+    let score =
+
+      coverageScore *
+      (
+        weights.needs /
+        100
+      )
+
+      +
+
+      functionality *
+      (
+        weights.functionality /
+        100
+      )
+
+      +
+
+      budget *
+      (
+        weights.budget /
+        100
+      )
+
+      +
+
+      integrations *
+      (
+        weights.integrations /
+        100
+      )
+
+      +
+
+      simplicity *
+      (
+        weights.simplicity /
+        100
+      )
+
+      +
+
+      team *
+      (
+        weights.team /
+        100
+      )
+
+      +
+
+      countryLanguage *
+      (
+        weights.countryLanguage /
+        100
+      )
+
+      +
+
+      scalability *
+      (
+        weights.scalability /
+        100
+      );
+
+
+    /*
+      Correzione automazione.
+    */
 
     score =
       score * 0.90 +
       automation * 0.10;
 
+
+    /*
+      Bonus ecosistema.
+    */
+
     const existingBonus =
-      calculateExistingBonus(
+      existingToolBonus(
         tool,
         answers
       );
 
-    const preservedBonus =
-      calculatePreservedBonus(
+
+    const preserveBonus =
+      preserveExistingTools(
         tool,
         answers
       );
+
 
     const integrationBonus =
       calculateIntegrationBonus(
@@ -2085,45 +3283,128 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         answers
       );
 
+
     score +=
-      existingBonus +
-      preservedBonus +
+      Math.min(
+        CONFIG.EXISTING_TOOL_MAX_BONUS,
+        existingBonus
+      );
+
+
+    score +=
+      Math.min(
+        CONFIG.PRESERVE_TOOL_MAX_BONUS,
+        preserveBonus
+      );
+
+
+    score +=
       integrationBonus;
 
-    score = clamp(
-      score,
-      0,
-      100
-    );
+
+    score =
+      clamp(
+        score,
+        0,
+        100
+      );
+
 
     return {
-      compatibility: Math.round(score),
+
+      compatibility:
+        Math.round(
+          score * 10
+        ) / 10,
+
+      baseCompatibility:
+        Math.round(
+          score * 10
+        ) / 10,
 
       factors: {
-        coverage: Math.round(coverage),
-        functionality: Math.round(functionality),
-        budget: Math.round(budget),
-        integrations: Math.round(integrations),
-        simplicity: Math.round(simplicity),
-        team: Math.round(team),
-        countryLanguage: Math.round(countryLanguage),
-        scalability: Math.round(scalability),
-        automation: Math.round(automation)
+
+        needs:
+          Math.round(
+            coverageScore
+          ),
+
+        functionality:
+          Math.round(
+            functionality
+          ),
+
+        budget:
+          Math.round(
+            budget
+          ),
+
+        integrations:
+          Math.round(
+            integrations
+          ),
+
+        simplicity:
+          Math.round(
+            simplicity
+          ),
+
+        team:
+          Math.round(
+            team
+          ),
+
+        countryLanguage:
+          Math.round(
+            countryLanguage
+          ),
+
+        scalability:
+          Math.round(
+            scalability
+          ),
+
+        automation:
+          Math.round(
+            automation
+          )
+
       },
 
       bonuses: {
-        existing: Math.round(existingBonus),
-        preserved: Math.round(preservedBonus),
-        integration: Math.round(integrationBonus)
+
+        existing:
+          existingBonus,
+
+        preserved:
+          preserveBonus,
+
+        integrations:
+          integrationBonus
+
       }
+
     };
+
   }
 
-  /* ============================================================
-     BUSINESS SCORE
-     ============================================================ */
 
-  function businessScore(tool) {
+  /* =========================================================
+     23. BUSINESS SCORE
+     ========================================================= */
+
+  function calculateBusinessScore(
+    tool
+  ) {
+
+    /*
+      Il Business Score NON modifica
+      il Compatibility Score.
+
+      Serve esclusivamente come tie-break
+      tra strumenti con compatibilità molto vicina.
+    */
+
     if (
       !tool ||
       !tool.business
@@ -2131,174 +3412,788 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
       return null;
     }
 
+
     const business =
       tool.business;
 
+
     const values = {
+
       commission:
         normalizeScore(
-          business.commission
+          business.commission,
+          null
         ),
 
       recurring:
         normalizeScore(
-          business.recurring
+          business.recurring,
+          null
         ),
 
       conversion:
         normalizeScore(
-          business.conversion
+          business.conversion,
+          null
         ),
 
       productPrice:
         normalizeScore(
-          business.productPrice
+          business.productPrice,
+          null
         ),
 
       attribution:
         normalizeScore(
-          business.attribution
+          business.attribution,
+          null
         ),
 
       marketSize:
         normalizeScore(
-          business.marketSize
+          business.marketSize,
+          null
         ),
 
       reliability:
         normalizeScore(
-          business.reliability
+          business.reliability,
+          null
         )
+
     };
 
-    let score =
-      values.commission *
-        (CONFIG.BUSINESS_WEIGHTS.commission / 100) +
 
-      values.recurring *
-        (CONFIG.BUSINESS_WEIGHTS.recurring / 100) +
+    const validValues =
+      Object.values(
+        values
+      ).filter(
+        function (x) {
+          return x !== null;
+        }
+      );
 
-      values.conversion *
-        (CONFIG.BUSINESS_WEIGHTS.conversion / 100) +
 
-      values.productPrice *
-        (CONFIG.BUSINESS_WEIGHTS.productPrice / 100) +
+    if (
+      !validValues.length
+    ) {
+      return null;
+    }
 
-      values.attribution *
-        (CONFIG.BUSINESS_WEIGHTS.attribution / 100) +
 
-      values.marketSize *
-        (CONFIG.BUSINESS_WEIGHTS.marketSize / 100) +
+    let score = 0;
 
-      values.reliability *
-        (CONFIG.BUSINESS_WEIGHTS.reliability / 100);
+    let totalWeight = 0;
 
-    return {
-      score: Math.round(
-        clamp(
-          score,
-          0,
-          100
-        )
-      ),
 
-      factors: values
-    };
+    Object.keys(
+      CONFIG.BUSINESS_WEIGHTS
+    ).forEach(
+      function (key) {
+
+        const value =
+          values[key];
+
+
+        if (
+          value === null
+        ) {
+          return;
+        }
+
+
+        const weight =
+          CONFIG.BUSINESS_WEIGHTS[key];
+
+
+        score +=
+          value * weight;
+
+
+        totalWeight +=
+          weight;
+
+      }
+    );
+
+
+    if (
+      !totalWeight
+    ) {
+      return null;
+    }
+
+
+    return Math.round(
+      (
+        score /
+        totalWeight
+      ) * 10
+    ) / 10;
+
   }
 
-  /* ============================================================
-     REDUNDANCY
-     ============================================================ */
+
+  /* =========================================================
+     24. CATEGORY / OVERLAP HELPERS
+     ========================================================= */
 
   function calculateFunctionalOverlap(
     toolA,
     toolB,
     needsProfile
   ) {
-    const relevantNeeds =
-      getActiveNeeds(
-        needsProfile,
-        50
-      );
 
-    if (!relevantNeeds.length) {
+    let weightedOverlap = 0;
+
+    let totalWeight = 0;
+
+
+    NEEDS.forEach(
+      function (need) {
+
+        const requirement =
+          Number(
+            needsProfile &&
+            needsProfile[need]
+              ? needsProfile[need]
+              : 0
+          );
+
+
+        if (
+          requirement < 40
+        ) {
+          return;
+        }
+
+
+        const a =
+          Number(
+            toolA &&
+            toolA.needs &&
+            toolA.needs[need]
+              ? toolA.needs[need]
+              : 0
+          );
+
+
+        const b =
+          Number(
+            toolB &&
+            toolB.needs &&
+            toolB.needs[need]
+              ? toolB.needs[need]
+              : 0
+          );
+
+
+        const maxCapability =
+          Math.max(
+            a,
+            b
+          );
+
+
+        if (
+          maxCapability <= 0
+        ) {
+          return;
+        }
+
+
+        const minCapability =
+          Math.min(
+            a,
+            b
+          );
+
+
+        const overlap =
+          minCapability /
+          maxCapability;
+
+
+        weightedOverlap +=
+          overlap *
+          requirement;
+
+
+        totalWeight +=
+          requirement;
+
+      }
+    );
+
+
+    if (
+      !totalWeight
+    ) {
       return 0;
     }
 
-    let overlapping = 0;
-    let considered = 0;
-
-    relevantNeeds.forEach(function (need) {
-      const capA =
-        normalizeToolNeed(
-          toolA.needs &&
-          toolA.needs[need]
-        );
-
-      const capB =
-        normalizeToolNeed(
-          toolB.needs &&
-          toolB.needs[need]
-        );
-
-      const requirement =
-        getRequirement(
-          needsProfile,
-          need
-        );
-
-      if (
-        requirement <= 0
-      ) {
-        return;
-      }
-
-      considered += 1;
-
-      if (
-        capA >= 60 &&
-        capB >= 60
-      ) {
-        overlapping += 1;
-      }
-    });
-
-    if (!considered) {
-      return 0;
-    }
 
     return clamp(
-      overlapping / considered,
+      weightedOverlap /
+      totalWeight,
       0,
       1
     );
+
   }
+
+
+  function sameCategory(
+    toolA,
+    toolB
+  ) {
+
+    const categoryA =
+      getToolCategory(
+        toolA
+      );
+
+
+    const categoryB =
+      getToolCategory(
+        toolB
+      );
+
+
+    return (
+      categoryA &&
+      categoryB &&
+      categoryA === categoryB
+    );
+
+  }
+
+
+  function calculateCategoryDiversity(
+    candidate,
+    selectedTools
+  ) {
+
+    if (
+      !candidate
+    ) {
+      return 0;
+    }
+
+
+    const candidateCategory =
+      getToolCategory(
+        candidate
+      );
+
+
+    if (
+      !candidateCategory
+    ) {
+      return 50;
+    }
+
+
+    const alreadyUsed =
+      (
+        selectedTools || []
+      ).some(
+        function (tool) {
+
+          return (
+            getToolCategory(tool) ===
+            candidateCategory
+          );
+
+        }
+      );
+
+
+    return alreadyUsed
+      ? 0
+      : 100;
+
+  }
+
+
+  /* =========================================================
+     25. RANKING
+     ========================================================= */
+
+  function rankTools(
+    answers,
+    needsProfile,
+    options
+  ) {
+
+    answers =
+      answers || {};
+
+
+    needsProfile =
+      needsProfile ||
+      buildNeedsProfile(
+        answers
+      );
+
+
+    options =
+      options || {};
+
+
+    const database =
+      getDatabase();
+
+
+    const ranked = [];
+
+
+    database.forEach(
+      function (rawTool) {
+
+        const tool =
+          normalizeTool(
+            rawTool
+          );
+
+
+        const filters =
+          passesHardFilters(
+            tool,
+            answers,
+            needsProfile
+          );
+
+
+        if (
+          !filters.passed &&
+          !options.includeFiltered
+        ) {
+          return;
+        }
+
+
+        const compatibility =
+          toolCompatibility(
+            tool,
+            answers,
+            needsProfile
+          );
+
+
+        const businessScore =
+          calculateBusinessScore(
+            tool
+          );
+
+
+        const coverage =
+          calculateCoverage(
+            tool,
+            needsProfile
+          );
+
+
+        const coveredNeeds =
+          NEEDS.filter(
+            function (need) {
+
+              return (
+                Number(
+                  coverage[need] ||
+                  0
+                ) >=
+                Math.max(
+                  40,
+                  Number(
+                    needsProfile[need] ||
+                    0
+                  ) * 0.6
+                )
+              );
+
+            }
+          );
+
+
+        const relevance =
+          calculateWeightedNeedsCoverage(
+            tool,
+            needsProfile
+          );
+
+
+        const reasons =
+          buildToolReasons(
+            tool,
+            answers,
+            needsProfile,
+            compatibility,
+            coveredNeeds
+          );
+
+
+        ranked.push({
+
+          ...tool,
+
+          compatibility:
+            compatibility.compatibility,
+
+          baseCompatibility:
+            compatibility.baseCompatibility,
+
+          compatibilityScore:
+            compatibility.compatibility,
+
+          businessScore,
+
+          businessScoreAvailable:
+            businessScore !== null,
+
+          compatibilityFactors:
+            compatibility.factors,
+
+          bonuses:
+            compatibility.bonuses,
+
+          coverage,
+
+          coveredNeeds,
+
+          relevance,
+
+          newCoverage: 0,
+
+          gapCoverage: 0,
+
+          redundancyPenalty: 0,
+
+          stackScore:
+            compatibility.compatibility,
+
+          role:
+            "candidate",
+
+          reasons,
+
+          why:
+            reasons,
+
+          hardFilterPassed:
+            filters.passed,
+
+          hardFilterReasons:
+            filters.reasons
+
+        });
+
+      }
+    );
+
+
+    /*
+      Ranking individuale.
+
+      Business Score NON è il criterio principale.
+    */
+
+    ranked.sort(
+      function (a, b) {
+
+        const compatibilityDifference =
+          b.compatibility -
+          a.compatibility;
+
+
+        if (
+          Math.abs(
+            compatibilityDifference
+          ) >
+          CONFIG.COMPATIBILITY_TIE_THRESHOLD
+        ) {
+
+          return compatibilityDifference;
+
+        }
+
+
+        const relevanceDifference =
+          b.relevance -
+          a.relevance;
+
+
+        if (
+          Math.abs(
+            relevanceDifference
+          ) >
+          CONFIG.RELEVANCE_TIE_THRESHOLD
+        ) {
+
+          return relevanceDifference;
+
+        }
+
+
+        /*
+          Business Score solo tie-break.
+        */
+
+        if (
+          a.businessScore !== null &&
+          b.businessScore !== null
+        ) {
+
+          const businessDifference =
+            b.businessScore -
+            a.businessScore;
+
+
+          if (
+            Math.abs(
+              businessDifference
+            ) > 0.1
+          ) {
+
+            return businessDifference;
+
+          }
+
+        }
+
+
+        if (
+          b.coveredNeeds.length !==
+          a.coveredNeeds.length
+        ) {
+
+          return (
+            b.coveredNeeds.length -
+            a.coveredNeeds.length
+          );
+
+        }
+
+
+        return a.name.localeCompare(
+          b.name
+        );
+
+      }
+    );
+
+
+    ranked.forEach(
+      function (tool, index) {
+
+        tool.rank =
+          index + 1;
+
+      }
+    );
+
+
+    return ranked;
+
+  }
+
+
+  /* =========================================================
+     26. MOTIVAZIONI
+     ========================================================= */
+
+  function buildToolReasons(
+    tool,
+    answers,
+    needsProfile,
+    compatibility,
+    coveredNeeds
+  ) {
+
+    const reasons = [];
+
+
+    const importantNeeds =
+      NEEDS
+        .filter(
+          function (need) {
+
+            return Number(
+              needsProfile[need] ||
+              0
+            ) >= 60;
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return (
+              Number(
+                needsProfile[b] ||
+                0
+              ) -
+              Number(
+                needsProfile[a] ||
+                0
+              )
+            );
+
+          }
+        )
+        .slice(
+          0,
+          3
+        );
+
+
+    importantNeeds.forEach(
+      function (need) {
+
+        if (
+          Number(
+            tool.needs[need] ||
+            0
+          ) >= 60
+        ) {
+
+          reasons.push(
+            "copre bene " +
+            NEED_LABELS[need]
+              .toLowerCase()
+          );
+
+        }
+
+      }
+    );
+
+
+    if (
+      compatibility.factors.integrations >= 75
+    ) {
+
+      reasons.push(
+        "si integra bene con gli strumenti già utilizzati"
+      );
+
+    }
+
+
+    if (
+      compatibility.bonuses.existing > 0
+    ) {
+
+      reasons.push(
+        "valorizza un ecosistema già presente"
+      );
+
+    }
+
+
+    if (
+      compatibility.factors.budget >= 90
+    ) {
+
+      reasons.push(
+        "è coerente con il budget indicato"
+      );
+
+    }
+
+
+    if (
+      compatibility.factors.simplicity >= 85
+    ) {
+
+      reasons.push(
+        "è relativamente semplice da adottare"
+      );
+
+    }
+
+
+    if (
+      compatibility.factors.automation >= 85
+    ) {
+
+      reasons.push(
+        "supporta bene il livello di automazione richiesto"
+      );
+
+    }
+
+
+    if (
+      !reasons.length
+    ) {
+
+      reasons.push(
+        "ha una buona compatibilità generale con il profilo"
+      );
+
+    }
+
+
+    return uniqueArray(
+      reasons
+    );
+
+  }
+
+
+  /* =========================================================
+     27. RIDONDANZA
+     ========================================================= */
 
   function calculateRedundancy(
     toolA,
     toolB,
     needsProfile
   ) {
-    if (!toolA || !toolB) {
+
+    if (
+      !toolA ||
+      !toolB
+    ) {
       return 0;
     }
 
+
     let penalty = 0;
 
+
     const categoryA =
-      normalizeText(
-        toolA.category
+      getToolCategory(
+        toolA
       );
+
 
     const categoryB =
-      normalizeText(
-        toolB.category
+      getToolCategory(
+        toolB
       );
 
-    const sameCategory =
+
+    /*
+      Stessa categoria.
+    */
+
+    if (
       categoryA &&
       categoryB &&
-      categoryA === categoryB;
+      categoryA === categoryB
+    ) {
+
+      penalty +=
+        CONFIG.CATEGORY_REDUNDANCY_PENALTY;
+
+    }
+
+
+    /*
+      Sovrapposizione funzionale.
+    */
 
     const overlap =
       calculateFunctionalOverlap(
@@ -2307,649 +4202,753 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         needsProfile
       );
 
-    if (sameCategory) {
-      penalty +=
-        CONFIG.CATEGORY_REDUNDANCY_PENALTY;
-    }
 
     if (
-      overlap >= 0.80
-    ) {
-      penalty +=
-        CONFIG.VERY_HIGH_OVERLAP_PENALTY;
-    } else if (
       overlap >=
       CONFIG.SAME_CATEGORY_OVERLAP_THRESHOLD
     ) {
+
       penalty +=
         CONFIG.STRONG_CATEGORY_REDUNDANCY_PENALTY;
-    } else {
-      penalty +=
-        overlap *
-        CONFIG.STRONG_CATEGORY_REDUNDANCY_PENALTY;
+
     }
 
-    return clamp(
-      penalty,
-      0,
-      CONFIG.MAX_REDUNDANCY_PENALTY
+
+    if (
+      overlap >=
+      CONFIG.HIGH_OVERLAP_THRESHOLD
+    ) {
+
+      penalty +=
+        CONFIG.VERY_HIGH_OVERLAP_PENALTY;
+
+    }
+
+
+    /*
+      Se due tool appartengono alla stessa categoria
+      e hanno forte sovrapposizione, sono praticamente
+      alternativi.
+    */
+
+    if (
+      categoryA &&
+      categoryB &&
+      categoryA === categoryB &&
+      overlap >= 0.55
+    ) {
+
+      penalty += 8;
+
+    }
+
+
+    return Math.round(
+      clamp(
+        penalty,
+        0,
+        CONFIG.MAX_REDUNDANCY_PENALTY
+      )
     );
+
   }
 
-  /* ============================================================
-     NEW COVERAGE
-     ============================================================ */
+
+  /* =========================================================
+     28. NUOVA COPERTURA
+     ========================================================= */
 
   function calculateNewCoverage(
     candidate,
     selectedTools,
     needsProfile
   ) {
-    const selected =
-      selectedTools || [];
 
-    let weightedNew = 0;
-    let totalWeight = 0;
+    let value = 0;
 
-    NEEDS.forEach(function (need) {
-      const requirement =
-        getRequirement(
-          needsProfile,
-          need
-        );
 
-      if (
-        requirement <= 0
-      ) {
-        return;
-      }
+    NEEDS.forEach(
+      function (need) {
 
-      const candidateCapability =
-        normalizeToolNeed(
-          candidate.needs &&
-          candidate.needs[need]
-        );
-
-      let existingCapability = 0;
-
-      selected.forEach(function (tool) {
-        const capability =
-          normalizeToolNeed(
-            tool.needs &&
-            tool.needs[need]
+        const required =
+          Number(
+            needsProfile[need] ||
+            0
           );
 
-        existingCapability =
-          Math.max(
-            existingCapability,
-            capability
+
+        if (
+          required < 40
+        ) {
+          return;
+        }
+
+
+        const candidateCoverage =
+          Number(
+            candidate.needs[need] ||
+            0
           );
-      });
 
-      const newCapability =
-        Math.max(
-          0,
-          candidateCapability -
-            existingCapability
-        );
 
-      weightedNew +=
-        requirement *
+        if (
+          candidateCoverage <= 0
+        ) {
+          return;
+        }
+
+
+        let alreadyCovered = 0;
+
+
         (
-          newCapability / 100
+          selectedTools || []
+        ).forEach(
+          function (tool) {
+
+            alreadyCovered =
+              Math.max(
+                alreadyCovered,
+                Number(
+                  tool.needs[need] ||
+                  0
+                )
+              );
+
+          }
         );
 
-      totalWeight += requirement;
-    });
 
-    if (
-      totalWeight <= 0
-    ) {
-      return 0;
-    }
+        const additional =
+          Math.max(
+            0,
+            candidateCoverage -
+            alreadyCovered
+          );
 
-    return clamp(
-      (
-        weightedNew /
-        totalWeight
-      ) * 100,
-      0,
-      100
+
+        value +=
+          additional *
+          (
+            required /
+            100
+          );
+
+      }
     );
+
+
+    return Math.round(
+      value * 10
+    ) / 10;
+
   }
 
-  /* ============================================================
-     PRIMARY GAPS
-     ============================================================ */
+
+  /* =========================================================
+     29. GAP ANALYSIS
+     ========================================================= */
 
   function getPrimaryGapNeeds(
     primary,
     needsProfile
   ) {
-    if (!primary) {
-      return [];
+
+    const gaps = [];
+
+
+    if (
+      !primary ||
+      !needsProfile
+    ) {
+      return gaps;
     }
 
-    return NEEDS
-      .map(function (need) {
-        const requirement =
-          getRequirement(
-            needsProfile,
-            need
+
+    NEEDS.forEach(
+      function (need) {
+
+        const required =
+          Number(
+            needsProfile[need] ||
+            0
           );
 
+
+        if (
+          required <
+          CONFIG.IMPORTANT_NEED_THRESHOLD
+        ) {
+          return;
+        }
+
+
         const capability =
-          normalizeToolNeed(
+          Number(
             primary.needs &&
             primary.needs[need]
+              ? primary.needs[need]
+              : 0
           );
+
 
         const gap =
           Math.max(
             0,
-            requirement -
-              capability
+            required -
+            capability
           );
 
-        return {
-          need,
-          requirement,
-          capability,
-          gap
-        };
-      })
-      .filter(function (item) {
+
+        if (
+          gap >=
+          CONFIG.MIN_PRIMARY_GAP
+        ) {
+
+          gaps.push({
+
+            id:
+              need,
+
+            need:
+              need,
+
+            label:
+              NEED_LABELS[need],
+
+            requested:
+              Math.round(
+                required
+              ),
+
+            primaryCoverage:
+              Math.round(
+                capability
+              ),
+
+            gap:
+              Math.round(
+                gap
+              )
+
+          });
+
+        }
+
+      }
+    );
+
+
+    gaps.sort(
+      function (a, b) {
+
         return (
-          item.requirement >= 50 &&
-          item.gap >=
-            CONFIG.MIN_PRIMARY_GAP
+          b.gap -
+          a.gap
         );
-      })
-      .sort(function (a, b) {
-        return b.gap - a.gap;
-      });
+
+      }
+    );
+
+
+    return gaps;
+
   }
+
+
+  /*
+    Misura quanto un candidato risolve
+    le lacune ancora aperte.
+
+    È diverso da New Coverage:
+
+    New Coverage
+    =
+    quanta capacità nuova porta.
+
+    Gap Coverage
+    =
+    quanta parte delle lacune importanti
+    risolve realmente.
+  */
 
   function calculateGapCoverage(
     candidate,
     selectedTools,
     needsProfile
   ) {
-    const stack =
-      selectedTools || [];
 
-    const primary =
-      stack[0];
-
-    if (!primary) {
-      return calculateNewCoverage(
-        candidate,
-        stack,
-        needsProfile
-      );
-    }
-
-    const gaps =
-      getPrimaryGapNeeds(
-        primary,
-        needsProfile
-      );
-
-    if (!gaps.length) {
+    if (
+      !candidate ||
+      !needsProfile
+    ) {
       return 0;
     }
 
-    let total = 0;
-    let weight = 0;
 
-    gaps.forEach(function (gap) {
-      const candidateCapability =
-        normalizeToolNeed(
-          candidate.needs &&
-          candidate.needs[gap.need]
-        );
+    let totalGap = 0;
 
-      const covered =
-        Math.min(
-          gap.gap,
-          candidateCapability
-        );
+    let resolvedGap = 0;
 
-      total +=
-        gap.requirement *
+
+    NEEDS.forEach(
+      function (need) {
+
+        const required =
+          Number(
+            needsProfile[need] ||
+            0
+          );
+
+
+        if (
+          required <
+          CONFIG.IMPORTANT_NEED_THRESHOLD
+        ) {
+          return;
+        }
+
+
+        let currentCoverage = 0;
+
+
         (
-          covered /
-          Math.max(
-            1,
-            gap.gap
-          )
+          selectedTools || []
+        ).forEach(
+          function (tool) {
+
+            currentCoverage =
+              Math.max(
+                currentCoverage,
+                Number(
+                  tool.needs &&
+                  tool.needs[need]
+                    ? tool.needs[need]
+                    : 0
+                )
+              );
+
+          }
         );
 
-      weight +=
-        gap.requirement;
-    });
 
-    if (!weight) {
+        const gap =
+          Math.max(
+            0,
+            required -
+            currentCoverage
+          );
+
+
+        if (
+          gap <= 0
+        ) {
+          return;
+        }
+
+
+        const candidateCapability =
+          Number(
+            candidate.needs &&
+            candidate.needs[need]
+              ? candidate.needs[need]
+              : 0
+          );
+
+
+        const additional =
+          Math.max(
+            0,
+            candidateCapability -
+            currentCoverage
+          );
+
+
+        const resolved =
+          Math.min(
+            gap,
+            additional
+          );
+
+
+        /*
+          Il peso del bisogno è proporzionale
+          alla sua importanza.
+        */
+
+        const weightedGap =
+          gap *
+          (
+            required /
+            100
+          );
+
+
+        const weightedResolved =
+          resolved *
+          (
+            required /
+            100
+          );
+
+
+        totalGap +=
+          weightedGap;
+
+
+        resolvedGap +=
+          weightedResolved;
+
+      }
+    );
+
+
+    if (
+      totalGap <= 0
+    ) {
       return 0;
     }
+
 
     return clamp(
       (
-        total /
-        weight
+        resolvedGap /
+        totalGap
       ) * 100,
       0,
       100
     );
+
   }
 
-  /* ============================================================
-     PRIMARY SELECTION
-     ============================================================ */
 
-  function choosePrimary(
-    rankedTools,
-    needsProfile
-  ) {
-    if (!rankedTools.length) {
-      return null;
-    }
+  /*
+    Versione quantitativa della lacuna.
 
-    const dominant =
-      getDominantNeeds(
-        needsProfile
-      );
+    Restituisce il valore ponderato
+    delle esigenze non sufficientemente coperte.
+  */
 
-    if (!dominant.length) {
-      return rankedTools[0];
-    }
-
-    const candidates =
-      rankedTools.filter(function (tool) {
-        return (
-          tool.compatibility >=
-          CONFIG.MIN_PRIMARY_COMPATIBILITY
-        );
-      });
-
-    if (!candidates.length) {
-      return rankedTools[0];
-    }
-
-    let best =
-      candidates[0];
-
-    let bestPrimaryScore =
-      -Infinity;
-
-    candidates.forEach(function (tool) {
-      let primaryScore =
-        tool.compatibility * 0.70 +
-        tool.relevance * 0.30;
-
-      dominant
-        .slice(0, 3)
-        .forEach(function (need, index) {
-          const capability =
-            normalizeToolNeed(
-              tool.needs &&
-              tool.needs[need]
-            );
-
-          const weight =
-            index === 0
-              ? 0.18
-              : index === 1
-                ? 0.10
-                : 0.05;
-
-          primaryScore +=
-            capability * weight;
-        });
-
-      if (
-        primaryScore >
-        bestPrimaryScore
-      ) {
-        bestPrimaryScore =
-          primaryScore;
-
-        best = tool;
-      }
-    });
-
-    return best;
-  }
-
-  /* ============================================================
-     STACK
-     ============================================================ */
-
-  function buildStack(
-    rankedTools,
+  function calculatePrimaryGapValue(
     primary,
-    answers,
     needsProfile
   ) {
-    if (!primary) {
-      return [];
-    }
 
-    const stack = [
-      {
-        ...primary,
-        role: "primary",
-        stackScore:
-          primary.compatibility,
-        gapCoverage: 100,
-        newCoverage: 100,
-        redundancyPenalty: 0
-      }
-    ];
-
-    const primaryGaps =
-      getPrimaryGapNeeds(
-        primary,
-        needsProfile
-      );
-
-    /*
-      REGOLA V1.2:
-
-      Se il Primary copre già sufficientemente
-      le esigenze importanti, NON costruiamo
-      uno stack artificiale.
-
-      Quindi Salesforce può rimanere da solo
-      se CRM, vendite, automazioni, email,
-      follow-up ecc. sono già adeguatamente
-      coperti.
-    */
-
-    if (!primaryGaps.length) {
-      return stack;
-    }
-
-    const candidates =
-      rankedTools.filter(function (candidate) {
-        if (
-          candidate.id === primary.id
-        ) {
-          return false;
-        }
-
-        if (
-          !passesHardFilters(
-            candidate,
-            answers,
-            needsProfile
-          )
-        ) {
-          return false;
-        }
-
-        return true;
-      });
-
-    while (
-      stack.length <
-        CONFIG.MAX_STACK_TOOLS
+    if (
+      !primary ||
+      !needsProfile
     ) {
-      let bestCandidate = null;
-      let bestScore = -Infinity;
+      return 0;
+    }
 
-      candidates.forEach(function (candidate) {
+
+    let value = 0;
+
+
+    NEEDS.forEach(
+      function (need) {
+
+        const required =
+          Number(
+            needsProfile[need] ||
+            0
+          );
+
+
         if (
-          stack.some(function (selected) {
-            return (
-              selected.id ===
-              candidate.id
-            );
-          })
+          required <
+          CONFIG.IMPORTANT_NEED_THRESHOLD
         ) {
           return;
         }
 
-        const sameCategory =
-          normalizeText(
-            candidate.category
-          ) ===
-          normalizeText(
-            primary.category
+
+        const capability =
+          Number(
+            primary.needs &&
+            primary.needs[need]
+              ? primary.needs[need]
+              : 0
           );
 
-        /*
-          Alternative dello stesso ruolo:
-          fuori dallo stack.
 
-          Eccezione:
-          se l'utente ha esplicitamente
-          dichiarato di usare/conservare
-          quel tool, possiamo mantenerlo.
-        */
+        const gap =
+          Math.max(
+            0,
+            required -
+            capability
+          );
+
 
         if (
-          sameCategory &&
-          !isExistingTool(
-            candidate,
-            answers
-          ) &&
-          !isPreservedTool(
-            candidate,
-            answers
-          )
-        ) {
-          return;
-        }
-
-        const gapCoverage =
-          calculateGapCoverage(
-            candidate,
-            stack,
-            needsProfile
-          );
-
-        const newCoverage =
-          calculateNewCoverage(
-            candidate,
-            stack,
-            needsProfile
-          );
-
-        /*
-          Il complemento deve aggiungere
-          una quantità significativa di
-          copertura nuova.
-        */
-
-        if (
-          gapCoverage <
+          gap <
           CONFIG.MIN_PRIMARY_GAP
         ) {
           return;
         }
 
-        if (
-          newCoverage <
-          CONFIG.MIN_NEW_COVERAGE
-        ) {
-          return;
+
+        value +=
+          gap *
+          (
+            required /
+            100
+          );
+
+      }
+    );
+
+
+    return Math.round(
+      value * 10
+    ) / 10;
+
+  }
+
+
+  /* =========================================================
+     30. PRIMARY TOOL
+     ========================================================= */
+
+  function choosePrimary(
+    rankedTools,
+    answers,
+    needsProfile
+  ) {
+
+    if (
+      !rankedTools.length
+    ) {
+      return null;
+    }
+
+
+    const viable =
+      rankedTools.filter(
+        function (tool) {
+
+          return (
+            tool.hardFilterPassed !== false &&
+            tool.compatibility >=
+            CONFIG.MIN_PRIMARY_COMPATIBILITY
+          );
+
         }
+      );
 
-        let redundancy = 0;
 
-        stack.forEach(function (selected) {
-          redundancy =
-            Math.max(
-              redundancy,
-              calculateRedundancy(
-                candidate,
-                selected,
-                needsProfile
+    if (
+      !viable.length
+    ) {
+      return rankedTools[0] || null;
+    }
+
+
+    /*
+      Individua i bisogni dominanti.
+    */
+
+    const dominantNeeds =
+      NEEDS
+        .filter(
+          function (need) {
+
+            return Number(
+              needsProfile &&
+              needsProfile[need]
+                ? needsProfile[need]
+                : 0
+            ) >=
+            CONFIG.DOMINANT_NEED_THRESHOLD;
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return (
+              Number(
+                needsProfile[b] ||
+                0
+              ) -
+              Number(
+                needsProfile[a] ||
+                0
               )
             );
-        });
 
-        if (
-          redundancy >
-          CONFIG.MAX_REDUNDANCY_PENALTY
-        ) {
-          return;
-        }
+          }
+        )
+        .slice(
+          0,
+          3
+        );
 
-        const integrationBonus =
-          calculateIntegrationBonus(
-            candidate,
-            answers
-          );
 
-        const existingBonus =
-          calculateExistingBonus(
-            candidate,
-            answers
-          );
+    const scored =
+      viable.map(
+        function (tool) {
 
-        const categoryDiversity =
-          sameCategory
-            ? 0
-            : 10;
+          let primaryFit =
+            tool.compatibility;
 
-        /*
-          STACK SCORE V1.2
 
-          45% = capacità di colmare
-                una lacuna del Primary
-          25% = nuova copertura
-          15% = compatibilità generale
-           5% = integrazione
-           5% = strumento già utilizzato
-           5% = diversità di categoria
+          if (
+            dominantNeeds.length
+          ) {
 
-          La ridondanza viene sottratta
-          separatamente e con penalità forte.
-        */
+            let dominantCoverage = 0;
 
-        const score =
-          gapCoverage * 0.45 +
-          newCoverage * 0.25 +
-          candidate.compatibility * 0.15 +
-          integrationBonus * 0.05 +
-          existingBonus * 0.05 +
-          categoryDiversity * 0.05 -
-          redundancy * 0.80;
+            let dominantWeight = 0;
 
-        if (
-          score >
-          bestScore
-        ) {
-          bestScore =
-            score;
 
-          bestCandidate = {
-            ...candidate,
-            role: "complementary",
-            gapCoverage:
-              Math.round(
-                gapCoverage
-              ),
-            newCoverage:
-              Math.round(
-                newCoverage
-              ),
-            redundancyPenalty:
-              Math.round(
-                redundancy
-              ),
-            stackScore:
-              Math.round(
-                clamp(
-                  score,
-                  0,
-                  100
-                )
-              )
+            dominantNeeds.forEach(
+              function (need) {
+
+                const requirement =
+                  Number(
+                    needsProfile[need] ||
+                    0
+                  );
+
+
+                const capability =
+                  Number(
+                    tool.needs[need] ||
+                    0
+                  );
+
+
+                dominantCoverage +=
+                  Math.min(
+                    requirement,
+                    capability
+                  ) *
+                  (
+                    requirement /
+                    100
+                  );
+
+
+                dominantWeight +=
+                  requirement;
+
+              }
+            );
+
+
+            if (
+              dominantWeight > 0
+            ) {
+
+              const dominantScore =
+                (
+                  dominantCoverage /
+                  dominantWeight
+                ) * 100;
+
+
+              /*
+                Compatibility resta il fattore principale.
+                La copertura del bisogno dominante serve
+                solo a rafforzare la scelta del Primary.
+              */
+
+              primaryFit =
+                tool.compatibility * 0.75 +
+                dominantScore * 0.25;
+
+            }
+
+          }
+
+
+          return {
+
+            tool:
+              tool,
+
+            primaryFit:
+              primaryFit
+
           };
+
         }
-      });
-
-      if (!bestCandidate) {
-        break;
-      }
-
-      stack.push(
-        bestCandidate
-      );
-    }
-
-    return stack;
-  }
-
-  /* ============================================================
-     ALTERNATIVES
-     ============================================================ */
-
-  function getAlternatives(
-    rankedTools,
-    primary,
-    needsProfile
-  ) {
-    if (!primary) {
-      return [];
-    }
-
-    const primaryCategory =
-      normalizeText(
-        primary.category
       );
 
-    return rankedTools
-      .filter(function (tool) {
+
+    scored.sort(
+      function (a, b) {
+
         if (
-          tool.id === primary.id
+          b.primaryFit !==
+          a.primaryFit
         ) {
-          return false;
-        }
 
-        const category =
-          normalizeText(
-            tool.category
+          return (
+            b.primaryFit -
+            a.primaryFit
           );
 
-        if (
-          category !==
-          primaryCategory
-        ) {
-          return false;
         }
+
 
         return (
-          tool.compatibility >=
-          CONFIG.MIN_PRIMARY_COMPATIBILITY
+          b.tool.compatibility -
+          a.tool.compatibility
         );
-      })
-      .slice(0, 6)
-      .map(function (tool) {
-        return {
-          ...tool,
-          role: "alternative"
-        };
-      });
+
+      }
+    );
+
+
+    return scored[0]
+      ? scored[0].tool
+      : viable[0];
+
   }
 
-  function getComplementaryTools(
+
+  /* =========================================================
+     31. STACK BUILDER — V1.3
+     ========================================================= */
+
+  function buildStack(
     rankedTools,
-    stack,
+    answers,
     needsProfile
   ) {
+
     if (
-      !stack ||
-      !stack.length
+      !rankedTools.length
     ) {
       return [];
     }
 
+
     const primary =
-      stack[0];
+      choosePrimary(
+        rankedTools,
+        answers,
+        needsProfile
+      );
+
+
+    if (!primary) {
+      return [];
+    }
+
+
+    primary.role =
+      "primary";
+
+
+    /*
+      ---------------------------------------------------------
+      STEP 1
+      GAP ANALYSIS DEL PRIMARY
+      ---------------------------------------------------------
+    */
 
     const primaryGaps =
       getPrimaryGapNeeds(
@@ -2957,171 +4956,1465 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
         needsProfile
       );
 
-    if (!primaryGaps.length) {
-      return [];
-    }
 
-    return rankedTools
-      .filter(function (tool) {
-        if (
-          stack.some(function (selected) {
-            return (
-              selected.id ===
-              tool.id
-            );
-          })
-        ) {
-          return false;
-        }
-
-        const gapCoverage =
-          calculateGapCoverage(
-            tool,
-            stack,
-            needsProfile
-          );
-
-        const newCoverage =
-          calculateNewCoverage(
-            tool,
-            stack,
-            needsProfile
-          );
-
-        return (
-          gapCoverage >=
-            CONFIG.MIN_PRIMARY_GAP &&
-          newCoverage >=
-            CONFIG.MIN_NEW_COVERAGE
-        );
-      })
-      .map(function (tool) {
-        return {
-          ...tool,
-          role: "complementary-candidate",
-          gapCoverage:
-            Math.round(
-              calculateGapCoverage(
-                tool,
-                stack,
-                needsProfile
-              )
-            ),
-          newCoverage:
-            Math.round(
-              calculateNewCoverage(
-                tool,
-                stack,
-                needsProfile
-              )
-            )
-        };
-      })
-      .slice(0, 10);
-  }
-
-  /* ============================================================
-     STACK COVERAGE
-     ============================================================ */
-
-  function calculateStackCoverage(
-    stack,
-    needsProfile
-  ) {
-    const coverage = {};
-
-    NEEDS.forEach(function (need) {
-      let maxCapability = 0;
-
-      (stack || []).forEach(function (tool) {
-        const capability =
-          normalizeToolNeed(
-            tool.needs &&
-            tool.needs[need]
-          );
-
-        maxCapability =
-          Math.max(
-            maxCapability,
-            capability
-          );
-      });
-
-      coverage[need] =
-        Math.round(
-          maxCapability
-        );
-    });
-
-    return coverage;
-  }
-
-  function calculateTotalCoverage(
-    stack,
-    needsProfile
-  ) {
-    const coverage =
-      calculateStackCoverage(
-        stack,
+    const primaryGapValue =
+      calculatePrimaryGapValue(
+        primary,
         needsProfile
       );
 
-    let weighted = 0;
-    let total = 0;
 
-    NEEDS.forEach(function (need) {
-      const requirement =
-        getRequirement(
-          needsProfile,
-          need
-        );
+    /*
+      ---------------------------------------------------------
+      REGOLA FONDAMENTALE V1.3
 
-      if (
-        requirement <= 0
-      ) {
-        return;
-      }
+      Se il Primary non presenta lacune importanti,
+      NON cerchiamo altri software.
 
-      const covered =
-        clamp(
-          Number(
-            coverage[need]
-          ) || 0,
-          0,
-          100
-        );
+      Stack:
+      [Primary]
+      ---------------------------------------------------------
+    */
 
-      weighted +=
-        requirement *
-        Math.min(
-          1,
-          covered / requirement
-        );
+    if (
+      !primaryGaps.length ||
+      primaryGapValue <
+      CONFIG.MIN_PRIMARY_GAP
+    ) {
 
-      total +=
-        requirement;
-    });
+      primary.gapCoverage = 100;
 
-    if (!total) {
-      return 0;
+      primary.newCoverage = 0;
+
+      primary.redundancyPenalty = 0;
+
+      primary.stackScore =
+        primary.compatibility;
+
+
+      primary.stackReason =
+        "Il Primary copre sufficientemente le esigenze principali: non è necessario aggiungere strumenti complementari.";
+
+
+      return [
+        primary
+      ];
+
     }
 
-    return Math.round(
-      clamp(
-        (
-          weighted /
-          total
-        ) * 100,
-        0,
-        100
-      )
-    );
+
+    /*
+      ---------------------------------------------------------
+      STEP 2
+      CANDIDATI COMPLEMENTARY
+
+      Cerchiamo SOLO strumenti che possano
+      risolvere le lacune.
+      ---------------------------------------------------------
+    */
+
+    const candidates =
+      rankedTools.filter(
+        function (tool) {
+
+          return (
+            tool.id !== primary.id &&
+            tool.name !== primary.name &&
+            tool.hardFilterPassed !== false
+          );
+
+        }
+      );
+
+
+    const stack = [
+      primary
+    ];
+
+
+    const selectedIds =
+      new Set([
+        primary.id
+      ]);
+
+
+    /*
+      ---------------------------------------------------------
+      STEP 3
+      COSTRUZIONE ITERATIVA DELLO STACK
+      ---------------------------------------------------------
+    */
+
+    while (
+      stack.length <
+      CONFIG.MAX_STACK_TOOLS
+    ) {
+
+      let bestCandidate = null;
+
+      let bestScore = -Infinity;
+
+      let bestMetrics = null;
+
+
+      candidates.forEach(
+        function (candidate) {
+
+          if (
+            selectedIds.has(
+              candidate.id
+            )
+          ) {
+            return;
+          }
+
+
+          /*
+            ---------------------------------------------------
+            GAP COVERAGE
+
+            Quanto il candidato risolve
+            delle lacune attuali.
+            ---------------------------------------------------
+          */
+
+          const gapCoverage =
+            calculateGapCoverage(
+              candidate,
+              stack,
+              needsProfile
+            );
+
+
+          /*
+            ---------------------------------------------------
+            NEW COVERAGE
+
+            Capacità nuova che il candidato
+            porta al sistema.
+            ---------------------------------------------------
+          */
+
+          const newCoverage =
+            calculateNewCoverage(
+              candidate,
+              stack,
+              needsProfile
+            );
+
+
+          /*
+            Se non risolve alcuna lacuna significativa,
+            NON è un Complementary.
+          */
+
+          if (
+            gapCoverage < 1
+          ) {
+            return;
+          }
+
+
+          if (
+            newCoverage <
+            CONFIG.MIN_NEW_COVERAGE
+          ) {
+            return;
+          }
+
+
+          /*
+            ---------------------------------------------------
+            RIDONDANZA
+            ---------------------------------------------------
+          */
+
+          const redundancy =
+            stack.reduce(
+              function (
+                total,
+                selected
+              ) {
+
+                return (
+                  total +
+                  calculateRedundancy(
+                    candidate,
+                    selected,
+                    needsProfile
+                  )
+                );
+
+              },
+              0
+            );
+
+
+          if (
+            redundancy >
+            CONFIG.MAX_REDUNDANCY_PENALTY
+          ) {
+            return;
+          }
+
+
+          /*
+            ---------------------------------------------------
+            CATEGORIA
+            ---------------------------------------------------
+          */
+
+          const candidateCategory =
+            getToolCategory(
+              candidate
+            );
+
+
+          const sameCategoryCount =
+            stack.filter(
+              function (tool) {
+
+                return (
+                  candidateCategory &&
+                  getToolCategory(tool) ===
+                  candidateCategory
+                );
+
+              }
+            ).length;
+
+
+          /*
+            Due tool della stessa categoria
+            non entrano normalmente nello stack.
+
+            Eccezione:
+            l'utente li utilizza già
+            oppure li ha dichiarati da preservare.
+          */
+
+          if (
+            sameCategoryCount >=
+            CONFIG.MAX_SAME_CATEGORY_TOOLS
+          ) {
+
+            const preserved =
+              preserveExistingTools(
+                candidate,
+                answers
+              );
+
+
+            const existing =
+              existingToolBonus(
+                candidate,
+                answers
+              );
+
+
+            if (
+              preserved <= 0 &&
+              existing <= 0
+            ) {
+              return;
+            }
+
+          }
+
+
+          /*
+            ---------------------------------------------------
+            INTEGRAZIONE
+            ---------------------------------------------------
+          */
+
+          const integrationBonus =
+            candidate.bonuses &&
+            candidate.bonuses.integrations
+              ? candidate.bonuses.integrations
+              : 0;
+
+
+          /*
+            ---------------------------------------------------
+            EXISTING
+            ---------------------------------------------------
+          */
+
+          const existingBonus =
+            candidate.bonuses &&
+            candidate.bonuses.existing
+              ? candidate.bonuses.existing
+              : 0;
+
+
+          /*
+            ---------------------------------------------------
+            CATEGORY DIVERSITY
+            ---------------------------------------------------
+          */
+
+          const categoryDiversity =
+            calculateCategoryDiversity(
+              candidate,
+              stack
+            );
+
+
+          /*
+            ---------------------------------------------------
+            STACK SCORE
+
+            Formula V1.3:
+
+            Gap Coverage        45%
+            New Coverage        25%
+            Compatibility       15%
+            Integration          5%
+            Existing             5%
+            Category Diversity   5%
+
+            Ridondanza:
+            penalizzazione forte
+
+            Questo significa che un tool
+            con Compatibility 90 ma che non
+            risolve una lacuna può perdere
+            contro un tool con Compatibility 80
+            che risolve davvero un gap.
+            ---------------------------------------------------
+          */
+
+          const score =
+
+            gapCoverage *
+            (
+              CONFIG.STACK_WEIGHTS.gapCoverage /
+              100
+            )
+
+            +
+
+            newCoverage *
+            (
+              CONFIG.STACK_WEIGHTS.newCoverage /
+              100
+            )
+
+            +
+
+            candidate.compatibility *
+            (
+              CONFIG.STACK_WEIGHTS.compatibility /
+              100
+            )
+
+            +
+
+            integrationBonus *
+            (
+              CONFIG.STACK_WEIGHTS.integration /
+              100
+            )
+
+            +
+
+            existingBonus *
+            (
+              CONFIG.STACK_WEIGHTS.existing /
+              100
+            )
+
+            +
+
+            categoryDiversity *
+            (
+              CONFIG.STACK_WEIGHTS.categoryDiversity /
+              100
+            )
+
+            -
+
+            redundancy *
+            0.80;
+
+
+          /*
+            ---------------------------------------------------
+            SELEZIONE MIGLIORE
+            ---------------------------------------------------
+          */
+
+          if (
+            score > bestScore
+          ) {
+
+            bestScore =
+              score;
+
+
+            bestCandidate =
+              candidate;
+
+
+            bestMetrics = {
+
+              gapCoverage:
+                gapCoverage,
+
+              newCoverage:
+                newCoverage,
+
+              redundancy:
+                redundancy,
+
+              integrationBonus:
+                integrationBonus,
+
+              existingBonus:
+                existingBonus,
+
+              categoryDiversity:
+                categoryDiversity,
+
+              stackScore:
+                Math.round(
+                  score * 10
+                ) / 10
+
+            };
+
+          }
+
+        }
+      );
+
+
+      /*
+        Nessun candidato che migliori realmente
+        il sistema.
+      */
+
+      if (
+        !bestCandidate ||
+        !bestMetrics
+      ) {
+        break;
+      }
+
+
+      /*
+        -------------------------------------------------------
+        STEP 4
+        AGGIUNTA COMPLEMENTARY
+        -------------------------------------------------------
+      */
+
+      bestCandidate.role =
+        "complementary";
+
+
+      bestCandidate.gapCoverage =
+        bestMetrics.gapCoverage;
+
+
+      bestCandidate.newCoverage =
+        bestMetrics.newCoverage;
+
+
+      bestCandidate.redundancyPenalty =
+        bestMetrics.redundancy;
+
+
+      bestCandidate.stackScore =
+        bestMetrics.stackScore;
+
+
+      bestCandidate.categoryDiversity =
+        bestMetrics.categoryDiversity;
+
+
+      bestCandidate.stackReason =
+        "Aggiunto perché risolve una lacuna significativa del sistema senza introdurre una sovrapposizione eccessiva.";
+
+
+      stack.push(
+        bestCandidate
+      );
+
+
+      selectedIds.add(
+        bestCandidate.id
+      );
+
+    }
+
+
+    /*
+      ---------------------------------------------------------
+      STEP 5
+      ORDINE STACK
+
+      Primary sempre primo.
+      Complementary ordinati per Stack Score.
+      ---------------------------------------------------------
+    */
+
+    if (
+      stack.length > 1
+    ) {
+
+      const primaryTool =
+        stack[0];
+
+
+      const complementary =
+        stack
+          .slice(1)
+          .sort(
+            function (a, b) {
+
+              return (
+                Number(
+                  b.stackScore ||
+                  0
+                ) -
+                Number(
+                  a.stackScore ||
+                  0
+                )
+              );
+
+            }
+          );
+
+
+      return [
+        primaryTool,
+        ...complementary
+      ];
+
+    }
+
+
+    return stack;
+
   }
 
-  function calculateStackCompatibility(
+
+  /* =========================================================
+     32. MISSING NEEDS
+     ========================================================= */
+
+  function getMissingNeeds(
+    needsProfile,
+    stack
+  ) {
+
+    const missing = [];
+
+
+    NEEDS.forEach(
+      function (need) {
+
+        const required =
+          Number(
+            needsProfile &&
+            needsProfile[need]
+              ? needsProfile[need]
+              : 0
+          );
+
+
+        if (
+          required < 50
+        ) {
+          return;
+        }
+
+
+        let covered = 0;
+
+
+        (
+          stack || []
+        ).forEach(
+          function (tool) {
+
+            covered =
+              Math.max(
+                covered,
+                Number(
+                  tool.needs &&
+                  tool.needs[need]
+                    ? tool.needs[need]
+                    : 0
+                )
+              );
+
+          }
+        );
+
+
+        if (
+          covered < 50
+        ) {
+
+          missing.push({
+
+            id:
+              need,
+
+            need:
+              need,
+
+            label:
+              NEED_LABELS[need],
+
+            requested:
+              Math.round(
+                required
+              ),
+
+            covered:
+              Math.round(
+                covered
+              ),
+
+            gap:
+              Math.round(
+                required -
+                covered
+              )
+
+          });
+
+        }
+
+      }
+    );
+
+
+    missing.sort(
+      function (a, b) {
+
+        return (
+          b.gap -
+          a.gap
+        );
+
+      }
+    );
+
+
+    return missing;
+
+  }
+
+
+  /* =========================================================
+     33. VALUE OF TIME
+     ========================================================= */
+
+  function estimateValue(
+    answers
+  ) {
+
+    answers =
+      answers || {};
+
+
+    const hoursValue =
+      answers.hours ||
+      answers.hoursPerWeek ||
+      answers.weeklyHours ||
+      "<1";
+
+
+    let weeklyHours = 0;
+
+
+    const hoursText =
+      normalizeText(
+        hoursValue
+      );
+
+
+    if (
+      hoursText.includes("15+")
+    ) {
+
+      weeklyHours = 18;
+
+    }
+
+    else if (
+      hoursText.includes("8")
+    ) {
+
+      weeklyHours = 11.5;
+
+    }
+
+    else if (
+      hoursText.includes("4")
+    ) {
+
+      weeklyHours = 5.5;
+
+    }
+
+    else if (
+      hoursText.includes("1")
+    ) {
+
+      weeklyHours = 2;
+
+    }
+
+    else {
+
+      weeklyHours = 0.5;
+
+    }
+
+
+    const hourlyValueRaw =
+      answers.hourValue ||
+      answers.hourlyValue ||
+      answers.valuePerHour ||
+      "30";
+
+
+    const hourlyText =
+      normalizeText(
+        hourlyValueRaw
+      );
+
+
+    let hourlyValue =
+      firstNumber(
+        hourlyValueRaw
+      );
+
+
+    if (
+      hourlyText.includes("100")
+    ) {
+      hourlyValue = 100;
+    }
+
+
+    if (
+      !Number.isFinite(
+        hourlyValue
+      )
+    ) {
+      hourlyValue = 30;
+    }
+
+
+    hourlyValue =
+      Math.max(
+        0,
+        hourlyValue
+      );
+
+
+    const monthlyHours =
+      weeklyHours *
+      4.33;
+
+
+    const monthlyValue =
+      monthlyHours *
+      hourlyValue;
+
+
+    return {
+
+      weeklyHours:
+        Math.round(
+          weeklyHours * 10
+        ) / 10,
+
+      hourlyValue:
+        Math.round(
+          hourlyValue * 100
+        ) / 100,
+
+      monthlyHours:
+        Math.round(
+          monthlyHours * 10
+        ) / 10,
+
+      monthlyValue:
+        Math.round(
+          monthlyValue * 100
+        ) / 100,
+
+      label:
+        "Valore potenziale del tempo recuperabile",
+
+      disclaimer:
+        "È una stima del valore del tempo potenzialmente recuperabile, non una garanzia di risparmio."
+
+    };
+
+  }
+
+
+  /* =========================================================
+     34. AUTOMATION IDEAS
+     ========================================================= */
+
+  function automationIdeas(
+    answers,
+    needsProfile,
+    stack
+  ) {
+
+    const ideas = [];
+
+
+    const has =
+      function (need) {
+
+        return Number(
+          needsProfile[need] ||
+          0
+        ) >= 50;
+
+      };
+
+
+    if (
+      has("email") &&
+      has("automation")
+    ) {
+
+      ideas.push({
+
+        title:
+          "Automatizza le email ripetitive",
+
+        description:
+          "Classifica le richieste, assegna priorità e attiva risposte o follow-up automatici."
+
+      });
+
+    }
+
+
+    if (
+      has("followup") &&
+      has("crm")
+    ) {
+
+      ideas.push({
+
+        title:
+          "Follow-up automatici",
+
+        description:
+          "Quando un cliente non risponde, crea automaticamente un promemoria o una nuova attività."
+
+      });
+
+    }
+
+
+    if (
+      has("sales") &&
+      has("crm")
+    ) {
+
+      ideas.push({
+
+        title:
+          "Lead → cliente",
+
+        description:
+          "Quando arriva un nuovo lead, crea il contatto e avvia automaticamente il percorso commerciale."
+
+      });
+
+    }
+
+
+    if (
+      has("quotes")
+    ) {
+
+      ideas.push({
+
+        title:
+          "Preventivi più veloci",
+
+        description:
+          "Raccogli i dati, genera il documento e programma automaticamente il follow-up."
+
+      });
+
+    }
+
+
+    if (
+      has("excel") &&
+      has("automation")
+    ) {
+
+      ideas.push({
+
+        title:
+          "Excel automatico",
+
+        description:
+          "Aggiorna dati, report e riepiloghi senza dover ripetere manualmente le stesse operazioni."
+
+      });
+
+    }
+
+
+    if (
+      has("appointments")
+    ) {
+
+      ideas.push({
+
+        title:
+          "Appuntamenti automatici",
+
+        description:
+          "Riduci lo scambio di email collegando prenotazioni, calendario e notifiche."
+
+      });
+
+    }
+
+
+    if (
+      has("documents") &&
+      has("automation")
+    ) {
+
+      ideas.push({
+
+        title:
+          "Gestione documenti",
+
+        description:
+          "Archivia, rinomina, invia e organizza automaticamente i documenti."
+
+      });
+
+    }
+
+
+    if (
+      has("ai")
+    ) {
+
+      ideas.push({
+
+        title:
+          "AI nel lavoro quotidiano",
+
+        description:
+          "Usa l'AI per classificare informazioni, creare bozze, riassumere contenuti e accelerare attività ripetitive."
+
+      });
+
+    }
+
+
+    return ideas.slice(
+      0,
+      5
+    );
+
+  }
+
+
+  /* =========================================================
+     35. STACK EXPLANATION
+     ========================================================= */
+
+  function explainStack(
     stack,
     needsProfile
   ) {
+
+    if (
+      !stack ||
+      !stack.length
+    ) {
+      return [];
+    }
+
+
+    return stack.map(
+      function (tool, index) {
+
+        if (
+          index === 0
+        ) {
+
+          return {
+
+            toolId:
+              tool.id,
+
+            toolName:
+              tool.name,
+
+            role:
+              "primary",
+
+            title:
+              "Soluzione principale",
+
+            explanation:
+              buildPrimaryExplanation(
+                tool,
+                needsProfile
+              )
+
+          };
+
+        }
+
+
+        return {
+
+          toolId:
+            tool.id,
+
+          toolName:
+            tool.name,
+
+          role:
+            "complementary",
+
+          title:
+            "Strumento complementare",
+
+          explanation:
+            buildComplementaryExplanation(
+              tool,
+              stack,
+              needsProfile
+            )
+
+        };
+
+      }
+    );
+
+  }
+
+
+  function buildPrimaryExplanation(
+    tool,
+    needsProfile
+  ) {
+
+    const important =
+      NEEDS
+        .filter(
+          function (need) {
+
+            return (
+              Number(
+                needsProfile[need] ||
+                0
+              ) >= 60 &&
+              Number(
+                tool.needs[need] ||
+                0
+              ) >= 60
+            );
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return (
+              needsProfile[b] -
+              needsProfile[a]
+            );
+
+          }
+        )
+        .slice(
+          0,
+          3
+        );
+
+
+    if (
+      !important.length
+    ) {
+
+      return (
+        tool.name +
+        " è la soluzione principale più compatibile con il profilo."
+      );
+
+    }
+
+
+    const labels =
+      important.map(
+        function (need) {
+
+          return NEED_LABELS[need]
+            .toLowerCase();
+
+        }
+      );
+
+
+    return (
+      tool.name +
+      " è la soluzione principale perché copre soprattutto " +
+      joinItalian(labels) +
+      " e rappresenta il centro del sistema proposto."
+    );
+
+  }
+
+
+  function buildComplementaryExplanation(
+    tool,
+    stack,
+    needsProfile
+  ) {
+
+    const covered =
+      NEEDS
+        .filter(
+          function (need) {
+
+            const requirement =
+              Number(
+                needsProfile[need] ||
+                0
+              );
+
+
+            if (
+              requirement < 50
+            ) {
+              return false;
+            }
+
+
+            const currentCoverage =
+              stack
+                .filter(
+                  function (x) {
+                    return (
+                      x.id !==
+                      tool.id
+                    );
+                  }
+                )
+                .reduce(
+                  function (
+                    max,
+                    x
+                  ) {
+
+                    return Math.max(
+                      max,
+                      Number(
+                        x.needs[need] ||
+                        0
+                      )
+                    );
+
+                  },
+                  0
+                );
+
+
+            return (
+              Number(
+                tool.needs[need] ||
+                0
+              ) >
+              currentCoverage
+            );
+
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            const aGain =
+              Math.max(
+                0,
+                Number(
+                  tool.needs[a] ||
+                  0
+                )
+              );
+
+
+            const bGain =
+              Math.max(
+                0,
+                Number(
+                  tool.needs[b] ||
+                  0
+                )
+              );
+
+
+            return (
+              bGain -
+              aGain
+            );
+
+          }
+        )
+        .slice(
+          0,
+          3
+        );
+
+
+    if (
+      !covered.length
+    ) {
+
+      return (
+        tool.name +
+        " completa lo stack senza introdurre una forte sovrapposizione."
+      );
+
+    }
+
+
+    return (
+      tool.name +
+      " completa lo stack soprattutto per " +
+      joinItalian(
+        covered.map(
+          function (need) {
+
+            return NEED_LABELS[need]
+              .toLowerCase();
+
+          }
+        )
+      ) +
+      "."
+    );
+
+  }
+
+
+  function joinItalian(
+    items
+  ) {
+
+    if (
+      !items.length
+    ) {
+      return "";
+    }
+
+
+    if (
+      items.length === 1
+    ) {
+      return items[0];
+    }
+
+
+    if (
+      items.length === 2
+    ) {
+
+      return (
+        items[0] +
+        " e " +
+        items[1]
+      );
+
+    }
+
+
+    return (
+      items.slice(
+        0,
+        -1
+      ).join(", ") +
+      " e " +
+      items[
+        items.length - 1
+      ]
+    );
+
+  }
+
+
+  /* =========================================================
+     36. ALTERNATIVE / COMPLEMENTARY
+     ========================================================= */
+
+  function getAlternatives(
+    rankedTools,
+    primaryTool,
+    limit,
+    stack
+  ) {
+
+    if (
+      !rankedTools ||
+      !primaryTool
+    ) {
+      return [];
+    }
+
+
+    const max =
+      Number(limit) || 5;
+
+
+    /*
+      IMPORTANTISSIMO V1.3:
+
+      Tutti gli strumenti già presenti
+      nello stack vengono esclusi dalle Alternative.
+
+      In questo modo non avremo:
+
+      STACK
+      Salesforce
+      Power Automate
+
+      ALTERNATIVE
+      Power Automate
+
+      perché Power Automate è già stato scelto
+      come complemento.
+    */
+
+    const stackIds =
+      new Set(
+        (
+          stack || []
+        ).map(
+          function (tool) {
+            return tool.id;
+          }
+        )
+      );
+
+
+    return rankedTools
+      .filter(
+        function (tool) {
+
+          return (
+            tool.id !==
+            primaryTool.id &&
+
+            tool.name !==
+            primaryTool.name &&
+
+            !stackIds.has(
+              tool.id
+            )
+
+          );
+
+        }
+      )
+      .slice(
+        0,
+        max
+      )
+      .map(
+        function (tool) {
+
+          return {
+
+            ...tool,
+
+            role:
+              "alternative"
+
+          };
+
+        }
+      );
+
+  }
+
+
+  function getComplementaryTools(
+    rankedTools,
+    stack
+  ) {
+
+    const stackIds =
+      new Set(
+        (
+          stack || []
+        ).map(
+          function (tool) {
+            return tool.id;
+          }
+        )
+      );
+
+
+    return (
+      rankedTools || []
+    )
+      .filter(
+        function (tool) {
+
+          return !stackIds.has(
+            tool.id
+          );
+
+        }
+      )
+      .map(
+        function (tool) {
+
+          return {
+
+            ...tool,
+
+            role:
+              "alternative"
+
+          };
+
+        }
+      );
+
+  }
+
+
+  /* =========================================================
+     37. STACK COMPATIBILITY
+     ========================================================= */
+
+  function calculateStackCompatibility(
+    stack,
+    profile,
+    totalCoverage
+  ) {
+
     if (
       !stack ||
       !stack.length
@@ -3129,954 +6422,986 @@ const PROJECTX_ENGINE_VERSION = "1.2.0";
       return 0;
     }
 
-    const averageCompatibility =
-      stack.reduce(
-        function (sum, tool) {
-          return (
-            sum +
-            Number(
-              tool.compatibility
-            || 0)
-          );
-        },
-        0
-      ) /
-      stack.length;
 
-    const totalCoverage =
-      calculateTotalCoverage(
-        stack,
-        needsProfile
+    const primary =
+      stack[0];
+
+
+    /*
+      ---------------------------------------------------------
+      1. BASE USER FIT
+
+      Il Primary rimane il punto centrale.
+      ---------------------------------------------------------
+    */
+
+    const primaryCompatibility =
+      Number(
+        primary.compatibility ||
+        0
       );
 
-    let redundancyPenalty = 0;
+
+    /*
+      ---------------------------------------------------------
+      2. COVERAGE SISTEMA
+
+      Quanto il sistema copre realmente
+      i bisogni dell'utente.
+      ---------------------------------------------------------
+    */
+
+    const coverageComponent =
+      clamp(
+        Number(
+          totalCoverage || 0
+        ),
+        0,
+        100
+      );
+
+
+    /*
+      ---------------------------------------------------------
+      3. QUALITÀ DEI COMPLEMENTARI
+
+      Valutiamo la capacità dei complementari
+      di essere realmente utili nello stack.
+      ---------------------------------------------------------
+    */
+
+    let complementaryQuality = 0;
+
+
+    if (
+      stack.length > 1
+    ) {
+
+      const complementaries =
+        stack.slice(1);
+
+
+      let total = 0;
+
+
+      complementaries.forEach(
+        function (tool) {
+
+          const gap =
+            Number(
+              tool.gapCoverage ||
+              0
+            );
+
+
+          const newCoverage =
+            clamp(
+              Number(
+                tool.newCoverage ||
+                0
+              ) * 2,
+              0,
+              100
+            );
+
+
+          const compatibility =
+            Number(
+              tool.compatibility ||
+              0
+            );
+
+
+          const individual =
+            gap * 0.50 +
+            newCoverage * 0.20 +
+            compatibility * 0.30;
+
+
+          total +=
+            individual;
+
+        }
+      );
+
+
+      complementaryQuality =
+        total /
+        complementaries.length;
+
+    }
+
+    else {
+
+      /*
+        Se esiste solo il Primary,
+        non penalizziamo lo stack.
+
+        Se il Primary basta, uno stack
+        composto da un solo tool è perfettamente valido.
+      */
+
+      complementaryQuality =
+        primaryCompatibility;
+
+    }
+
+
+    /*
+      ---------------------------------------------------------
+      4. RIDONDANZA
+      ---------------------------------------------------------
+    */
+
+    let redundancyTotal = 0;
+
 
     for (
       let i = 0;
       i < stack.length;
-      i += 1
+      i++
     ) {
+
       for (
         let j = i + 1;
         j < stack.length;
-        j += 1
+        j++
       ) {
-        redundancyPenalty =
-          Math.max(
-            redundancyPenalty,
+
+        redundancyTotal +=
+          Number(
             calculateRedundancy(
               stack[i],
               stack[j],
-              needsProfile
-            )
+              profile
+            ) || 0
           );
+
       }
+
     }
 
-    return Math.round(
-      clamp(
-        averageCompatibility * 0.55 +
-        totalCoverage * 0.45 -
-        redundancyPenalty * 0.25,
-        0,
-        100
-      )
-    );
-  }
 
-  /* ============================================================
-     MISSING NEEDS
-     ============================================================ */
-
-  function getMissingNeeds(
-    stack,
-    needsProfile
-  ) {
-    const coverage =
-      calculateStackCoverage(
-        stack,
-        needsProfile
+    const redundancyPenalty =
+      Math.min(
+        20,
+        redundancyTotal /
+        Math.max(
+          1,
+          stack.length
+        )
       );
 
-    return NEEDS
-      .filter(function (need) {
-        return (
-          getRequirement(
-            needsProfile,
-            need
-          ) >= 50
-        );
-      })
-      .map(function (need) {
-        const required =
-          getRequirement(
-            needsProfile,
-            need
-          );
-
-        const covered =
-          Number(
-            coverage[need]
-          ) || 0;
-
-        return {
-          need,
-          label:
-            NEED_LABELS[need] ||
-            need,
-          required,
-          covered,
-          gap:
-            Math.max(
-              0,
-              required -
-                covered
-            )
-        };
-      })
-      .filter(function (item) {
-        return (
-          item.covered <
-          item.required * 0.50
-        );
-      })
-      .sort(function (a, b) {
-        return (
-          b.gap -
-          a.gap
-        );
-      });
-  }
-
-  /* ============================================================
-     REASONS
-     ============================================================ */
-
-  function buildReasons(
-    tool,
-    answers,
-    needsProfile
-  ) {
-    const reasons = [];
-
-    const covered =
-      getCoveredNeeds(
-        tool,
-        needsProfile,
-        60
-      );
-
-    covered
-      .slice(0, 3)
-      .forEach(function (need) {
-        reasons.push(
-          "🎯 " +
-          (
-            NEED_LABELS[need] ||
-            need
-          )
-        );
-      });
-
-    if (
-      integrationMatchScore(
-        tool,
-        answers
-      ) >= 75
-    ) {
-      reasons.push(
-        "🔗 Buona integrazione con gli strumenti che utilizzi"
-      );
-    }
-
-    if (
-      isExistingTool(
-        tool,
-        answers
-      )
-    ) {
-      reasons.push(
-        "♻️ È già presente nel tuo ecosistema"
-      );
-    }
-
-    if (
-      isPreservedTool(
-        tool,
-        answers
-      )
-    ) {
-      reasons.push(
-        "🛡️ Rispetta uno strumento che hai scelto di mantenere"
-      );
-    }
-
-    const budget =
-      budgetScore(
-        tool,
-        answers
-      );
-
-    if (budget >= 85) {
-      reasons.push(
-        "💶 Compatibile con il budget indicato"
-      );
-    }
-
-    if (
-      simplicityScore(
-        tool,
-        answers
-      ) >= 85
-    ) {
-      reasons.push(
-        "🧩 Adatto al tuo livello di semplicità richiesto"
-      );
-    }
-
-    if (
-      automationScore(tool) >= 80
-    ) {
-      reasons.push(
-        "⚡ Buone capacità di automazione"
-      );
-    }
-
-    return reasons.slice(
-      0,
-      6
-    );
-  }
-
-  /* ============================================================
-     VALUE ESTIMATE
-     ============================================================ */
-
-  function getWeeklyHoursFromSelection(
-    value
-  ) {
-    const normalized =
-      normalizeText(value);
-
-    if (
-      normalized.indexOf("15") !== -1
-    ) {
-      return 18;
-    }
-
-    if (
-      normalized.indexOf("8") !== -1
-    ) {
-      return 11.5;
-    }
-
-    if (
-      normalized.indexOf("4") !== -1
-    ) {
-      return 5.5;
-    }
-
-    if (
-      normalized.indexOf("1") !== -1
-    ) {
-      return 2;
-    }
-
-    return 0.5;
-  }
-
-  function calculateValueEstimate(
-    answers
-  ) {
-    const input =
-      answers || {};
-
-    const hoursSelection =
-      input.hoursWasted ||
-      input.timeWasted ||
-      input.orePerse ||
-      input.timeLoss ||
-      "";
-
-    const weeklyHours =
-      getWeeklyHoursFromSelection(
-        hoursSelection
-      );
-
-    const hourlyValue =
-      firstNumber(
-        input.hourlyValue ||
-        input.valuePerHour ||
-        input.valoreOra ||
-        30,
-        30
-      );
-
-    const monthlyValue =
-      weeklyHours *
-      4.33 *
-      hourlyValue;
-
-    return {
-      weeklyHours,
-      hourlyValue,
-      monthlyValue:
-        Math.round(
-          monthlyValue
-        ),
-      disclaimer:
-        "Stima del potenziale valore del tempo recuperato. Non rappresenta un risparmio garantito."
-    };
-  }
-
-  /* ============================================================
-     AUTOMATION IDEAS
-     ============================================================ */
-
-  function buildAutomationIdeas(
-    needsProfile
-  ) {
-    const ideas = [];
-
-    const active =
-      getActiveNeeds(
-        needsProfile,
-        50
-      );
-
-    if (
-      active.includes("email") &&
-      active.includes("automation")
-    ) {
-      ideas.push(
-        "Automatizzare l'invio e la gestione delle email ripetitive."
-      );
-    }
-
-    if (
-      active.includes("followup") &&
-      active.includes("crm")
-    ) {
-      ideas.push(
-        "Creare follow-up automatici in base allo stato del cliente."
-      );
-    }
-
-    if (
-      active.includes("sales") &&
-      active.includes("crm")
-    ) {
-      ideas.push(
-        "Trasformare automaticamente nuovi lead in opportunità commerciali."
-      );
-    }
-
-    if (
-      active.includes("quotes")
-    ) {
-      ideas.push(
-        "Generare e inviare preventivi automaticamente a partire dai dati del cliente."
-      );
-    }
-
-    if (
-      active.includes("excel") &&
-      active.includes("automation")
-    ) {
-      ideas.push(
-        "Eliminare l'inserimento manuale dei dati nei fogli Excel."
-      );
-    }
-
-    if (
-      active.includes("appointments")
-    ) {
-      ideas.push(
-        "Automatizzare prenotazioni, conferme e promemoria degli appuntamenti."
-      );
-    }
-
-    if (
-      active.includes("documents") &&
-      active.includes("automation")
-    ) {
-      ideas.push(
-        "Creare e archiviare automaticamente documenti e PDF."
-      );
-    }
-
-    if (
-      active.includes("ai")
-    ) {
-      ideas.push(
-        "Usare l'AI per classificare, riassumere o generare contenuti e risposte."
-      );
-    }
-
-    return uniqueArray(
-      ideas
-    ).slice(
-      0,
-      5
-    );
-  }
-
-  /* ============================================================
-     STACK EXPLANATIONS
-     ============================================================ */
-
-  function buildPrimaryExplanation(
-    primary,
-    needsProfile
-  ) {
-    if (!primary) {
-      return "";
-    }
-
-    const dominant =
-      getDominantNeeds(
-        needsProfile
-      )
-      .slice(0, 3)
-      .map(function (need) {
-        return (
-          NEED_LABELS[need] ||
-          need
-        );
-      });
-
-    if (!dominant.length) {
-      return (
-        primary.name +
-        " è il punto di partenza principale del sistema."
-      );
-    }
-
-    return (
-      primary.name +
-      " è stato scelto come Primary perché copre soprattutto " +
-      dominant.join(", ") +
-      " in relazione al tuo profilo."
-    );
-  }
-
-  function buildComplementaryExplanation(
-    stack,
-    needsProfile
-  ) {
-    if (
-      !stack ||
-      stack.length <= 1
-    ) {
-      return (
-        "Il Primary copre già sufficientemente le esigenze principali: non sono stati aggiunti strumenti complementari inutili."
-      );
-    }
-
-    const explanations =
-      stack
-        .slice(1)
-        .map(function (tool) {
-          const covered =
-            getCoveredNeeds(
-              tool,
-              needsProfile,
-              60
-            );
-
-          if (!covered.length) {
-            return (
-              tool.name +
-              " aggiunge una capacità specifica al sistema."
-            );
-          }
-
-          return (
-            tool.name +
-            " aggiunge copertura per " +
-            covered
-              .slice(0, 3)
-              .map(function (need) {
-                return (
-                  NEED_LABELS[need] ||
-                  need
-                );
-              })
-              .join(", ") +
-            "."
-          );
-        });
-
-    return explanations.join(
-      " "
-    );
-  }
-
-  /* ============================================================
-     RANKING
-     ============================================================ */
-
-  function rankTools(
-    tools,
-    answers,
-    needsProfile
-  ) {
-    const evaluated =
-      tools.map(function (tool) {
-        const compatibility =
-          calculateCompatibility(
-            tool,
-            answers,
-            needsProfile
-          );
-
-        const relevance =
-          calculateRelevance(
-            tool,
-            needsProfile
-          );
-
-        const business =
-          businessScore(
-            tool
-          );
-
-        const coveredNeeds =
-          getCoveredNeeds(
-            tool,
-            needsProfile,
-            50
-          );
-
-        return {
-          ...tool,
-
-          compatibility:
-            compatibility.compatibility,
-
-          factors:
-            compatibility.factors,
-
-          bonuses:
-            compatibility.bonuses,
-
-          relevance:
-            Math.round(
-              relevance
-            ),
-
-          businessScore:
-            business
-              ? business.score
-              : null,
-
-          business:
-            business,
-
-          coveredNeeds:
-
-            coveredNeeds.length,
-
-          reasons:
-            buildReasons(
-              tool,
-              answers,
-              needsProfile
-            ),
-
-          role:
-            "candidate"
-        };
-      });
-
-    evaluated.sort(
-      function (a, b) {
-        const compatibilityDifference =
-          b.compatibility -
-          a.compatibility;
-
-        if (
-          Math.abs(
-            compatibilityDifference
-          ) >
-          CONFIG.COMPATIBILITY_TIE_THRESHOLD
-        ) {
-          return compatibilityDifference;
-        }
-
-        const relevanceDifference =
-          b.relevance -
-          a.relevance;
-
-        if (
-          Math.abs(
-            relevanceDifference
-          ) > 5
-        ) {
-          return relevanceDifference;
-        }
-
-        /*
-          Business Score:
-          solo tie-breaker quando la
-          compatibilità è molto vicina.
-        */
-
-        if (
-          a.businessScore !== null &&
-          b.businessScore !== null
-        ) {
-          const businessDifference =
-            b.businessScore -
-            a.businessScore;
-
-          if (
-            businessDifference !== 0
-          ) {
-            return businessDifference;
-          }
-        }
-
-        if (
-          b.coveredNeeds !==
-          a.coveredNeeds
-        ) {
-          return (
-            b.coveredNeeds -
-            a.coveredNeeds
-          );
-        }
-
-        return String(
-          a.name
-        ).localeCompare(
-          String(b.name)
-        );
-      }
-    );
-
-    evaluated.forEach(
-      function (tool, index) {
-        tool.rank =
-          index + 1;
-      }
-    );
-
-    return evaluated;
-  }
-
-  /* ============================================================
-     ANALYZE ANSWERS
-     ============================================================ */
-
-  function analyzeAnswers(
-    answers
-  ) {
-    const input =
-      answers || {};
-
-    const needsProfile =
-      buildNeedsProfile(
-        input
-      );
-
-    const database =
-      getNormalizedDatabase();
-
-    let candidates =
-      database.filter(
-        function (tool) {
-          if (
-            !CONFIG.ENABLE_HARD_FILTERS
-          ) {
-            return true;
-          }
-
-          return passesHardFilters(
-            tool,
-            input,
-            needsProfile
-          );
-        }
-      );
 
     /*
-      Fallback:
-      se i filtri eliminano tutto,
-      usiamo il database completo,
-      mantenendo comunque l'esclusione
-      degli strumenti esplicitamente evitati.
+      ---------------------------------------------------------
+      5. DIVERSITÀ
+      ---------------------------------------------------------
+    */
+
+    const categories =
+      new Set(
+        stack
+          .map(
+            function (tool) {
+              return getToolCategory(
+                tool
+              );
+            }
+          )
+          .filter(Boolean)
+      );
+
+
+    const diversityScore =
+      stack.length > 0
+        ? (
+            categories.size /
+            stack.length
+          ) * 100
+        : 0;
+
+
+    /*
+      ---------------------------------------------------------
+      6. FORMULA SISTEMA
+
+      NON è:
+
+      media dei Compatibility Score.
+
+      È:
+
+      copertura reale
+      + qualità Primary
+      + qualità complementari
+      + diversità
+      - ridondanza
+
+      ---------------------------------------------------------
+    */
+
+    const stackCompatibility =
+      clamp(
+
+        coverageComponent *
+        0.40
+
+        +
+
+        primaryCompatibility *
+        0.30
+
+        +
+
+        complementaryQuality *
+        0.20
+
+        +
+
+        diversityScore *
+        0.10
+
+        -
+
+        redundancyPenalty,
+
+        0,
+        100
+
+      );
+
+
+    return Math.round(
+      stackCompatibility * 10
+    ) / 10;
+
+  }
+
+
+  /* =========================================================
+     38. MAIN ANALYSIS
+     ========================================================= */
+
+  function analyzeAnswers(
+    answers,
+    aiProfile
+  ) {
+
+    answers =
+      answers || {};
+
+
+    /*
+      ---------------------------------------------------------
+      1. PROFILO BISOGNI
+      ---------------------------------------------------------
+    */
+
+    const profile =
+      buildNeedsProfile(
+        answers,
+        aiProfile
+      );
+
+
+    /*
+      ---------------------------------------------------------
+      2. RANKING
+      ---------------------------------------------------------
+    */
+
+    let rankedTools =
+      rankTools(
+        answers,
+        profile
+      );
+
+
+    /*
+      ---------------------------------------------------------
+      3. FALLBACK CONTROLLATO
+      ---------------------------------------------------------
     */
 
     if (
-      !candidates.length &&
+      !rankedTools.length &&
       CONFIG.ALLOW_SOFT_FALLBACK
     ) {
-      candidates =
-        database.filter(
-          function (tool) {
-            return !isExcludedTool(
-              tool,
-              input
+
+      rankedTools =
+        rankTools(
+          answers,
+          profile,
+          {
+            includeFiltered:
+              true
+          }
+        )
+        .sort(
+          function (a, b) {
+
+            return (
+              b.compatibility -
+              a.compatibility
             );
+
           }
         );
-      }
+
     }
 
-    const rankedTools =
-      rankTools(
-        candidates,
-        input,
-        needsProfile
-      );
 
-    const primary =
-      choosePrimary(
-        rankedTools,
-        needsProfile
-      );
+    /*
+      ---------------------------------------------------------
+      4. STACK
+      ---------------------------------------------------------
+    */
 
     const stack =
       buildStack(
         rankedTools,
-        primary,
-        input,
-        needsProfile
+        answers,
+        profile
       );
 
-    const alternatives =
-      getAlternatives(
-        rankedTools,
-        primary,
-        needsProfile
+
+    /*
+      ---------------------------------------------------------
+      5. PRIMARY
+      ---------------------------------------------------------
+    */
+
+    const primaryTool =
+      stack[0] ||
+      rankedTools[0] ||
+      null;
+
+
+    if (
+      primaryTool
+    ) {
+
+      primaryTool.role =
+        "primary";
+
+    }
+
+
+    stack
+      .slice(1)
+      .forEach(
+        function (tool) {
+
+          tool.role =
+            "complementary";
+
+        }
       );
 
-    const complementaryCandidates =
-      getComplementaryTools(
-        rankedTools,
-        stack,
-        needsProfile
-      );
 
-    const stackCoverage =
-      calculateStackCoverage(
-        stack,
-        needsProfile
-      );
+    /*
+      ---------------------------------------------------------
+      6. STACK COVERAGE
+      ---------------------------------------------------------
+    */
+
+    const stackCoverage = {};
+
+
+    NEEDS.forEach(
+      function (need) {
+
+        stackCoverage[need] =
+          stack.reduce(
+            function (
+              max,
+              tool
+            ) {
+
+              return Math.max(
+                max,
+                Number(
+                  tool.needs &&
+                  tool.needs[need]
+                    ? tool.needs[need]
+                    : 0
+                )
+              );
+
+            },
+            0
+          );
+
+      }
+    );
+
+
+    /*
+      ---------------------------------------------------------
+      7. COVERAGE PONDERATA
+      ---------------------------------------------------------
+    */
+
+    let totalRequired = 0;
+
+    let totalCovered = 0;
+
+
+    NEEDS.forEach(
+      function (need) {
+
+        const required =
+          Number(
+            profile[need] ||
+            0
+          );
+
+
+        if (
+          required <= 0
+        ) {
+          return;
+        }
+
+
+        totalRequired +=
+          required;
+
+
+        totalCovered +=
+          Math.min(
+            required,
+            Number(
+              stackCoverage[need] ||
+              0
+            )
+          );
+
+      }
+    );
+
 
     const totalCoverage =
-      calculateTotalCoverage(
-        stack,
-        needsProfile
-      );
+      totalRequired > 0
+        ? Math.round(
+            (
+              totalCovered /
+              totalRequired
+            ) * 1000
+          ) / 10
+        : 0;
 
-    const missingNeeds =
-      getMissingNeeds(
-        stack,
-        needsProfile
-      );
+
+    /*
+      ---------------------------------------------------------
+      8. STACK COMPATIBILITY
+
+      Calcolata come qualità del SISTEMA,
+      non come media dei tool.
+      ---------------------------------------------------------
+    */
 
     const stackCompatibility =
       calculateStackCompatibility(
         stack,
-        needsProfile
+        profile,
+        totalCoverage
       );
+
+
+    /*
+      ---------------------------------------------------------
+      9. MISSING NEEDS
+      ---------------------------------------------------------
+    */
+
+    const missingNeeds =
+      getMissingNeeds(
+        profile,
+        stack
+      );
+
+
+    /*
+      ---------------------------------------------------------
+      10. VALUE
+      ---------------------------------------------------------
+    */
 
     const valueEstimate =
-      calculateValueEstimate(
-        input
+      estimateValue(
+        answers
       );
 
-    const automationIdeas =
-      buildAutomationIdeas(
-        needsProfile
+
+    /*
+      ---------------------------------------------------------
+      11. AUTOMAZIONI
+      ---------------------------------------------------------
+    */
+
+    const automationSuggestions =
+      automationIdeas(
+        answers,
+        profile,
+        stack
       );
+
+
+    /*
+      ---------------------------------------------------------
+      12. EXPLANATIONS
+      ---------------------------------------------------------
+    */
+
+    const explanations =
+      explainStack(
+        stack,
+        profile
+      );
+
+
+    /*
+      ---------------------------------------------------------
+      13. FINAL RANKING
+      ---------------------------------------------------------
+    */
+
+    const finalRanking =
+      rankedTools.slice(
+        0,
+        15
+      );
+
+
+    /*
+      ---------------------------------------------------------
+      14. ALTERNATIVE
+
+      IMPORTANTE:
+
+      Lo stack viene passato al filtro.
+
+      Quindi un tool già scelto come
+      Complementary NON viene riproposto
+      nelle Alternative.
+      ---------------------------------------------------------
+    */
+
+    const alternatives =
+      primaryTool
+        ? getAlternatives(
+            rankedTools,
+            primaryTool,
+            6,
+            stack
+          )
+        : [];
+
+
+    /*
+      ---------------------------------------------------------
+      15. COMPLEMENTARY CANDIDATES
+
+      Tutto ciò che non è nello stack
+      resta candidato/alternativa.
+      ---------------------------------------------------------
+    */
+
+    const complementaryCandidates =
+      getComplementaryTools(
+        rankedTools,
+        stack
+      );
+
+
+    /*
+      ---------------------------------------------------------
+      16. BUSINESS AVAILABILITY
+      ---------------------------------------------------------
+    */
 
     const businessAvailable =
-      rankedTools.some(
+      finalRanking.some(
         function (tool) {
+
           return (
             tool.businessScore !==
             null
           );
+
         }
       );
 
+
+    /*
+      ---------------------------------------------------------
+      17. PRIMARY GAP REPORT
+      ---------------------------------------------------------
+    */
+
+    const primaryGaps =
+      primaryTool
+        ? getPrimaryGapNeeds(
+            primaryTool,
+            profile
+          )
+        : [];
+
+
+    const primaryGapValue =
+      primaryTool
+        ? calculatePrimaryGapValue(
+            primaryTool,
+            profile
+          )
+        : 0;
+
+
+    /*
+      ---------------------------------------------------------
+      18. RETURN
+      ---------------------------------------------------------
+    */
+
     return {
+
       version:
         CONFIG.VERSION,
 
-      profile:
-        needsProfile,
 
-      answers:
-        input,
+      profile,
+
+
+      answers,
+
 
       rankedTools:
-        rankedTools.slice(
-          0,
-          15
-        ),
+        finalRanking,
+
 
       ranking:
-        rankedTools.slice(
-          0,
-          15
-        ),
+        finalRanking,
 
-      primaryTool:
-        primary,
+
+      /*
+        Struttura decisionale.
+      */
+
+      primaryTool,
 
       primary:
-        primary,
+        primaryTool,
 
-      stack:
-        stack,
 
-      alternatives:
-        alternatives,
+      /*
+        Gap Analysis.
+      */
 
-      complementaryCandidates:
-        complementaryCandidates,
+      primaryGaps,
 
-      stackCompatibility:
-        stackCompatibility,
+      primaryGapValue,
 
-      stackCoverage:
-        stackCoverage,
 
-      totalCoverage:
-        totalCoverage,
+      /*
+        Stack.
+      */
 
-      missingNeeds:
-        missingNeeds,
+      stack,
 
-      valueEstimate:
-        valueEstimate,
+
+      /*
+        Alternative.
+      */
+
+      alternatives,
+
+
+      complementaryCandidates,
+
+
+      /*
+        Metriche stack.
+      */
+
+      stackCompatibility,
+
+      stackCoverage,
+
+      totalCoverage,
+
+
+      /*
+        Needs mancanti.
+      */
+
+      missingNeeds,
+
+
+      /*
+        Value.
+      */
+
+      valueEstimate,
 
       value:
         valueEstimate,
 
+
+      /*
+        Automazioni.
+      */
+
       automationIdeas:
-        automationIdeas,
+        automationSuggestions,
 
-      automationSuggestions:
-        automationIdeas,
+      automationSuggestions,
 
-      primaryExplanation:
-        buildPrimaryExplanation(
-          primary,
-          needsProfile
-        ),
 
-      complementaryExplanation:
-        buildComplementaryExplanation(
-          stack,
-          needsProfile
-        ),
+      /*
+        Explanations.
+      */
+
+      explanations,
+
+
+      /*
+        Filtri.
+      */
 
       filters: {
-        enabled:
+
+        hardFiltersEnabled:
           CONFIG.ENABLE_HARD_FILTERS,
 
         budget:
           getBudgetLimit(
-            input
+            answers
           ),
 
         country:
           getUserCountry(
-            input
+            answers
           ),
 
         language:
           getUserLanguage(
-            input
+            answers
           ),
 
         excludedTools:
           getExcludedTools(
-            input
+            answers
+          ),
+
+        existingTools:
+          getExistingTools(
+            answers
+          ),
+
+        preservedTools:
+          getPreservedTools(
+            answers
           )
+
       },
 
+
+      /*
+        Business.
+      */
+
       business: {
+
         available:
           businessAvailable,
 
         note:
-          businessAvailable
-            ? "Il Business Score viene utilizzato solo come tie-breaker tra compatibilità molto vicine."
-            : "Nessun Business Score disponibile: la scelta viene effettuata sulla compatibilità con il profilo."
+          "Il Business Score non modifica la compatibilità dell'utente e viene utilizzato solo come tie-break quando la compatibilità è molto vicina."
+
       }
+
     };
+
   }
 
-  /* ============================================================
-     PUBLIC API
-     ============================================================ */
+
+  /* =========================================================
+     39. HELPERS PUBBLICI
+     ========================================================= */
+
+  function getCoveredNeeds(
+    stack
+  ) {
+
+    const covered =
+      new Set();
+
+
+    (
+      stack || []
+    ).forEach(
+      function (tool) {
+
+        NEEDS.forEach(
+          function (need) {
+
+            if (
+              Number(
+                tool.needs &&
+                tool.needs[need]
+                  ? tool.needs[need]
+                  : 0
+              ) >= 50
+            ) {
+
+              covered.add(
+                need
+              );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+    return Array.from(
+      covered
+    );
+
+  }
+
+
+  function getNeedLabel(
+    need
+  ) {
+
+    return (
+      NEED_LABELS[need] ||
+      need
+    );
+
+  }
+
+
+  /* =========================================================
+     40. API PUBBLICA
+     ========================================================= */
 
   const ProjectXEngine = {
+
     VERSION:
       CONFIG.VERSION,
 
-    CONFIG:
-      CONFIG,
+    CONFIG,
 
-    NEEDS:
-      NEEDS,
+    NEEDS,
 
-    NEED_LABELS:
-      NEED_LABELS,
+    NEED_LABELS,
 
-    analyze:
-      analyzeAnswers,
 
-    analyzeAnswers:
-      analyzeAnswers,
+    analyzeAnswers,
 
-    buildNeedsProfile:
-      buildNeedsProfile,
+    interpretGoals,
 
-    calculateCompatibility:
-      calculateCompatibility,
+    interpretPainPoint,
 
-    calculateNewCoverage:
-      calculateNewCoverage,
+    buildNeedsProfile,
 
-    calculateRedundancy:
-      calculateRedundancy,
 
-    calculateStackCoverage:
-      calculateStackCoverage,
+    rankTools,
 
-    calculateStackCompatibility:
-      calculateStackCompatibility,
+    buildStack,
 
-    getAlternatives:
-      getAlternatives,
 
-    getComplementaryTools:
-      getComplementaryTools
+    getPrimaryGapNeeds,
+
+    calculatePrimaryGapValue,
+
+    calculateGapCoverage,
+
+    calculateNewCoverage,
+
+
+    getMissingNeeds,
+
+
+    estimateValue,
+
+
+    automationIdeas,
+
+
+    calculateCoverage,
+
+    calculateRedundancy,
+
+    calculateBusinessScore,
+
+    toolCompatibility,
+
+
+    getExistingTools,
+
+    getPreservedTools,
+
+    getExcludedTools,
+
+
+    getCoveredNeeds,
+
+    getNeedLabel,
+
+
+    explainStack,
+
+
+    getDatabase,
+
+
+    getAlternatives,
+
+    getComplementaryTools,
+
+
+    calculateFunctionalOverlap,
+
+    calculateCategoryDiversity,
+
+    calculateStackCompatibility
+
   };
 
-  /* ============================================================
-     EXPORT
-     ============================================================ */
+
+  /* =========================================================
+     41. GLOBAL
+     ========================================================= */
 
   if (
     typeof window !== "undefined"
   ) {
+
     window.ProjectXEngine =
       ProjectXEngine;
+
+
+    /*
+      Compatibilità con il vecchio nome.
+    */
+
+    window.StackPilotEngine =
+      ProjectXEngine;
+
   }
 
-  if (
-    typeof globalThis !== "undefined"
-  ) {
-    globalThis.ProjectXEngine =
-      ProjectXEngine;
-  }
+
+  console.log(
+    "PROJECT-X Decision Engine v1.3.0 caricato correttamente."
+  );
+
 
 })();
