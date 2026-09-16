@@ -1,6 +1,6 @@
 /* =========================================================
    PROJECT-X — DECISION ENGINE
-   Versione 1.0.0
+   Versione 1.1.0
    ---------------------------------------------------------
    Obiettivo:
    - interpretare i bisogni dell'utente
@@ -14,13 +14,25 @@
    - stimare il valore potenziale del tempo recuperabile
    - generare automazioni suggerite
 
-   Compatibile con:
-   - database.js
-   - index.html attuale
+   V1.1.0
+   ---------------------------------------------------------
+   Miglioramenti principali:
+   - Primary più coerente con il bisogno dominante
+   - distinzione netta tra Alternative e Complementary
+   - ridondanza più intelligente
+   - penalizzazione dei duplicati di categoria
+   - maggiore peso alla nuova copertura nello stack
+   - Stack Score separato dal Compatibility Score
+   - Business Score mai utilizzato per favorire un
+     software meno adatto all'utente
+   - ranking più stabile
+   - protezione contro stack composti da tool equivalenti
+   - mantenimento compatibilità con database.js e index.html
    ========================================================= */
 
 (function () {
   "use strict";
+
 
   /* =========================================================
      1. NEEDS
@@ -41,6 +53,7 @@
     "ecommerce",
     "ai"
   ];
+
 
   const NEED_LABELS = {
     crm: "Gestione clienti",
@@ -65,7 +78,7 @@
 
   const CONFIG = {
 
-    VERSION: "1.0.0",
+    VERSION: "1.1.0",
 
     /* Stack */
     MAX_STACK_TOOLS: 4,
@@ -73,12 +86,32 @@
     /* Soglie */
     MIN_PRIMARY_COMPATIBILITY: 50,
     MIN_STACK_COMPATIBILITY: 55,
-    MIN_COMPLEMENTARY_COVERAGE: 18,
+    MIN_COMPLEMENTARY_COVERAGE: 12,
+
+    /*
+      Una componente deve aggiungere almeno questa
+      quantità di copertura utile per entrare nello stack.
+    */
+    MIN_NEW_COVERAGE: 12,
+
+    /*
+      Evita che due software della stessa categoria
+      finiscano normalmente nello stesso stack.
+    */
+    MAX_SAME_CATEGORY_TOOLS: 1,
 
     /* Ridondanza */
     MAX_REDUNDANCY_PENALTY: 30,
-    CATEGORY_REDUNDANCY_PENALTY: 14,
-    STRONG_CATEGORY_REDUNDANCY_PENALTY: 20,
+    CATEGORY_REDUNDANCY_PENALTY: 18,
+    STRONG_CATEGORY_REDUNDANCY_PENALTY: 24,
+    VERY_HIGH_OVERLAP_PENALTY: 30,
+
+    /*
+      Se due tool della stessa categoria hanno una
+      sovrapposizione molto alta, vengono considerati
+      alternative anziché complementari.
+    */
+    SAME_CATEGORY_OVERLAP_THRESHOLD: 0.55,
 
     /* Ecosistema */
     EXISTING_TOOL_MAX_BONUS: 15,
@@ -87,6 +120,12 @@
 
     /* Ranking */
     COMPATIBILITY_TIE_THRESHOLD: 3,
+
+    /*
+      Quando la differenza tra due software è piccola,
+      la rilevanza specifica può aiutare a ordinare.
+    */
+    RELEVANCE_TIE_THRESHOLD: 5,
 
     /* Pesi Compatibility Score */
     WEIGHTS: {
@@ -109,6 +148,15 @@
       attribution: 10,
       marketSize: 5,
       reliability: 5
+    },
+
+    /* Stack Score */
+    STACK_WEIGHTS: {
+      compatibility: 35,
+      newCoverage: 40,
+      integration: 10,
+      existing: 5,
+      categoryDiversity: 10
     },
 
     /* Filtri */
@@ -192,6 +240,28 @@
     }
 
     return clamp(n, 0, 100);
+  }
+
+
+  function getToolCategory(tool) {
+    return normalizeText(
+      tool &&
+      tool.category
+        ? tool.category
+        : ""
+    );
+  }
+
+
+  function getToolId(tool) {
+    return String(
+      tool &&
+      (
+        tool.id ||
+        tool.name ||
+        ""
+      )
+    ).trim();
   }
 
 
@@ -721,6 +791,33 @@
       "hubspot"
     ],
 
+    "salesforce": [
+      "salesforce"
+    ],
+
+    "freshsales": [
+      "freshsales",
+      "freshworks crm"
+    ],
+
+    "zoho crm": [
+      "zoho crm",
+      "zoho"
+    ],
+
+    "activecampaign": [
+      "activecampaign"
+    ],
+
+    "close": [
+      "close",
+      "close crm"
+    ],
+
+    "klaviyo": [
+      "klaviyo"
+    ],
+
     "make": [
       "make",
       "make.com",
@@ -754,7 +851,10 @@
     }
 
 
-    const aliases = TOOL_ALIASES[toolName] || [];
+    const aliases = TOOL_ALIASES[
+      normalizedTool
+    ] || [];
+
 
     return aliases.some(function (alias) {
       return normalizedText.includes(
@@ -863,10 +963,6 @@
       return CONFIG.EXISTING_TOOL_MAX_BONUS;
     }
 
-
-    /*
-      Ecosistemi conosciuti.
-    */
 
     const normalizedTool = normalizeText(tool.name);
 
@@ -1013,7 +1109,11 @@
       );
 
       const fit = clamp(
-        capability / Math.max(normalizedRequirement, 1),
+        capability /
+        Math.max(
+          normalizedRequirement,
+          1
+        ),
         0,
         1
       );
@@ -1113,10 +1213,6 @@
       return 100;
     }
 
-
-    /*
-      Flessibilità ragionevole.
-    */
 
     if (
       wanted.includes("solo")
@@ -1431,11 +1527,6 @@
     const price = getToolMonthlyPrice(tool);
 
 
-    /*
-      Se il database non ha ancora prezzi,
-      non penalizziamo il tool.
-    */
-
     if (price === null) {
 
       if (budget <= 30 && toolHasFreePlan(tool)) {
@@ -1487,12 +1578,6 @@
     const price = getToolMonthlyPrice(tool);
 
 
-    /*
-      Senza dati di prezzo non filtriamo.
-      Questo evita di eliminare erroneamente strumenti
-      dal database attuale.
-    */
-
     if (price === null) {
       return true;
     }
@@ -1510,10 +1595,6 @@
       return true;
     }
 
-
-    /*
-      Tollera un 20% per evitare stack vuoti.
-    */
 
     return price <= budget * 1.20;
   }
@@ -1806,11 +1887,6 @@
     );
 
 
-    /*
-      Se il database ha un campo esplicito,
-      lo utilizziamo.
-    */
-
     if (
       tool.simplicity !== undefined
     ) {
@@ -1853,10 +1929,6 @@
     if (
       automation.includes("ai")
     ) {
-      /*
-        Non penalizziamo gli strumenti avanzati
-        quando l'utente chiede AI.
-      */
       score = Math.max(
         score,
         80
@@ -1905,10 +1977,6 @@
       )
     );
 
-
-    /*
-      Default neutrale.
-    */
 
     let score = 75;
 
@@ -2051,13 +2119,6 @@
     }
 
 
-    /*
-      Categoria / rilevanza:
-      non eliminiamo strumenti con una categoria
-      sconosciuta, ma evitiamo strumenti totalmente
-      scollegati dai bisogni.
-    */
-
     const relevance =
       calculateWeightedNeedsCoverage(
         tool,
@@ -2149,15 +2210,6 @@
       );
 
 
-    /*
-      Il punteggio finale segue principalmente
-      il FIT dell'utente.
-
-      L'ecosistema può aumentare il risultato,
-      ma non può trasformare un tool sbagliato
-      in un tool giusto.
-    */
-
     const weights = CONFIG.WEIGHTS;
 
 
@@ -2217,11 +2269,6 @@
       );
 
 
-    /*
-      L'automazione viene usata come correttivo,
-      non come peso dominante.
-    */
-
     score =
       score * 0.90 +
       automation * 0.10;
@@ -2267,10 +2314,6 @@
     score += integrationBonus;
 
 
-    /*
-      Limite finale.
-    */
-
     score = clamp(
       score,
       0,
@@ -2280,7 +2323,8 @@
 
     return {
 
-      compatibility: Math.round(score * 10) / 10,
+      compatibility:
+        Math.round(score * 10) / 10,
 
       baseCompatibility:
         Math.round(score * 10) / 10,
@@ -2316,25 +2360,11 @@
   function calculateBusinessScore(tool) {
 
     /*
-      IMPORTANTISSIMO:
+      Il Business Score NON influenza il Compatibility
+      Score.
 
-      Non inventiamo commissioni,
-      prezzi o cookie.
-
-      Il database potrà in futuro contenere:
-
-      business: {
-        commission: 0-100,
-        recurring: 0-100,
-        conversion: 0-100,
-        productPrice: 0-100,
-        attribution: 0-100,
-        marketSize: 0-100,
-        reliability: 0-100
-      }
-
-      Se questi dati non esistono:
-      Business Score = null.
+      Viene utilizzato esclusivamente come tie-break
+      quando due software hanno compatibilità molto vicina.
     */
 
     if (
@@ -2452,7 +2482,155 @@
 
 
   /* =========================================================
-     24. RANKING
+     24. CATEGORY / OVERLAP HELPERS
+     ========================================================= */
+
+  function calculateFunctionalOverlap(
+    toolA,
+    toolB,
+    needsProfile
+  ) {
+
+    let weightedOverlap = 0;
+    let totalWeight = 0;
+
+
+    NEEDS.forEach(function (need) {
+
+      const requirement =
+        Number(
+          needsProfile &&
+          needsProfile[need]
+            ? needsProfile[need]
+            : 0
+        );
+
+
+      if (
+        requirement < 40
+      ) {
+        return;
+      }
+
+
+      const a =
+        Number(
+          toolA &&
+          toolA.needs &&
+          toolA.needs[need]
+            ? toolA.needs[need]
+            : 0
+        );
+
+      const b =
+        Number(
+          toolB &&
+          toolB.needs &&
+          toolB.needs[need]
+            ? toolB.needs[need]
+            : 0
+        );
+
+
+      const maxCapability =
+        Math.max(a, b);
+
+
+      if (
+        maxCapability <= 0
+      ) {
+        return;
+      }
+
+
+      const minCapability =
+        Math.min(a, b);
+
+
+      const overlap =
+        minCapability /
+        maxCapability;
+
+
+      weightedOverlap +=
+        overlap * requirement;
+
+      totalWeight += requirement;
+
+    });
+
+
+    if (!totalWeight) {
+      return 0;
+    }
+
+
+    return clamp(
+      weightedOverlap /
+      totalWeight,
+      0,
+      1
+    );
+  }
+
+
+  function sameCategory(toolA, toolB) {
+
+    const categoryA =
+      getToolCategory(toolA);
+
+    const categoryB =
+      getToolCategory(toolB);
+
+
+    return (
+      categoryA &&
+      categoryB &&
+      categoryA === categoryB
+    );
+  }
+
+
+  function calculateCategoryDiversity(
+    candidate,
+    selectedTools
+  ) {
+
+    if (
+      !candidate
+    ) {
+      return 0;
+    }
+
+
+    const candidateCategory =
+      getToolCategory(candidate);
+
+
+    if (!candidateCategory) {
+      return 50;
+    }
+
+
+    const alreadyUsed =
+      (selectedTools || []).some(
+        function (tool) {
+          return (
+            getToolCategory(tool) ===
+            candidateCategory
+          );
+        }
+      );
+
+
+    return alreadyUsed
+      ? 0
+      : 100;
+  }
+
+
+  /* =========================================================
+     25. RANKING
      ========================================================= */
 
   function rankTools(
@@ -2462,6 +2640,7 @@
   ) {
 
     answers = answers || {};
+
     needsProfile =
       needsProfile ||
       buildNeedsProfile(answers);
@@ -2490,14 +2669,6 @@
           needsProfile
         );
 
-
-      /*
-        Gli strumenti esclusi vengono
-        normalmente rimossi.
-
-        In modalità fallback possiamo
-        tenerli separati.
-      */
 
       if (
         !filters.passed &&
@@ -2613,13 +2784,13 @@
 
 
     /*
-      Ordinamento:
+      Ranking = qualità individuale.
 
-      1. Compatibility
-      2. Relevance
-      3. Coverage
-      4. Business Score SOLO come tie-break
-         quando Compatibility è vicina.
+      NON utilizziamo Business Score come criterio
+      primario.
+
+      Il Business Score entra solo quando la
+      compatibilità è realmente vicina.
     */
 
     ranked.sort(function (a, b) {
@@ -2639,9 +2810,23 @@
       }
 
 
+      const relevanceDifference =
+        b.relevance -
+        a.relevance;
+
+
+      if (
+        Math.abs(
+          relevanceDifference
+        ) >
+        CONFIG.RELEVANCE_TIE_THRESHOLD
+      ) {
+        return relevanceDifference;
+      }
+
+
       /*
-        Compatibilità molto vicina:
-        Business Score può fare da tie-break.
+        Business Score solo tie-break.
       */
 
       if (
@@ -2663,16 +2848,6 @@
 
 
       if (
-        b.relevance !== a.relevance
-      ) {
-        return (
-          b.relevance -
-          a.relevance
-        );
-      }
-
-
-      if (
         b.coveredNeeds.length !==
         a.coveredNeeds.length
       ) {
@@ -2690,7 +2865,7 @@
 
 
     /*
-      Assegna posizione.
+      Posizione.
     */
 
     ranked.forEach(function (tool, index) {
@@ -2703,7 +2878,7 @@
 
 
   /* =========================================================
-     25. MOTIVAZIONI
+     26. MOTIVAZIONI
      ========================================================= */
 
   function buildToolReasons(
@@ -2804,7 +2979,7 @@
 
 
   /* =========================================================
-     26. RIDONDANZA
+     27. RIDONDANZA
      ========================================================= */
 
   function calculateRedundancy(
@@ -2825,18 +3000,15 @@
 
 
     const categoryA =
-      normalizeText(
-        toolA.category
-      );
+      getToolCategory(toolA);
 
     const categoryB =
-      normalizeText(
-        toolB.category
-      );
+      getToolCategory(toolB);
 
 
     /*
-      Stessa categoria.
+      Stessa categoria = forte segnale di
+      possibile alternativa.
     */
 
     if (
@@ -2853,63 +3025,47 @@
       Sovrapposizione funzionale.
     */
 
-    let overlap = 0;
-    let relevantNeeds = 0;
-
-
-    NEEDS.forEach(function (need) {
-
-      const requirement =
-        Number(
-          needsProfile &&
-          needsProfile[need]
-            ? needsProfile[need]
-            : 0
-        );
-
-
-      if (
-        requirement < 40
-      ) {
-        return;
-      }
-
-
-      const a =
-        Number(
-          toolA.needs[need] || 0
-        );
-
-      const b =
-        Number(
-          toolB.needs[need] || 0
-        );
-
-
-      if (
-        a >= 60 &&
-        b >= 60
-      ) {
-        overlap++;
-      }
-
-
-      relevantNeeds++;
-    });
+    const overlap =
+      calculateFunctionalOverlap(
+        toolA,
+        toolB,
+        needsProfile
+      );
 
 
     if (
-      relevantNeeds > 0
+      overlap >=
+      CONFIG.SAME_CATEGORY_OVERLAP_THRESHOLD
     ) {
 
-      const overlapRatio =
-        overlap /
-        relevantNeeds;
+      penalty +=
+        CONFIG.STRONG_CATEGORY_REDUNDANCY_PENALTY;
+    }
 
+
+    if (
+      overlap >= 0.80
+    ) {
 
       penalty +=
-        overlapRatio *
-        CONFIG.STRONG_CATEGORY_REDUNDANCY_PENALTY;
+        CONFIG.VERY_HIGH_OVERLAP_PENALTY;
+    }
+
+
+    /*
+      Se sono della stessa categoria e
+      hanno sovrapposizione elevata,
+      li consideriamo sostanzialmente
+      alternativi.
+    */
+
+    if (
+      categoryA &&
+      categoryB &&
+      categoryA === categoryB &&
+      overlap >= 0.55
+    ) {
+      penalty += 8;
     }
 
 
@@ -2924,7 +3080,7 @@
 
 
   /* =========================================================
-     27. NUOVA COPERTURA
+     28. NUOVA COPERTURA
      ========================================================= */
 
   function calculateNewCoverage(
@@ -2967,17 +3123,19 @@
       let alreadyCovered = 0;
 
 
-      selectedTools.forEach(function (tool) {
+      (selectedTools || []).forEach(
+        function (tool) {
 
-        alreadyCovered =
-          Math.max(
-            alreadyCovered,
-            Number(
-              tool.needs[need] || 0
-            )
-          );
+          alreadyCovered =
+            Math.max(
+              alreadyCovered,
+              Number(
+                tool.needs[need] || 0
+              )
+            );
 
-      });
+        }
+      );
 
 
       const additional =
@@ -2987,6 +3145,11 @@
           alreadyCovered
         );
 
+
+      /*
+        La copertura di un bisogno molto importante
+        vale più della copertura di un bisogno marginale.
+      */
 
       value +=
         additional *
@@ -3001,7 +3164,7 @@
 
 
   /* =========================================================
-     28. PRIMARY TOOL
+     29. PRIMARY TOOL
      ========================================================= */
 
   function choosePrimary(
@@ -3016,8 +3179,13 @@
 
 
     /*
-      Prima scelta:
-      miglior Compatibility Score.
+      Il Primary deve essere:
+      - compatibile
+      - rilevante
+      - capace di coprire il bisogno centrale.
+
+      Non scegliamo il Primary semplicemente
+      guardando il numero di tool coperti.
     */
 
     const viable =
@@ -3032,21 +3200,135 @@
       );
 
 
-    if (viable.length) {
-      return viable[0];
+    if (!viable.length) {
+      return rankedTools[0] || null;
     }
 
 
     /*
-      Fallback.
+      Individua i bisogni dominanti.
     */
 
-    return rankedTools[0] || null;
+    const dominantNeeds =
+      NEEDS
+        .filter(function (need) {
+          return Number(
+            needsProfile &&
+            needsProfile[need]
+              ? needsProfile[need]
+              : 0
+          ) >= 60;
+        })
+        .sort(function (a, b) {
+          return (
+            Number(needsProfile[b] || 0) -
+            Number(needsProfile[a] || 0)
+          );
+        })
+        .slice(0, 3);
+
+
+    /*
+      Se esiste un bisogno dominante,
+      valorizziamo la copertura di quel bisogno
+      senza alterare il Compatibility Score.
+    */
+
+    const scored =
+      viable.map(function (tool) {
+
+        let primaryFit =
+          tool.compatibility;
+
+
+        if (
+          dominantNeeds.length
+        ) {
+
+          let dominantCoverage = 0;
+          let dominantWeight = 0;
+
+
+          dominantNeeds.forEach(
+            function (need) {
+
+              const requirement =
+                Number(
+                  needsProfile[need] || 0
+                );
+
+              const capability =
+                Number(
+                  tool.needs[need] || 0
+                );
+
+
+              dominantCoverage +=
+                Math.min(
+                  requirement,
+                  capability
+                ) *
+                (requirement / 100);
+
+              dominantWeight +=
+                requirement;
+            }
+          );
+
+
+          if (
+            dominantWeight > 0
+          ) {
+
+            const dominantScore =
+              (
+                dominantCoverage /
+                dominantWeight
+              ) * 100;
+
+
+            primaryFit =
+              tool.compatibility * 0.75 +
+              dominantScore * 0.25;
+          }
+        }
+
+
+        return {
+          tool: tool,
+          primaryFit: primaryFit
+        };
+
+      });
+
+
+    scored.sort(function (a, b) {
+
+      if (
+        b.primaryFit !== a.primaryFit
+      ) {
+        return (
+          b.primaryFit -
+          a.primaryFit
+        );
+      }
+
+
+      return (
+        b.tool.compatibility -
+        a.tool.compatibility
+      );
+    });
+
+
+    return scored[0]
+      ? scored[0].tool
+      : viable[0];
   }
 
 
   /* =========================================================
-     29. STACK BUILDER
+     30. STACK BUILDER
      ========================================================= */
 
   function buildStack(
@@ -3082,7 +3364,13 @@
 
 
     /*
-      Selezioniamo complementari.
+      Candidati:
+
+      NON cerchiamo semplicemente i software
+      con il Compatibility Score più alto.
+
+      Cerchiamo software che aggiungano
+      qualcosa al sistema.
     */
 
     const candidates =
@@ -3123,6 +3411,10 @@
         }
 
 
+        /*
+          1. Nuova copertura.
+        */
+
         const newCoverage =
           calculateNewCoverage(
             candidate,
@@ -3130,6 +3422,10 @@
             needsProfile
           );
 
+
+        /*
+          2. Ridondanza.
+        */
 
         const redundancy =
           stack.reduce(
@@ -3148,9 +3444,75 @@
 
 
         /*
-          Se non aggiunge quasi nulla,
-          non serve.
+          3. Categoria.
         */
+
+        const candidateCategory =
+          getToolCategory(candidate);
+
+
+        const sameCategoryCount =
+          stack.filter(
+            function (tool) {
+              return (
+                candidateCategory &&
+                getToolCategory(tool) ===
+                candidateCategory
+              );
+            }
+          ).length;
+
+
+        /*
+          Due CRM dello stesso tipo non sono
+          normalmente un complemento.
+        */
+
+        if (
+          sameCategoryCount >=
+          CONFIG.MAX_SAME_CATEGORY_TOOLS
+        ) {
+
+          /*
+            Eccezione:
+            se l'utente ha esplicitamente chiesto
+            di preservare/integrare quel tool,
+            non lo scartiamo automaticamente.
+          */
+
+          const preserved =
+            preserveExistingTools(
+              candidate,
+              answers
+            );
+
+          const existing =
+            existingToolBonus(
+              candidate,
+              answers
+            );
+
+
+          if (
+            preserved <= 0 &&
+            existing <= 0
+          ) {
+            return;
+          }
+        }
+
+
+        /*
+          4. Soglia nuova copertura.
+        */
+
+        if (
+          newCoverage <
+          CONFIG.MIN_NEW_COVERAGE
+        ) {
+          return;
+        }
+
 
         if (
           newCoverage <
@@ -3161,7 +3523,7 @@
 
 
         /*
-          Evitiamo combinazioni troppo ridondanti.
+          5. Ridondanza massima.
         */
 
         if (
@@ -3186,32 +3548,89 @@
             : 0;
 
 
-        /*
-          Score complementare.
+        const categoryDiversity =
+          calculateCategoryDiversity(
+            candidate,
+            stack
+          );
 
-          La copertura aggiuntiva è più importante
-          della semplice popolarità del software.
+
+        /*
+          Stack Score.
+
+          La nuova copertura è il fattore
+          più importante.
+
+          Compatibility resta importante,
+          ma non deve far entrare un duplicato.
         */
 
         const score =
-          candidate.compatibility * 0.40 +
-          newCoverage * 0.40 +
-          integrationBonus * 0.10 +
-          existingBonus * 0.10 -
-          redundancy * 0.75;
+          candidate.compatibility *
+          (
+            CONFIG.STACK_WEIGHTS.compatibility /
+            100
+          )
+
+          +
+
+          newCoverage *
+          (
+            CONFIG.STACK_WEIGHTS.newCoverage /
+            100
+          )
+
+          +
+
+          integrationBonus *
+          (
+            CONFIG.STACK_WEIGHTS.integration /
+            100
+          )
+
+          +
+
+          existingBonus *
+          (
+            CONFIG.STACK_WEIGHTS.existing /
+            100
+          )
+
+          +
+
+          categoryDiversity *
+          (
+            CONFIG.STACK_WEIGHTS.categoryDiversity /
+            100
+          )
+
+          -
+
+          redundancy *
+          0.90;
 
 
         if (
           score > bestScore
         ) {
+
           bestScore = score;
+
           bestCandidate = candidate;
+
           bestCandidate.__newCoverage =
             newCoverage;
+
           bestCandidate.__redundancy =
             redundancy;
+
           bestCandidate.__stackScore =
-            score;
+            Math.round(
+              score * 10
+            ) / 10;
+
+          bestCandidate.__categoryDiversity =
+            categoryDiversity;
         }
 
       });
@@ -3225,37 +3644,84 @@
       bestCandidate.role =
         "complementary";
 
+
       bestCandidate.newCoverage =
         bestCandidate.__newCoverage || 0;
 
+
       bestCandidate.redundancyPenalty =
         bestCandidate.__redundancy || 0;
+
 
       bestCandidate.stackScore =
         bestCandidate.__stackScore ||
         bestCandidate.compatibility;
 
 
-      /*
-        NON modifichiamo il Compatibility Score base.
+      bestCandidate.categoryDiversity =
+        bestCandidate.__categoryDiversity || 0;
 
-        Questo è importante:
-        Compatibility Score = qualità per l'utente.
-        Stack Score = qualità nel contesto dello stack.
+
+      /*
+        Compatibility Score resta invariato.
+
+        Compatibility Score =
+        qualità per l'utente.
+
+        Stack Score =
+        qualità del tool all'interno
+        dello stack specifico.
       */
 
       delete bestCandidate.__newCoverage;
       delete bestCandidate.__redundancy;
       delete bestCandidate.__stackScore;
+      delete bestCandidate.__categoryDiversity;
 
 
       stack.push(
         bestCandidate
       );
 
+
       selectedIds.add(
         bestCandidate.id
       );
+    }
+
+
+    /*
+      Riordina lo stack:
+      Primary sempre primo,
+      complementari per Stack Score.
+    */
+
+    if (
+      stack.length > 1
+    ) {
+
+      const primaryTool =
+        stack[0];
+
+      const complementary =
+        stack
+          .slice(1)
+          .sort(function (a, b) {
+            return (
+              Number(
+                b.stackScore || 0
+              ) -
+              Number(
+                a.stackScore || 0
+              )
+            );
+          });
+
+
+      return [
+        primaryTool,
+        ...complementary
+      ];
     }
 
 
@@ -3264,7 +3730,7 @@
 
 
   /* =========================================================
-     30. MISSING NEEDS
+     31. MISSING NEEDS
      ========================================================= */
 
   function getMissingNeeds(
@@ -3353,7 +3819,7 @@
 
 
   /* =========================================================
-     31. VALUE OF TIME
+     32. VALUE OF TIME
      ========================================================= */
 
   function estimateValue(answers) {
@@ -3487,7 +3953,7 @@
 
 
   /* =========================================================
-     32. AUTOMATION IDEAS
+     33. AUTOMATION IDEAS
      ========================================================= */
 
   function automationIdeas(
@@ -3612,7 +4078,7 @@
 
 
   /* =========================================================
-     33. STACK EXPLANATION
+     34. STACK EXPLANATION
      ========================================================= */
 
   function explainStack(
@@ -3694,7 +4160,7 @@
     if (!important.length) {
       return (
         tool.name +
-        " è la soluzione con la compatibilità generale più alta per il tuo profilo."
+        " è la soluzione principale più compatibile con il profilo."
       );
     }
 
@@ -3708,9 +4174,9 @@
 
     return (
       tool.name +
-      " è stato scelto come soluzione principale perché copre soprattutto " +
+      " è la soluzione principale perché copre soprattutto " +
       joinItalian(labels) +
-      "."
+      " e rappresenta il centro del sistema proposto."
     );
   }
 
@@ -3729,6 +4195,7 @@
             Number(
               needsProfile[need] || 0
             );
+
 
           if (
             requirement < 50
@@ -3763,13 +4230,33 @@
           );
 
         })
+        .sort(function (a, b) {
+
+          const aGain =
+            Math.max(
+              0,
+              Number(
+                tool.needs[a] || 0
+              )
+            );
+
+          const bGain =
+            Math.max(
+              0,
+              Number(
+                tool.needs[b] || 0
+              )
+            );
+
+          return bGain - aGain;
+        })
         .slice(0, 3);
 
 
     if (!covered.length) {
       return (
         tool.name +
-        " completa lo stack senza aggiungere una forte sovrapposizione."
+        " completa lo stack senza introdurre una forte sovrapposizione."
       );
     }
 
@@ -3815,7 +4302,84 @@
 
 
   /* =========================================================
-     34. MAIN ANALYSIS
+     35. ALTERNATIVE / COMPLEMENTARY
+     ========================================================= */
+
+  function getAlternatives(
+    rankedTools,
+    primaryTool,
+    limit
+  ) {
+
+    if (
+      !rankedTools ||
+      !primaryTool
+    ) {
+      return [];
+    }
+
+
+    const max =
+      Number(limit) || 5;
+
+
+    return rankedTools
+      .filter(function (tool) {
+
+        return (
+          tool.id !== primaryTool.id &&
+          tool.name !== primaryTool.name
+        );
+
+      })
+      .slice(0, max)
+      .map(function (tool) {
+
+        return {
+          ...tool,
+          role: "alternative"
+        };
+
+      });
+  }
+
+
+  function getComplementaryTools(
+    rankedTools,
+    stack
+  ) {
+
+    const stackIds =
+      new Set(
+        (stack || []).map(
+          function (tool) {
+            return tool.id;
+          }
+        )
+      );
+
+
+    return (rankedTools || [])
+      .filter(function (tool) {
+
+        return !stackIds.has(
+          tool.id
+        );
+
+      })
+      .map(function (tool) {
+
+        return {
+          ...tool,
+          role: "alternative"
+        };
+
+      });
+  }
+
+
+  /* =========================================================
+     36. MAIN ANALYSIS
      ========================================================= */
 
   function analyzeAnswers(
@@ -3827,7 +4391,7 @@
 
 
     /*
-      1. Costruiamo il profilo bisogni.
+      1. Profilo bisogni.
     */
 
     const profile =
@@ -3849,8 +4413,7 @@
 
 
     /*
-      3. Se gli hard filter eliminano tutto,
-         facciamo un fallback controllato.
+      3. Fallback controllato.
     */
 
     if (
@@ -3966,21 +4529,28 @@
 
     const finalRanking =
       rankedTools
-        .filter(function (tool) {
-
-          /*
-            Se è nello stack non lo mostriamo
-            anche nella lista "altri".
-          */
-
-          return true;
-
-        })
         .slice(0, 15);
 
 
     /*
-      12. Coverage totale dello stack.
+      12. Alternative.
+
+      Le alternative sono strumenti valutati
+      singolarmente ma NON inseriti nello stack.
+    */
+
+    const alternatives =
+      primaryTool
+        ? getAlternatives(
+            rankedTools,
+            primaryTool,
+            6
+          )
+        : [];
+
+
+    /*
+      13. Coverage totale dello stack.
     */
 
     const stackCoverage = {};
@@ -4007,28 +4577,149 @@
 
 
     /*
-      13. Qualità complessiva stack.
+      14. Coverage ponderata complessiva.
     */
 
-    const stackCompatibility =
-      stack.length
+    let totalRequired = 0;
+    let totalCovered = 0;
+
+
+    NEEDS.forEach(function (need) {
+
+      const required =
+        Number(
+          profile[need] || 0
+        );
+
+
+      if (
+        required <= 0
+      ) {
+        return;
+      }
+
+
+      totalRequired += required;
+
+
+      totalCovered +=
+        Math.min(
+          required,
+          Number(
+            stackCoverage[need] || 0
+          )
+        );
+
+    });
+
+
+    const totalCoverage =
+      totalRequired > 0
         ? Math.round(
             (
-              stack.reduce(
-                function (sum, tool) {
-                  return (
-                    sum +
-                    Number(
-                      tool.compatibility || 0
-                    )
-                  );
-                },
-                0
-              ) /
-              stack.length
-            ) * 10
+              totalCovered /
+              totalRequired
+            ) * 1000
           ) / 10
         : 0;
+
+
+    /*
+      15. Qualità complessiva stack.
+
+      NON è la semplice media dei tool.
+
+      Tiene conto di:
+      - Compatibility
+      - copertura effettiva
+      - ridondanza
+      - capacità di costruire un sistema
+    */
+
+    let stackCompatibility = 0;
+
+
+    if (
+      stack.length
+    ) {
+
+      const compatibilityAverage =
+        stack.reduce(
+          function (sum, tool) {
+            return (
+              sum +
+              Number(
+                tool.compatibility || 0
+              )
+            );
+          },
+          0
+        ) /
+        stack.length;
+
+
+      const redundancyTotal =
+        stack.reduce(
+          function (total, tool) {
+            return (
+              total +
+              Number(
+                tool.redundancyPenalty || 0
+              )
+            );
+          },
+          0
+        );
+
+
+      const redundancyPenalty =
+        stack.length > 1
+          ? Math.min(
+              20,
+              redundancyTotal /
+              stack.length
+            )
+          : 0;
+
+
+      stackCompatibility =
+        Math.round(
+          clamp(
+            (
+              compatibilityAverage * 0.55 +
+              totalCoverage * 0.45 -
+              redundancyPenalty
+            ),
+            0,
+            100
+          ) * 10
+        ) / 10;
+    }
+
+
+    /*
+      16. Complementary tools esterni allo stack.
+    */
+
+    const complementaryCandidates =
+      getComplementaryTools(
+        rankedTools,
+        stack
+      );
+
+
+    /*
+      17. Business availability.
+    */
+
+    const businessAvailable =
+      finalRanking.some(
+        function (tool) {
+          return (
+            tool.businessScore !== null
+          );
+        }
+      );
 
 
     return {
@@ -4046,16 +4737,26 @@
       ranking:
         finalRanking,
 
-      stack,
+      /*
+        Nuova struttura esplicita.
+      */
 
       primaryTool,
 
       primary:
         primaryTool,
 
+      stack,
+
+      alternatives,
+
+      complementaryCandidates,
+
       stackCompatibility,
 
       stackCoverage,
+
+      totalCoverage,
 
       missingNeeds,
 
@@ -4072,6 +4773,7 @@
       explanations,
 
       filters: {
+
         hardFiltersEnabled:
           CONFIG.ENABLE_HARD_FILTERS,
 
@@ -4092,20 +4794,17 @@
 
         preservedTools:
           getPreservedTools(answers)
+
       },
 
       business: {
+
         available:
-          finalRanking.some(
-            function (tool) {
-              return (
-                tool.businessScore !== null
-              );
-            }
-          ),
+          businessAvailable,
 
         note:
           "Il Business Score non modifica la compatibilità dell'utente e viene utilizzato solo come tie-break quando la compatibilità è molto vicina."
+
       }
 
     };
@@ -4113,7 +4812,7 @@
 
 
   /* =========================================================
-     35. HELPERS PUBBLICI
+     37. HELPERS PUBBLICI
      ========================================================= */
 
   function getCoveredNeeds(
@@ -4160,7 +4859,7 @@
 
 
   /* =========================================================
-     36. API PUBBLICA
+     38. API PUBBLICA
      ========================================================= */
 
   const ProjectXEngine = {
@@ -4212,12 +4911,21 @@
 
     explainStack,
 
-    getDatabase
+    getDatabase,
+
+    getAlternatives,
+
+    getComplementaryTools,
+
+    calculateFunctionalOverlap,
+
+    calculateCategoryDiversity
+
   };
 
 
   /* =========================================================
-     37. GLOBAL
+     39. GLOBAL
      ========================================================= */
 
   if (
@@ -4238,7 +4946,7 @@
 
 
   console.log(
-    "PROJECT-X Decision Engine v1.0.0 caricato correttamente."
+    "PROJECT-X Decision Engine v1.1.0 caricato correttamente."
   );
 
 
