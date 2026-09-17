@@ -10,7 +10,6 @@
   const SESSION_KEY = 'projectx_autopilot_session_v1';
   const VARIANT_KEY = 'projectx_autopilot_variant_v1';
   const START_KEY = 'projectx_autopilot_start_v1';
-  const SEEN_KEY = 'projectx_autopilot_seen_v1';
 
   function id() {
     return 'pxs-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
@@ -63,6 +62,7 @@
   function applyVariant(variant, source) {
     const heroTitle = document.querySelector('.hero h1');
     const heroCopy = document.querySelector('.hero p');
+    const hero = document.querySelector('.hero');
     if (!heroTitle) return;
 
     const variants = {
@@ -72,7 +72,7 @@
       },
       B: {
         title: 'Meno <span class="grad">lavoro manuale.</span> Più sistema.',
-        copy: 'Parti dal problema reale, non dal nome di un'app. PROJECT-X collega esigenze, processi, automazioni e software in un unico percorso.'
+        copy: 'Parti dal problema reale, non dal nome di un\'app. PROJECT-X collega esigenze, processi, automazioni e software in un unico percorso.'
       },
       C: {
         title: 'Descrivi il problema. <span class="grad">PROJECT-X costruisce il sistema.</span>',
@@ -81,11 +81,18 @@
     };
 
     const chosen = variants[variant] || variants.A;
-    heroTitle.innerHTML = chosen.title;
+    const wowMode = !!(hero && hero.dataset && hero.dataset.pxWow === '1');
+
+    if (!wowMode) {
+      heroTitle.innerHTML = chosen.title;
+    } else {
+      heroTitle.innerHTML = 'Non cercare il software giusto.<br><span class="grad">Fatti costruire il sistema.</span>';
+    }
+
     if (heroCopy) heroCopy.textContent = chosen.copy;
 
     try { localStorage.setItem(VARIANT_KEY, variant); } catch (e) {}
-    send('experiment_variant', { variant, source });
+    send('experiment_variant', { variant, source, surface: wowMode ? 'wow-subcopy' : 'hero-title' });
   }
 
   async function loadVariant() {
@@ -189,7 +196,7 @@
       '<h3 style="margin:8px 0 7px;font-size:21px;">Ora facciamo il passo che produce valore.</h3>',
       '<p style="margin:0;color:#98a5bc;font-size:12px;line-height:1.55;">',
       highIntent
-        ? 'Hai già un problema abbastanza concreto da trasformarlo in un blueprint operativo. Puoi passare dal risultato al Report PRO oppure parlare con Coach.',
+        ? 'Hai già un problema abbastanza concreto da trasformarlo in un blueprint operativo. Puoi passare dal risultato al Report PRO oppure parlare con Coach.'
         : 'Parti dal risultato, conserva la direzione e approfondisci solo ciò che serve. Nessuna app casuale: prima il processo, poi lo strumento.',
       '</p>',
       '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;">',
