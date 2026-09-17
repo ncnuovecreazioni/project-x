@@ -39,6 +39,26 @@ export default async function handler(req, res) {
         name: 'Make',
         env: 'AFFILIATE_MAKE',
         fallback: 'https://www.make.com/'
+      },
+      brevo: {
+        name: 'Brevo',
+        env: 'AFFILIATE_BREVO',
+        fallback: 'https://www.brevo.com/it/'
+      },
+      monday: {
+        name: 'monday.com',
+        env: 'AFFILIATE_MONDAY',
+        fallback: 'https://monday.com/'
+      },
+      semrush: {
+        name: 'Semrush',
+        env: 'AFFILIATE_SEMRUSH',
+        fallback: 'https://it.semrush.com/'
+      },
+      kit: {
+        name: 'Kit',
+        env: 'AFFILIATE_KIT',
+        fallback: 'https://kit.com/'
       }
     };
 
