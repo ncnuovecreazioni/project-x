@@ -1,0 +1,45 @@
+name: PROJECT-X Autopilot Growth
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '13 5 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  growth:
+    if: github.event_name == 'schedule' || github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate SEO growth pages
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            node scripts/generate-seo.mjs --count=1
+          else
+            node scripts/generate-seo.mjs --count=3
+          fi
+
+      - name: Commit generated growth
+        run: |
+          git config user.name 'PROJECT-X Autopilot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet; then
+            echo 'No growth changes to commit.'
+            exit 0
+          fi
+          git add sitemap.xml '*.html'
+          git commit -m "PROJECT-X autopilot: expand organic growth"
+          git push

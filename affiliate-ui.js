@@ -1,4 +1,4 @@
-/* PROJECT-X monetization UI bridge.
+/* PROJECT-X monetization + autopilot UI bridge.
    Loaded after the existing app without changing the decision engine.
 */
 (function(){
@@ -46,13 +46,23 @@
     mount.appendChild(box);
   }
 
+  function loadAutopilot(){
+    if(window.ProjectXAutopilot || document.querySelector('script[data-projectx-autopilot="1"]')) return;
+    var script=document.createElement('script');
+    script.src='/autopilot.js';
+    script.async=true;
+    script.dataset.projectxAutopilot='1';
+    document.body.appendChild(script);
+  }
+
   function update(){
     if(document.getElementById('results') && document.getElementById('results').style.display!=='none') addProButton();
     rewriteAffiliateLinks();
+    loadAutopilot();
   }
 
   var observer=new MutationObserver(update);
-  observer.observe(document.body,{subtree:true,childList:true});
+  observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style']});
   update();
   window.addEventListener('load',update);
 })();
