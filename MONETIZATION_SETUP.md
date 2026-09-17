@@ -1,4 +1,4 @@
-# PROJECT-X — Monetization setup
+# PROJECT-X — Monetization & automation setup
 
 ## Affiliate
 
@@ -18,9 +18,7 @@ Until a variable is configured, `/api/affiliate?tool=...` falls back to the prov
 
 ## Tracking
 
-`EVENT_WEBHOOK_URL` can receive server-side `affiliate_redirect` events with the software, source and monetized flag.
-
-The existing frontend also records `affiliate_click` events.
+`EVENT_WEBHOOK_URL` receives server-side events such as `affiliate_redirect` and frontend events such as analysis completion, Coach usage and Report PRO views.
 
 ## Report PRO
 
@@ -28,8 +26,35 @@ Set the Vercel Production environment variable:
 
 - `PRO_CHECKOUT_URL`
 
-This should be the public checkout/payment URL for the Report PRO product. The code redirects to that URL and adds `source=project-x` and `product=project-x-report-pro` query parameters.
+The checkout redirect adds `source=project-x` and `product=project-x-report-pro`.
 
-## Important
+## AI Coach
 
-Affiliate approval and payment-provider setup are external account actions. The repository intentionally contains no personal affiliate IDs or payment secrets.
+Open `/coach.html` to use the conversational entry point.
+
+Optional environment variables:
+
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL` (optional override; otherwise the existing PROJECT-X default is used)
+
+The Coach does not choose software. It collects business context and hands the structured answers to the Decision Engine.
+
+## Lead scoring
+
+`/api/lead` now returns and forwards:
+
+- `leadScore` from 0–100
+- `leadTemperature`: `HOT`, `WARM` or `COLD`
+- `tags`
+- `recommendedFollowup`
+- `leadId`
+
+The score uses declared intent, budget, team size, time at stake, problem detail and existing tools. It is deterministic and does not alter the software ranking.
+
+## External automation
+
+`LEAD_WEBHOOK_URL` is still the main CRM/automation bridge. The webhook can use `leadTemperature` and `recommendedFollowup` to route high-priority leads and start different sequences.
+
+## Data handling
+
+PROJECT-X does not intentionally persist Coach conversations or AI responses in the repository. The AI request uses `store: false`. Leads and analytics are sent only to the webhooks configured by the site owner.
