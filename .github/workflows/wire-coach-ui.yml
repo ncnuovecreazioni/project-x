@@ -1,0 +1,48 @@
+name: Wire PROJECT-X Coach UI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject Coach link
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          if '/coach.html' in s:
+              print('Coach link already present.')
+              raise SystemExit(0)
+          marker = '<div class="topnav">'
+          if marker not in s:
+              print('Topnav marker not found; leaving index unchanged.')
+              raise SystemExit(0)
+          replacement = '<div class="topnav"><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ Coach AI</a>'
+          s = s.replace(marker, replacement, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          git config user.name 'PROJECT-X Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'Nothing to commit.'
+            exit 0
+          fi
+          git commit -m 'Add PROJECT-X Coach entry point'
+          git push
