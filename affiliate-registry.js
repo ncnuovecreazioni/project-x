@@ -110,6 +110,66 @@
       model: 'Recurring revenue share',
       sourceUrl: 'https://help.make.com/affiliate-program',
       commercialNote: '35% delle sottoscrizioni pagate per 12 mesi dalla registrazione tramite link affiliato.'
+    },
+    brevo: {
+      id: 'brevo',
+      name: 'Brevo',
+      officialProgramUrl: 'https://help.brevo.com/hc/it/articles/16487784994322-Programma-di-affiliazione-Brevo',
+      productUrl: 'https://www.brevo.com/it/',
+      envKey: 'AFFILIATE_BREVO',
+      verified: true,
+      commissionLabel: 'CPA fisso + 5 USD/CPL',
+      recurring: false,
+      durationLabel: 'Cookie 90 giorni',
+      cookieDays: 90,
+      model: 'CPA / CPL',
+      sourceUrl: 'https://help.brevo.com/hc/it/articles/16487784994322-Programma-di-affiliazione-Brevo',
+      commercialNote: 'Il programma ufficiale prevede un CPA fisso per account pagante; dopo il primo account pagante viene attivato anche un CPL da 5 USD per account gratuito idoneo.'
+    },
+    monday: {
+      id: 'monday',
+      name: 'monday.com',
+      officialProgramUrl: 'https://monday.com/lang/it/affiliate-program',
+      productUrl: 'https://monday.com/',
+      envKey: 'AFFILIATE_MONDAY',
+      verified: true,
+      commissionLabel: 'Fino al 100% del primo anno',
+      recurring: false,
+      durationLabel: 'Vendite del primo anno',
+      cookieDays: null,
+      model: 'Tiered first-year commission',
+      sourceUrl: 'https://monday.com/lang/it/affiliate-program',
+      commercialNote: 'Il programma ufficiale indica un modello a livelli con commissioni fino al 100% sulle vendite del primo anno del cliente segnalato.'
+    },
+    semrush: {
+      id: 'semrush',
+      name: 'Semrush',
+      officialProgramUrl: 'https://it.semrush.com/kb/97-affiliate-program',
+      productUrl: 'https://it.semrush.com/',
+      envKey: 'AFFILIATE_SEMRUSH',
+      verified: true,
+      commissionLabel: 'Fino a 450 USD/vendita + 10 USD/trial',
+      recurring: false,
+      durationLabel: 'Cookie 120 giorni',
+      cookieDays: 120,
+      model: 'CPA',
+      sourceUrl: 'https://www.semrush.com/lp/affiliate-program/en/',
+      commercialNote: 'Il programma ufficiale globale indica fino a 450 USD per vendita e 10 USD per attivazione trial; importi e condizioni dipendono dal prodotto e dal livello partner.'
+    },
+    kit: {
+      id: 'kit',
+      name: 'Kit',
+      officialProgramUrl: 'https://kit.com/affiliate',
+      productUrl: 'https://kit.com/',
+      envKey: 'AFFILIATE_KIT',
+      verified: true,
+      commissionLabel: '50% per 12 mesi + 10–20% oltre',
+      recurring: true,
+      durationLabel: '12 mesi + ricorrente con status',
+      cookieDays: null,
+      model: 'Revenue share',
+      sourceUrl: 'https://kit.com/affiliate',
+      commercialNote: 'Il programma ufficiale indica il 50% per i primi 12 mesi e un’ulteriore quota ricorrente del 10–20% oltre i 12 mesi per gli affiliati che mantengono lo status previsto.'
     }
   };
 })();
