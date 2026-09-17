@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050711">
+<meta name="description" content="Report PRO PROJECT-X: una blueprint operativa personalizzata per trasformare il risultato in un sistema concreto.">
+<title>PROJECT-X — Report PRO</title>
+<style>
+:root{--bg:#050711;--bg2:#0a0f1c;--panel:#0f1626;--line:rgba(255,255,255,.1);--text:#f7f9ff;--muted:#98a5bc;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d;--gold:#ffd166;--shadow:0 30px 100px rgba(0,0,0,.45)}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 8% 0%,rgba(124,92,255,.24),transparent 31%),radial-gradient(circle at 92% 12%,rgba(91,140,255,.16),transparent 28%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.wrap{width:min(1020px,calc(100% - 28px));margin:auto}.hero{padding:78px 0 36px;text-align:center}.eyebrow{display:inline-flex;padding:8px 11px;border-radius:999px;border:1px solid rgba(255,209,102,.22);background:rgba(255,209,102,.06);color:#ffe18c;font-size:10px;font-weight:900}.hero h1{font-size:clamp(44px,8vw,78px);line-height:.93;letter-spacing:-.07em;margin:18px 0 12px}.grad{background:linear-gradient(100deg,#fff,#ad9dff,#79aaff);-webkit-background-clip:text;color:transparent}.hero p{color:var(--muted);max-width:760px;margin:auto;line-height:1.65}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:28px;padding-bottom:44px}.card{padding:23px;border:1px solid var(--line);border-radius:22px;background:rgba(15,22,38,.9);box-shadow:0 16px 55px rgba(0,0,0,.18)}.wide{grid-column:1/-1}.card h2{margin:0 0 7px;font-size:19px}.sub{color:var(--muted);font-size:12px;line-height:1.55;margin:0 0 15px}.metric{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px}.metric:last-child{border-bottom:0}.metric span{color:var(--muted)}.metric b{font-size:17px}.lock{padding:17px;border:1px dashed rgba(255,209,102,.2);border-radius:15px;background:rgba(255,209,102,.035);color:var(--muted);font-size:11px;line-height:1.6}.cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:13px;padding:13px 17px;color:#fff;font-weight:900;font-size:11px;cursor:pointer}.primary{background:linear-gradient(135deg,var(--p),var(--p2));box-shadow:0 18px 45px rgba(124,92,255,.25)}.secondary{background:rgba(255,255,255,.04);border:1px solid var(--line)}.value{font-size:34px;font-weight:950;letter-spacing:-.055em}.tiny{color:#78869d;font-size:9px;line-height:1.5}.footer{padding:20px 0 50px;text-align:center;color:#65738a;font-size:9px}@media(max-width:720px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.hero{padding-top:58px}.cta .btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<div class="eyebrow">✦ REPORT PRO · BLUEPRINT OPERATIVA</div>
+<h1>Non solo una scelta.<br><span class="grad">Un sistema da costruire.</span></h1>
+<p>Il Report PRO prende il tuo profilo PROJECT-X e lo trasforma in una blueprint più dettagliata: priorità, automazioni, misurazione del valore, roadmap e punti da implementare.</p>
+<div class="cta"><a class="btn secondary" href="/">← Torna a PROJECT-X</a><a id="payBtn" class="btn primary" href="/api/pro-checkout?source=report-pro">Sblocca Report PRO →</a></div>
+</section>
+<section class="grid" id="content">
+<div class="card" id="profile"></div>
+<div class="card" id="value"></div>
+<div class="card wide" id="blueprint"></div>
+<div class="card" id="automation"></div>
+<div class="card" id="stack"></div>
+<div class="card wide" id="premium"></div>
+</section>
+<div class="footer">PROJECT-X · Il Report PRO deve completare il risultato gratuito, non sostituirlo.</div>
+</div>
+<script src="/database.js"></script>
+<script src="/engine.js"></script>
+<script>
+(function(){
+'use strict';
+var E=window.ProjectXEngine||window.StackPilotEngine;
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function money(n){return '€'+Math.round(Number(n)||0).toLocaleString('it-IT')}
+function loadAnswers(){try{return JSON.parse(localStorage.getItem('projectx_answers_v2')||'null')}catch(e){return null}}
+var a=loadAnswers();
+if(!a){document.getElementById('content').innerHTML='<div class="card wide"><h2>Prima serve un profilo PROJECT-X.</h2><p class="sub">Apri l’analisi gratuita, completa almeno l’analisi rapida e poi torna qui: il Report PRO userà le tue risposte.</p><div class="cta"><a class="btn primary" href="/">Apri PROJECT-X →</a></div></div>';return}
+var r=null;
+try{r=E&&E.analyzeAnswers?E.analyzeAnswers(a):null}catch(e){r=null}
+var p=r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]));
+var v=r&&(r.valueEstimate||r.value)||{};
+var stack=r&&r.stack||[];
+var profile=r&&r.profile||{};
+var labels=E&&E.NEED_LABELS||{};
+var entries=Object.entries(profile).sort(function(x,y){return y[1]-x[1]});
+var focus=entries.slice(0,3).map(function(x){return labels[x[0]]||x[0]});
+var autos=(r&&(r.automationIdeas||r.automationSuggestions)||[]).slice(0,6);
+var missing=(r&&r.missingNeeds||[]).slice(0,5);
+var hourly=Number(v.hourlyValue||0), hours=Number(v.hoursPerWeek||0), monthly=Number(v.monthlyValue||hours*hourly*4.33);
+document.getElementById('profile').innerHTML='<h2>🧠 Il tuo profilo</h2><p class="sub">La blueprint parte da ciò che hai dichiarato, non da una lista generica di software.</p>'+
+'<div class="metric"><span>Attività</span><b>'+esc(a.businessType||'—')+'</b></div><div class="metric"><span>Team</span><b>'+esc(a.teamSize||'—')+'</b></div><div class="metric"><span>Budget</span><b>'+esc(a.budget||'—')+'</b></div><div class="metric"><span>Focus</span><b>'+esc(focus.join(' · ')||'—')+'</b></div>';
+document.getElementById('value').innerHTML='<h2>💰 Valore del tempo</h2><p class="sub">Stima teorica basata sulle ore e sul valore orario inseriti.</p><div class="value">'+money(monthly)+'</div><p class="tiny">valore potenziale mensile · non promessa di risparmio</p><div class="metric"><span>Ore indicate</span><b>'+esc(hours)+' h/settimana</b></div><div class="metric"><span>Valore orario</span><b>'+money(hourly)+'</b></div>';
+document.getElementById('blueprint').innerHTML='<h2>🗺 Blueprint operativa</h2><p class="sub">La parte PRO approfondisce ciò che fare prima, cosa collegare e cosa misurare dopo l’implementazione.</p><div class="metric"><span>1 · Nucleo</span><b>'+esc(p&&p.name||'Da definire')+'</b></div><div class="metric"><span>2 · Bisogni prioritari</span><b>'+esc(focus.join(' · ')||'Da definire')+'</b></div><div class="metric"><span>3 · Gap da chiudere</span><b>'+esc(missing.join(' · ')||'Nessuno evidente')+'</b></div><div class="lock"><strong>Nel report completo:</strong> ordine delle automazioni, specifiche dei workflow, KPI da monitorare, impostazione dei dati, roadmap 30 giorni e schema di implementazione.</div>';
+document.getElementById('automation').innerHTML='<h2>⚡ Automazioni</h2><p class="sub">Le prime aree da trasformare in workflow.</p>'+(autos.length?autos.map(function(x,i){var label=typeof x==='string'?x:(x.title||x.name||x.description||'Automazione '+(i+1));return'<div class="metric"><span>'+((i+1))+'</span><b>'+esc(label)+'</b></div>'}).join(''):'<div class="lock">Il tuo profilo non ha ancora restituito automazioni dettagliate.</div>');
+document.getElementById('stack').innerHTML='<h2>⚙️ Stack</h2><p class="sub">Il nucleo e i complementi già individuati dal motore.</p>'+(stack.length?stack.map(function(t,i){return'<div class="metric"><span>'+((i===0?'Primary':'Complementare'))+'</span><b>'+esc(t.name||t.id||'Strumento')+'</b></div>'}).join(''):'<div class="lock">Nessuno stack disponibile.</div>');
+document.getElementById('premium').innerHTML='<h2>🔐 Cosa aggiunge il PRO</h2><p class="sub">Il report a pagamento è pensato come un deliverable utilizzabile, non come un semplice PDF più lungo.</p><div class="metric"><span>Roadmap</span><b>30 giorni, per fasi</b></div><div class="metric"><span>Automazioni</span><b>Workflow da implementare</b></div><div class="metric"><span>Misurazione</span><b>KPI e baseline prima/dopo</b></div><div class="metric"><span>Business case</span><b>Costi vs valore del tempo</b></div><div class="lock">Il pagamento viene gestito dal link configurato in Vercel. Finché non viene impostato <code>PRO_CHECKOUT_URL</code>, il pulsante mostra semplicemente che il checkout non è ancora collegato.</div><div class="cta"><a class="btn primary" href="/api/pro-checkout?source=report-pro">Sblocca Report PRO →</a><a class="btn secondary" href="/">Rifai l’analisi →</a></div>';
+try{fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'pro_report_view',sessionId:'pro-'+Date.now(),meta:{primary:p&&p.name||'',business:a.businessType||'',budget:a.budget||''}})}).catch(function(){})}catch(e){}
+})();
+</script>
+</body>
+</html>
