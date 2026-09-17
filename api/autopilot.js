@@ -1,23 +1,26 @@
 /* =========================================================
    PROJECT-X — AUTOPILOT CONTROL PLANE
    ---------------------------------------------------------
-   Public mode: /api/autopilot?mode=variant
-   Cron mode:   /api/autopilot   (requires CRON_SECRET)
+   Public mode:  /api/autopilot?mode=variant
+   Dashboard:    /api/autopilot?mode=dashboard&token=...
+   Cron mode:    /api/autopilot  (requires CRON_SECRET)
 
    Optional env:
    CRON_SECRET
+   DASHBOARD_TOKEN
    AUTOPILOT_DATA_URL      -> JSON aggregate feed
    AUTOPILOT_WEBHOOK_URL   -> digest destination
    EVENT_WEBHOOK_URL       -> fallback digest destination
+   LEAD_WEBHOOK_URL
+   PRO_CHECKOUT_URL
    ========================================================= */
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
 }
 
-function pct(n) {
-  const value = Number(n);
-  return Number.isFinite(value) ? clamp(Math.round(value * 100), 0, 100) : 0;
+function safeObject(value) {
+  return value && typeof value === "object" ? value : {};
 }
 
 async function loadFeed() {
@@ -54,11 +57,15 @@ function getVariantStats(data) {
 
   if (Array.isArray(variants)) {
     return variants.map(function (item) {
+      const views = Number(item.views || 0);
+      const conversions = Number(item.conversions || 0);
+      const rate = Number(item.conversionRate || item.rate || (views ? conversions / views : 0));
       return {
         id: String(item.id || "A"),
-        views: Number(item.views || 0),
-        conversions: Number(item.conversions || 0),
-        rate: Number(item.conversionRate || item.rate || 0)
+        views,
+        conversions,
+        rate,
+        ratePct: Math.round(rate * 100 * 100) / 100
       };
     });
   }
@@ -69,7 +76,7 @@ function getVariantStats(data) {
       const views = Number(item.views || 0);
       const conversions = Number(item.conversions || 0);
       const rate = Number(item.conversionRate || item.rate || (views ? conversions / views : 0));
-      return { id, views, conversions, rate };
+      return { id, views, conversions, rate, ratePct: Math.round(rate * 100 * 100) / 100 };
     });
   }
 
@@ -77,20 +84,21 @@ function getVariantStats(data) {
 }
 
 function chooseVariant(data) {
-  const stats = getVariantStats(data).filter(function (item) {
+  const stats = getVariantStats(data);
+  const measured = stats.filter(function (item) {
     return item.views >= 10;
   });
 
-  if (stats.length) {
-    stats.sort(function (a, b) {
+  if (measured.length) {
+    measured.sort(function (a, b) {
       if (b.rate !== a.rate) return b.rate - a.rate;
       return b.conversions - a.conversions;
     });
 
     return {
-      variant: stats[0].id,
+      variant: measured[0].id,
       source: "measured",
-      stats
+      stats: measured
     };
   }
 
@@ -103,10 +111,53 @@ function chooseVariant(data) {
   };
 }
 
+function getConversions(data) {
+  const conversions = safeObject(data && data.conversions);
+  return {
+    affiliate: Number(conversions.affiliate || conversions.affiliate_redirect || 0),
+    pro: Number(conversions.pro || conversions.reportPro || 0),
+    implementation: Number(conversions.implementation || 0),
+    lead: Number(conversions.lead || 0)
+  };
+}
+
+function getEventCounts(data) {
+  return safeObject(data && data.eventCounts);
+}
+
+function buildTotals(data) {
+  const conversions = getConversions(data);
+  const variants = getVariantStats(data);
+  const views = variants.reduce(function (sum, item) { return sum + Number(item.views || 0); }, 0);
+  const eventCounts = getEventCounts(data);
+
+  return {
+    views,
+    affiliate: conversions.affiliate || Number(eventCounts.affiliate_redirect || 0),
+    pro: conversions.pro,
+    implementation: conversions.implementation,
+    lead: conversions.lead
+  };
+}
+
+function chooseRevenuePath(data) {
+  const c = getConversions(data);
+  const candidates = [
+    { id: "affiliate", value: c.affiliate },
+    { id: "pro", value: c.pro },
+    { id: "implementation", value: c.implementation }
+  ].filter(function (item) { return item.value > 0; });
+
+  if (!candidates.length) return "report-pro";
+  candidates.sort(function (a, b) { return b.value - a.value; });
+  return candidates[0].id;
+}
+
 function buildReadiness(feed) {
   const data = feed && feed.data ? feed.data : {};
-  const eventCounts = data.eventCounts && typeof data.eventCounts === "object" ? data.eventCounts : {};
-  const conversions = data.conversions && typeof data.conversions === "object" ? data.conversions : {};
+  const eventCounts = getEventCounts(data);
+  const conversions = getConversions(data);
+  const variantStats = getVariantStats(data);
 
   const readiness = {
     tracking: !!String(process.env.EVENT_WEBHOOK_URL || "").trim(),
@@ -114,8 +165,9 @@ function buildReadiness(feed) {
     proCheckout: !!String(process.env.PRO_CHECKOUT_URL || "").trim(),
     affiliateRouting: true,
     dataFeed: !!feed.configured,
-    measuredExperiment: getVariantStats(data).some(function (item) { return Number(item.views || 0) >= 10; }),
-    seoAutopilot: true
+    measuredExperiment: variantStats.some(function (item) { return Number(item.views || 0) >= 10; }),
+    seoAutopilot: true,
+    controlRoom: !!String(process.env.DASHBOARD_TOKEN || "").trim()
   };
 
   const actions = [];
@@ -123,23 +175,23 @@ function buildReadiness(feed) {
   if (!readiness.tracking) actions.push("Collega EVENT_WEBHOOK_URL per non perdere i segnali di comportamento.");
   if (!readiness.leadCapture) actions.push("Collega LEAD_WEBHOOK_URL per trasformare i contatti in lead lavorabili automaticamente.");
   if (!readiness.proCheckout) actions.push("Collega PRO_CHECKOUT_URL per rendere acquistabile il Report PRO.");
-  if (!readiness.dataFeed) actions.push("Collega AUTOPILOT_DATA_URL con un feed aggregato per permettere agli esperimenti di imparare dai dati.");
+  if (!readiness.dataFeed) actions.push("Collega AUTOPILOT_DATA_URL con un feed aggregato per permettere al sistema di imparare dai dati.");
   if (readiness.dataFeed && !readiness.measuredExperiment) actions.push("Accumula almeno 10 visualizzazioni per variante prima di cambiare il vincitore.");
 
   if (eventCounts.affiliate_redirect || conversions.affiliate) {
-    actions.push("Monitora il rapporto analisi → click affiliate e conserva solo i partner coerenti con il profilo utente.");
+    actions.push("Confronta analisi → click affiliate per individuare i percorsi con maggiore intenzione commerciale.");
   }
 
-  if (conversions.reportPro || conversions.pro) {
-    actions.push("Ottimizza il passaggio risultati → Report PRO sulla base del tasso di acquisto reale.");
+  if (conversions.pro) {
+    actions.push("Usa gli acquisti PRO come segnale per ottimizzare il passaggio risultati → blueprint.");
   }
 
   if (conversions.implementation) {
-    actions.push("Dai priorità ai lead implementation e raccogli il problema specifico che li ha portati alla richiesta.");
+    actions.push("Dai priorità ai lead implementation e raccogli il problema specifico che ha generato la richiesta.");
   }
 
   if (!actions.length) {
-    actions.push("Il sistema è pronto a osservare, misurare e aumentare progressivamente la qualità del funnel.");
+    actions.push("Il sistema è pronto a osservare, misurare e migliorare progressivamente il funnel.");
   }
 
   return { readiness, actions };
@@ -166,6 +218,14 @@ async function sendDigest(payload) {
   }
 }
 
+function dashboardAuthorized(req) {
+  const expected = String(process.env.DASHBOARD_TOKEN || "").trim();
+  if (!expected) return false;
+  const queryToken = String((req.query && req.query.token) || "").trim();
+  const header = String(req.headers.authorization || "");
+  return queryToken === expected || header === `Bearer ${expected}`;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ success: false, error: "Method Not Allowed" });
@@ -180,7 +240,37 @@ export default async function handler(req, res) {
       success: true,
       variant: decision.variant,
       source: decision.source,
-      measured: decision.stats.length > 0
+      measured: decision.source === "measured"
+    });
+  }
+
+  if (mode === "dashboard") {
+    if (!dashboardAuthorized(req)) {
+      return res.status(401).json({
+        success: false,
+        error: String(process.env.DASHBOARD_TOKEN || "").trim() ? "Unauthorized" : "DASHBOARD_TOKEN non configurato."
+      });
+    }
+
+    const feed = await loadFeed();
+    const data = feed.data || {};
+    const control = buildReadiness(feed);
+    const decision = chooseVariant(data);
+    const conversions = getConversions(data);
+
+    return res.status(200).json({
+      success: true,
+      generatedAt: new Date().toISOString(),
+      recommendedVariant: decision.variant,
+      variantSource: decision.source,
+      variants: decision.stats,
+      conversions,
+      totals: buildTotals(data),
+      readiness: control.readiness,
+      actions: control.actions,
+      nextRevenuePath: chooseRevenuePath(data),
+      feedConfigured: feed.configured,
+      feedAvailable: !!feed.data
     });
   }
 
@@ -199,9 +289,11 @@ export default async function handler(req, res) {
     generatedAt: new Date().toISOString(),
     recommendedVariant: decision.variant,
     variantSource: decision.source,
+    nextRevenuePath: chooseRevenuePath(feed.data),
     readiness: control.readiness,
     actions: control.actions,
     measuredVariants: decision.stats,
+    totals: buildTotals(feed.data),
     feedConfigured: feed.configured,
     feedAvailable: !!feed.data
   };
