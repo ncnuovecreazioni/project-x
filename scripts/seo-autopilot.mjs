@@ -1,0 +1,99 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+const root = process.cwd();
+const baseUrl = 'https://project-x-phi-steel.vercel.app';
+const topics = JSON.parse(fs.readFileSync(path.join(root, 'seo-topics.json'), 'utf8'));
+const sitemapPath = path.join(root, 'sitemap.xml');
+
+function esc(value = '') {
+  return String(value).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function pageHtml(topic) {
+  const title = esc(topic.title);
+  const keyword = esc(topic.keyword);
+  const audience = esc(topic.audience);
+  const problem = esc(topic.problem);
+  const slug = esc(topic.slug);
+  const description = `${topic.title}. Metodo pratico per capire processo, strumenti e automazioni senza scegliere software a caso.`;
+  const canonical = `${baseUrl}/${topic.slug}.html`;
+
+  return `<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="${esc(description)}">
+<link rel="canonical" href="${canonical}">
+<meta property="og:title" content="${title} | PROJECT-X">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:type" content="article">
+<title>${title} | PROJECT-X</title>
+<style>
+:root{--bg:#050711;--bg2:#0a0f1c;--panel:rgba(15,21,38,.92);--line:rgba(255,255,255,.09);--text:#f7f9ff;--muted:#98a5bc;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 10% 0%,rgba(124,92,255,.2),transparent 28%),linear-gradient(180deg,var(--bg),var(--bg2));line-height:1.68}.wrap{width:min(980px,calc(100% - 30px));margin:auto}.top{padding:22px 0;border-bottom:1px solid var(--line)}.logo{font-weight:950;letter-spacing:.18em}.logo b{color:var(--p)}main{padding:62px 0 100px}.eyebrow{display:inline-block;padding:7px 10px;border:1px solid rgba(124,92,255,.3);border-radius:999px;color:#c9bfff;background:rgba(124,92,255,.07);font-size:10px;font-weight:900;letter-spacing:.12em}.hero h1{font-size:clamp(38px,6vw,66px);line-height:.98;letter-spacing:-.065em;margin:18px 0}.grad{background:linear-gradient(100deg,#fff,#ad9dff 47%,#79aaff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{color:var(--muted);font-size:17px;max-width:820px}.card{margin-top:17px;padding:27px;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 18px 55px rgba(0,0,0,.18)}h2{font-size:25px;letter-spacing:-.035em;margin:0 0 9px}h3{font-size:18px;margin:22px 0 6px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.step{padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.02)}.step b{display:block}.step span{display:block;color:var(--muted);font-size:13px;margin-top:5px}.cta{margin-top:22px;padding:23px;border:1px solid rgba(124,92,255,.3);border-radius:20px;background:linear-gradient(135deg,rgba(124,92,255,.12),rgba(91,140,255,.07))}.cta a{display:inline-flex;margin:8px 8px 0 0;padding:12px 15px;border-radius:12px;text-decoration:none;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2))}.links{margin-top:25px;font-size:12px;color:var(--muted)}.links a{color:#bcaeff;text-decoration:none}@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">${JSON.stringify({
+  '@context':'https://schema.org',
+  '@type':'Article',
+  headline:topic.title,
+  description,
+  dateModified:new Date().toISOString().slice(0,10),
+  inLanguage:'it-IT',
+  author:{'@type':'Organization',name:'PROJECT-X'},
+  mainEntityOfPage:canonical
+})}</script>
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="logo">PROJECT-<b>X</b></div></div></header>
+<main><div class="wrap">
+<section class="hero">
+<span class="eyebrow">GUIDA PROJECT-X · ${keyword.toUpperCase()}</span>
+<h1>${title.replace(topic.keyword, `<span class="grad">${keyword}</span>`)}</h1>
+<p>Per ${audience}, il punto di partenza non è cercare l'app più famosa: è capire il processo, il collo di bottiglia e quali passaggi vale davvero la pena automatizzare.</p>
+</section>
+<section class="card"><h2>Il problema da risolvere</h2><p>${problem}. L'obiettivo è ridurre il lavoro ripetitivo senza aggiungere strumenti inutili.</p><h3>Il metodo PROJECT-X</h3><div class="grid">
+<div class="step"><b>1 · Mappa il processo</b><span>Individua dove entrano dati, persone, email, file, richieste e scadenze.</span></div>
+<div class="step"><b>2 · Mantieni ciò che funziona</b><span>Se uno strumento esistente copre bene una parte del lavoro, può restare il nucleo del sistema.</span></div>
+<div class="step"><b>3 · Automatizza il collo di bottiglia</b><span>Parti dal passaggio ripetitivo e misurabile che assorbe più tempo.</span></div>
+<div class="step"><b>4 · Misura il ritorno</b><span>Confronta tempo risparmiato, errori evitati e qualità del follow-up con il costo della soluzione.</span></div>
+</div></section>
+<section class="card"><h2>Flussi candidati all'automazione</h2><div class="grid">
+<div class="step"><b>Acquisizione</b><span>Richiesta → raccolta dati → contatto/opportunità.</span></div>
+<div class="step"><b>Follow-up</b><span>Scadenza o mancata risposta → promemoria → attività.</span></div>
+<div class="step"><b>Documenti</b><span>Dati → modello → PDF/email → archiviazione.</span></div>
+<div class="step"><b>Reporting</b><span>Fonte dati → aggiornamento → report → notifica.</span></div>
+</div></section>
+<section class="card"><h2>Come scegliere senza comprare una seconda app inutile</h2><p>Parti da cinque elementi: cosa vuoi eliminare, quante volte accade, chi lo esegue, quali strumenti usi già e quale budget è realistico. Poi confronta le piattaforme sulla copertura del processo, non sulla sola quantità di funzioni.</p><p>Quando il problema è piccolo, una semplice automazione può essere sufficiente. Quando invece coinvolge più persone, più dati e più passaggi, serve un sistema coerente e misurabile.</p></section>
+<section class="cta"><h2>Scopri il sistema per il tuo caso</h2><p class="muted">Descrivi il problema. PROJECT-X collega esigenze, strumenti e automazioni in un percorso personalizzato.</p><a href="/?source=seo&topic=${slug}">Fai l'analisi →</a><a href="/coach.html?source=seo&topic=${slug}">Parla con AI Coach →</a></section>
+<div class="links"><a href="/">Analisi PROJECT-X</a> · <a href="/coach.html">AI Coach</a> · <a href="/soluzioni.html">Soluzioni</a> · <a href="/faq.html">FAQ</a></div>
+</div></main>
+</body></html>
+`;
+}
+
+const existingPages = new Set(
+  fs.readdirSync(root, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.html'))
+    .map((entry) => entry.name.replace(/\.html$/, ''))
+);
+
+let chosen = topics.find((topic) => !existingPages.has(topic.slug));
+if (!chosen) {
+  console.log('PROJECT-X SEO autopilot: nessuna nuova pagina in coda.');
+  process.exit(0);
+}
+
+const targetPath = path.join(root, `${chosen.slug}.html`);
+fs.writeFileSync(targetPath, pageHtml(chosen), 'utf8');
+
+let sitemap = fs.readFileSync(sitemapPath, 'utf8');
+const today = new Date().toISOString().slice(0,10);
+const entry = `  <url><loc>${baseUrl}/${chosen.slug}.html</loc><lastmod>${today}</lastmod><priority>0.7</priority></url>\n`;
+if (!sitemap.includes(`${baseUrl}/${chosen.slug}.html`)) {
+  sitemap = sitemap.replace('</urlset>', entry + '</urlset>');
+  fs.writeFileSync(sitemapPath, sitemap, 'utf8');
+}
+
+console.log(`PROJECT-X SEO autopilot: creata ${chosen.slug}.html`);
