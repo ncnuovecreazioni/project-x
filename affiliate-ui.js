@@ -19,7 +19,16 @@
     'shopify.com':'shopify',
     'www.shopify.com':'shopify',
     'make.com':'make',
-    'www.make.com':'make'
+    'www.make.com':'make',
+    'brevo.com':'brevo',
+    'www.brevo.com':'brevo',
+    'monday.com':'monday',
+    'www.monday.com':'monday',
+    'semrush.com':'semrush',
+    'www.semrush.com':'semrush',
+    'it.semrush.com':'semrush',
+    'kit.com':'kit',
+    'www.kit.com':'kit'
   };
 
   function injectWowStyles(){
