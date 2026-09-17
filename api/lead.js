@@ -1,13 +1,13 @@
 /* =========================================================
    PROJECT-X — LEAD CAPTURE
    ---------------------------------------------------------
-   Riceve i contatti dal report gratuito.
+   Riceve i contatti dal report gratuito e dall'eventuale
+   richiesta di implementazione.
 
-   Configurazione Vercel opzionale:
-   LEAD_WEBHOOK_URL = URL del tuo webhook / CRM / automation
+   Env opzionale:
+   LEAD_WEBHOOK_URL = URL webhook / CRM / automation
 
-   Il dato viene inoltrato solo se LEAD_WEBHOOK_URL è presente.
-   PROJECT-X non salva localmente i dati dei lead.
+   PROJECT-X non salva localmente i lead.
    ========================================================= */
 
 export default async function handler(req, res) {
@@ -19,8 +19,10 @@ export default async function handler(req, res) {
   }
 
   const body = req.body || {};
-  const email = String(body.email || "").trim().toLowerCase();
+  const email = String(body.email || "").trim().toLowerCase().slice(0, 160);
   const name = String(body.name || "").trim().slice(0, 120);
+  const intent = String(body.intent || "report").trim().slice(0, 60);
+  const source = String(body.source || "PROJECT-X").trim().slice(0, 60);
   const report = body.report && typeof body.report === "object" ? body.report : {};
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -33,12 +35,6 @@ export default async function handler(req, res) {
   const webhook = String(process.env.LEAD_WEBHOOK_URL || "").trim();
 
   if (!webhook) {
-    console.log("PROJECT-X lead received but LEAD_WEBHOOK_URL is not configured.", {
-      email,
-      name,
-      report
-    });
-
     return res.status(200).json({
       success: false,
       configured: false,
@@ -47,8 +43,9 @@ export default async function handler(req, res) {
   }
 
   const payload = {
-    source: "PROJECT-X",
+    source,
     createdAt: new Date().toISOString(),
+    intent,
     name,
     email,
     report
@@ -78,7 +75,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("PROJECT-X lead network error", error);
-
     return res.status(200).json({
       success: false,
       configured: true,
