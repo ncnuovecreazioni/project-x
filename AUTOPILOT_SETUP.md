@@ -6,21 +6,30 @@ PROJECT-X ora ha un livello di crescita automatica separato dal motore di raccom
 
 - raccoglie eventi di funnel senza salvare dati personali nel browser;
 - assegna una sessione anonima e misura analisi, scroll, permanenza e CTA;
-- ruota tre varianti della hero;
+- mostra una live demo del processo nella home;
+- ricorda localmente in forma anonima il percorso del visitatore e adatta la UX quando ritorna;
+- ruota tre varianti della hero/subcopy;
 - quando esiste un feed aggregato, sceglie automaticamente la variante con il miglior tasso di conversione dopo un minimo di 10 visualizzazioni;
-- mostra un'offerta di approfondimento coerente con il percorso dell'utente;
+- mostra un next-best-action commerciale coerente con il profilo raccolto;
 - genera progressivamente nuove landing SEO da un catalogo di intenti ad alta utilità;
 - aggiorna automaticamente la sitemap;
 - invia un digest operativo giornaliero tramite webhook;
-- mantiene il motore deterministico separato dagli esperimenti di crescita.
+- mantiene il motore deterministico separato dagli esperimenti di crescita;
+- espone una Control Room privata per vedere stato, esperimenti e conversioni aggregate.
 
 ## Variabili Vercel
 
-### Necessarie per l'automazione giornaliera
+### Automazione giornaliera
 
 `CRON_SECRET`
 
-Stringa casuale lunga almeno 16 caratteri. Vercel la invia automaticamente come `Authorization: Bearer ...` quando esegue il Cron Job.
+Stringa casuale lunga almeno 16 caratteri. Vercel la invia come `Authorization: Bearer ...` quando esegue il Cron Job.
+
+### Control Room privata
+
+`DASHBOARD_TOKEN`
+
+Token lungo e casuale usato da `/dashboard.html` per autorizzare `/api/autopilot?mode=dashboard`.
 
 ### Necessarie per imparare dai dati
 
@@ -45,12 +54,13 @@ Endpoint HTTPS che restituisce un JSON aggregato. Esempio minimo:
   "conversions": {
     "pro": 4,
     "implementation": 2,
-    "affiliate": 23
+    "affiliate": 23,
+    "lead": 11
   }
 }
 ```
 
-Il feed può essere costruito con Make, Power Automate, un database o un'altra automazione che conosci già. PROJECT-X usa solo dati aggregati e non ha bisogno di leggere email o contenuti personali.
+Il feed può essere costruito con Make, Power Automate, un database o un'altra automazione. PROJECT-X usa solo dati aggregati e non ha bisogno di leggere email o contenuti personali.
 
 ### Digest operativo
 
@@ -69,6 +79,16 @@ Link al checkout del Report PRO.
 Webhook/CRM per ricevere i lead con score, temperatura e intento.
 
 Gli affiliate restano server-side tramite le variabili `AFFILIATE_*` già previste dal progetto. Inserire esclusivamente i propri link referral ufficialmente assegnati dai programmi.
+
+## SEO Autopilot
+
+`.github/workflows/seo-autopilot.yml` esegue ogni giorno lo script `scripts/seo-autopilot.mjs`.
+
+Lo script sceglie il prossimo intento non ancora pubblicato da `seo-topics.json`, genera una landing HTML coerente con il template PROJECT-X e aggiunge l'URL alla sitemap. Il catalogo contiene decine di professioni, problemi e casi d'uso ed è estendibile aggiungendo oggetti al JSON.
+
+## Control Room
+
+Apri `/dashboard.html` e usa `DASHBOARD_TOKEN`. La dashboard mostra esclusivamente aggregati provenienti da `AUTOPILOT_DATA_URL` e lo stato delle integrazioni rilevate dal control plane.
 
 ## Nota importante
 
