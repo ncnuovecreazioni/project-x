@@ -46,7 +46,7 @@ var raw=String($('input').value||'').trim();if(raw){answers.painPoint=answers.pa
 });}
 function start(){add('assistant','Ciao. Dimmi in una frase che cosa ti fa perdere più tempo nel lavoro. Non serve essere tecnico.');renderQuick('');}
 $('send').addEventListener('click',callCoach);$('input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();callCoach()}});
-$('analyze').addEventListener('click',function(){save();window.location.href='/#coach=1';});
+$('analyze').addEventListener('click',function(){save();window.location.href='/coach-result.html';});
 start();
 })();
 </script>
