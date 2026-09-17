@@ -1,0 +1,37 @@
+name: PROJECT-X Syntax Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check browser JavaScript
+        run: |
+          node --check database.js
+          node --check engine.js
+          node --check affiliate-ui.js
+          node --check experience.js
+          node --check autopilot.js
+
+      - name: Check server JavaScript as ES modules
+        run: |
+          node --input-type=module --check < api/affiliate.js
+          node --input-type=module --check < api/analyze.js
+          node --input-type=module --check < api/autopilot.js
+          node --input-type=module --check < api/coach.js
+          node --input-type=module --check < api/event.js
+          node --input-type=module --check < api/lead.js
+          node --input-type=module --check < api/pro-checkout.js
