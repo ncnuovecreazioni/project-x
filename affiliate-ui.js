@@ -215,12 +215,22 @@
     document.body.appendChild(script);
   }
 
+  function loadExperience(){
+    if(document.querySelector('script[data-projectx-experience="1"]')) return;
+    var script=document.createElement('script');
+    script.src='/experience.js';
+    script.async=true;
+    script.dataset.projectxExperience='1';
+    document.body.appendChild(script);
+  }
+
   function update(){
     injectWowStyles();
     addWowHomeLayer();
     if(document.getElementById('results') && document.getElementById('results').style.display!=='none') addProButton();
     rewriteAffiliateLinks();
     loadAutopilot();
+    loadExperience();
   }
 
   var observer=new MutationObserver(update);
