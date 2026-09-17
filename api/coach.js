@@ -86,11 +86,16 @@ function inferBudget(text) {
 }
 
 function deterministicReply(answers, messages) {
-  const allUserText = messages.filter(function (m) { return m.role === "user"; }).map(function (m) { return m.content; }).join(" ");
+  const allUserMessages = messages.filter(function (m) { return m.role === "user"; });
+  const allUserText = allUserMessages.map(function (m) { return m.content; }).join(" ");
+  const latestUser = allUserMessages.length ? allUserMessages[allUserMessages.length - 1].content : "";
+  const hadBusinessBeforeTurn = !!(answers && answers.businessType);
   const next = Object.assign({}, answers || {});
   if (!next.businessType) next.businessType = inferBusiness(allUserText);
   if (!Array.isArray(next.goals) || !next.goals.length) next.goals = inferGoals(allUserText);
   if (!next.budget) next.budget = inferBudget(allUserText);
+  if (!next.teamSize) next.teamSize = "2–5";
+  if (!next.painPoint && hadBusinessBeforeTurn && latestUser) next.painPoint = latestUser.slice(0, 800);
 
   if (!next.businessType) {
     return { message: "Partiamo dal contesto. Che tipo di attività hai?", done: false, answers: next, field: "businessType" };
