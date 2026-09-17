@@ -2,7 +2,7 @@
 
 ## Affiliate
 
-Set these Vercel environment variables for Production:
+Set these Vercel environment variables for Production after approval by each provider:
 
 - `AFFILIATE_SYSTEME`
 - `AFFILIATE_PIPEDRIVE`
@@ -11,10 +11,27 @@ Set these Vercel environment variables for Production:
 - `AFFILIATE_HUBSPOT`
 - `AFFILIATE_SHOPIFY`
 - `AFFILIATE_MAKE`
+- `AFFILIATE_BREVO`
+- `AFFILIATE_MONDAY`
+- `AFFILIATE_SEMRUSH`
+- `AFFILIATE_KIT`
 
 Use the exact personal referral URL supplied by each provider after approval. Do not paste dashboard passwords, API keys or other secrets into the repository.
 
 Until a variable is configured, `/api/affiliate?tool=...` falls back to the provider's public website instead of using an invented referral link.
+
+The Affiliate Center is available at `/affiliate.html` and now shows the commercial terms stored in the registry.
+
+## Commercial layer
+
+The Decision Engine ranking remains compatibility-first. Commercial metadata is a separate layer used to:
+
+- connect a selected tool to an official affiliate program when one exists;
+- show commission model, duration and cookie information where the provider publishes it;
+- add eligible commercial tools to the runtime catalog without changing the scoring logic;
+- keep a transparent provider-source link for each program.
+
+Current expanded runtime additions include Brevo, monday.com, Semrush and Kit.
 
 ## Tracking
 
@@ -41,7 +58,7 @@ The Coach does not choose software. It collects business context and hands the s
 
 ## Lead scoring
 
-`/api/lead` now returns and forwards:
+`/api/lead` returns and forwards:
 
 - `leadScore` from 0–100
 - `leadTemperature`: `HOT`, `WARM` or `COLD`
