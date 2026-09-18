@@ -24,6 +24,8 @@ Per collegare intake e ordini a un archivio o automation:
 - PRO_INTAKE_WEBHOOK_URL = webhook che riceve il profilo prima del pagamento.
 - PRO_ORDER_WEBHOOK_URL = webhook che riceve la conferma Stripe.
 - EVENT_WEBHOOK_URL = webhook eventi analytics.
+- RESEND_API_KEY = API key Resend per l email transazionale post-pagamento.
+- EMAIL_FROM = mittente verificato da Resend, ad esempio PROJECT-X <mail@tuodominio.it>.
 - LEAD_WEBHOOK_URL = webhook lead. Se PRO_INTAKE_WEBHOOK_URL o PRO_ORDER_WEBHOOK_URL non sono impostati, alcune funzioni usano questo come fallback.
 
 ## Stripe Webhook
@@ -47,7 +49,7 @@ Quando il checkout usa una Checkout Session nativa:
 4. /api/stripe-session verifica lato server.
 5. /pro-delivery.html mostra il Report PRO solo con pagamento verificato.
 
-La pagina di consegna ricostruisce il report dal profilo salvato nel browser dell'utente. La consegna email/server-side richiede un archivio esterno tramite webhook.
+La pagina di consegna ricostruisce il report dal profilo salvato nel browser dell'utente. Con RESEND_API_KEY + EMAIL_FROM, il webhook Stripe può inviare automaticamente al cliente il link al Report PRO. La consegna completa cross-device richiede comunque un archivio esterno tramite webhook.
 
 ## Verifica
 API pubblica di readiness: /api/health
