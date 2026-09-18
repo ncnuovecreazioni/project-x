@@ -24,7 +24,7 @@
   function num(v){
     var n=Number(v);
     if(Number.isFinite(n)) return n;
-    var m=String(v==null?'':v).replace(',','.').match(/-?\\d+(?:\\.\\d+)?/);
+    var m=String(v==null?'':v).replace(',','.').match(/-?\d+(?:\.\d+)?/);
     return m?Number(m[0]):0;
   }
 
@@ -102,7 +102,7 @@
   }
 
   function addHomeBar(){
-    if(location.pathname!=='/'&&!/index\\.html$/i.test(location.pathname)) return;
+    if(location.pathname!=='/'&&!/index\.html$/i.test(location.pathname)) return;
     if(document.getElementById('px-product-homebar')) return;
     var hero=document.querySelector('.hero');
     if(!hero) return;
@@ -114,7 +114,7 @@
   }
 
   function addSchema(){
-    if(location.pathname!=='/'&&!/index\\.html$/i.test(location.pathname)) return;
+    if(location.pathname!=='/'&&!/index\.html$/i.test(location.pathname)) return;
     if(document.getElementById('px-product-schema')) return;
     var script=document.createElement('script');
     script.id='px-product-schema';
