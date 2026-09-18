@@ -26,6 +26,25 @@
   function result(){
     try{return window.result||null}catch(e){return null}
   }
+  function domResult(){
+    var root=one('#results');
+    if(!root || getComputedStyle(root).display==='none') return null;
+    var title=one('.resulthero h2',root);
+    var fitEl=one('.fit',root);
+    var stack=one('#stackMount',root);
+    var gaps=one('#gapMount',root);
+    var coverageEl=one('#architectureMount .score b',root);
+    var values=one('#valueMount .money',root);
+    return {
+      primary:{name:title?title.textContent.trim():'PROJECT-X'},
+      fit:fitEl?(fitEl.textContent.match(/(\\d+)\\s*%/)||[])[1]||0:0,
+      coverage:coverageEl?coverageEl.textContent.replace(/[^0-9]/g,''):0,
+      stackCount:stack?stack.querySelectorAll('.item').length:0,
+      gapCount:gaps?gaps.querySelectorAll('.item').length:0,
+      monthlyText:values?values.textContent:'',
+      primaryNode:title
+    };
+  }
   function primary(r){
     return r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]))||null;
   }
@@ -67,20 +86,21 @@
   function addResultScorecard(){
     if(one('#px-result-scorecard')) return;
     var r=result();
+    var d=domResult();
     var p=primary(r);
-    if(!r || !p) return;
     var results=one('#results');
+    if(!r && !d) return;
     if(!results || getComputedStyle(results).display==='none') return;
 
     var a=answers();
-    var v=r.valueEstimate||r.value||{};
+    var v=r?(r.valueEstimate||r.value||{}):{};
     var hours=num(v.hoursPerWeek||a.hours);
     var monthly=num(v.monthlyValue||hours*num(v.hourlyValue)*4.33);
-    var coverage=pct(r.stackCoverage);
-    var stackCount=Array.isArray(r.stack)?r.stack.length:0;
-    var gaps=Array.isArray(r.missingNeeds)?r.missingNeeds.length:0;
-    var automation=Array.isArray(r.automationIdeas)?r.automationIdeas.length:(Array.isArray(r.automationSuggestions)?r.automationSuggestions.length:0);
-    var score=pct(p.compatibility!=null?p.compatibility:p.score);
+    var coverage=pct(r?r.stackCoverage:(d&&d.coverage));
+    var stackCount=r&&Array.isArray(r.stack)?r.stack.length:(d?d.stackCount:0);
+    var gaps=r&&Array.isArray(r.missingNeeds)?r.missingNeeds.length:(d?d.gapCount:0);
+    var score=pct(r?(p.compatibility!=null?p.compatibility:p.score):(d?d.fit:0));
+    var primaryName=p?(p.name||p.id||'PROJECT-X'):(d&&d.primary?d.primary.name:'PROJECT-X');
 
     var box=document.createElement('section');
     box.id='px-result-scorecard';
@@ -103,7 +123,7 @@
       '<div class="px-before-after">'+
         '<div class="px-ba-box"><b>PRIMA</b><span>Problema aperto, strumenti da scegliere e tempo da distribuire.</span></div>'+
         '<div class="px-ba-arrow">→</div>'+
-        '<div class="px-ba-box"><b>DOPO</b><span><strong>'+esc(p.name||p.id||'Stack')+'</strong> come nucleo + un primo workflow da misurare.</span></div>'+
+        '<div class="px-ba-box"><b>DOPO</b><span><strong>'+esc(primaryName)+'</strong> come nucleo + un primo workflow da misurare.</span></div>'+
       '</div>'+
       '<div class="px-value-band"><div><strong>Il numero che conta</strong><span>Valore teorico mensile del tempo indicato. Non è una promessa di risparmio.</span></div><strong class="px-value-amount">'+money(monthly)+'/mese</strong></div>'+
       '<div class="px-next-action"><div><strong>Adesso non aggiungere altre app.</strong><span>Apri il piano e completa prima il workflow prioritario.</span></div><a href="'+nextHref+'">Vedi il piano →</a></div>';
@@ -115,7 +135,7 @@
     var link=one('.px-next-action a',box);
     if(link) link.addEventListener('click',function(){var plan=one('#planMount');if(plan)plan.scrollIntoView({behavior:'smooth',block:'start'});});
 
-    track('decision_card_view',{primary:p.name||p.id||'',fit:score});
+    track('decision_card_view',{primary:primaryName,fit:score});
   }
 
   function addHomeMicroTrust(){
@@ -134,12 +154,13 @@
     if(one('#px-results-bottom-cta')) return;
     var results=one('#results');
     if(!results || getComputedStyle(results).display==='none') return;
-    var r=result(),p=primary(r);
-    if(!r||!p) return;
+    var r=result(),d=domResult(),p=primary(r);
+    if(!r && !d) return;
 
     var box=document.createElement('div');
     box.id='px-results-bottom-cta';
     box.style.cssText='margin-top:18px;padding:18px;border-radius:18px;border:1px solid rgba(124,92,255,.18);background:linear-gradient(135deg,rgba(124,92,255,.07),rgba(91,140,255,.04));text-align:center;';
+    var primaryName=p?(p.name||p.id||'PROJECT-X'):(d&&d.primary?d.primary.name:'PROJECT-X');
     box.innerHTML='<div style="font-size:9px;letter-spacing:.14em;color:#9f94ff;font-weight:950;">NEXT STAGE</div>'+
       '<div style="margin-top:6px;font-size:18px;font-weight:950;letter-spacing:-.03em;">Da decisione a sistema.</div>'+
       '<div style="margin:5px auto 0;max-width:620px;color:#8996ab;font-size:10px;line-height:1.5;">Hai già la scelta principale. Ora puoi trasformarla in blueprint, workflow e implementazione invece di continuare a cercare strumenti.</div>'+
