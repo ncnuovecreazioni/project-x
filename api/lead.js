@@ -115,7 +115,7 @@ export default async function handler(req, res) {
       leadId,
       leadScore: lead.score,
       leadTemperature: lead.temperature,
-      error: "Lead acquisito localmente dalla richiesta, ma webhook non ancora configurato."
+      error: "Webhook lead non configurato: il contatto non è stato salvato da PROJECT-X."
     });
   }
 
