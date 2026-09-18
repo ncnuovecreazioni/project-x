@@ -1,0 +1,10 @@
+{
+  "name": "PROJECT-X — Software Decision Engine",
+  "short_name": "PROJECT-X",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050711",
+  "theme_color": "#050711",
+  "description": "Motore decisionale per scegliere software, automazioni e stack operativi.",
+  "lang": "it-IT"
+}
