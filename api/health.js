@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       eventWebhook: has("EVENT_WEBHOOK_URL"),
       proIntakeWebhook: has("PRO_INTAKE_WEBHOOK_URL") || has("LEAD_WEBHOOK_URL"),
       proCheckoutLink: has("PRO_CHECKOUT_URL"),
-      stripeSession: has("STRIPE_SECRET_KEY") && has("STRIPE_PRICE_ID"),
+      stripeSession: has("STRIPE_SECRET_KEY") && (has("STRIPE_PRICE_ID") || has("PRO_CHECKOUT_URL")),
       stripeVerification: has("STRIPE_SECRET_KEY"),
       stripeWebhook: has("STRIPE_WEBHOOK_SECRET"),
       receiptEmail: has("RESEND_API_KEY") && has("EMAIL_FROM"),
