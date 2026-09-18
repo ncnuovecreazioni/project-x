@@ -42,24 +42,75 @@ if(field==='goals')opts=['Clienti','Vendite','Preventivi','Email','Automazioni',
 opts.forEach(function(o){var b=document.createElement('button');b.className='chip';b.textContent=o;b.onclick=function(){
 if(field==='goals'){if(answers.goals.indexOf(o)<0)answers.goals.push(o);$('input').value=answers.goals.join(', ');}else{$('input').value=o;}$('input').focus();};box.appendChild(b)});
 }
-function callCoach(){var text=String($('input').value||'').trim();if(!text)return;add('user',text);$('input').value='';$('quick').innerHTML='';$('status').textContent='Sto elaborando…';fetch('/api/coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:answers,messages:messages})}).then(function(r){return r.json()}).then(function(d){if(!d||!d.success)throw new Error('Coach non disponibile');aiAvailable=!!d.aiAvailable;answers=Object.assign(answers,d.answers||{});if(!Array.isArray(answers.goals))answers.goals=[];save();add('assistant',d.message||'Continuiamo.');done=!!d.done;if(done){$('result').style.display='block';$('status').textContent=aiAvailable?'Profilo pronto con AI.':'Profilo pronto in modalità assistita.';$('input').disabled=true;$('send').disabled=true;}else{$('status').textContent='Una domanda alla volta.';renderQuick(d.field||'');}}).catch(function(){
-$('status').textContent='Uso la modalità assistita.';
-var raw=text;
-if(raw){
-  if(!answers.painPoint && raw.length>=8) answers.painPoint=raw.slice(0,800);
-  var inferred=answers.businessType;
-  if(!inferred){inferred=raw.match(/e-?commerce|shopify|woocommerce/i)?'E-commerce':raw.match(/agenzia|agency/i)?'Agenzia':raw.match(/ristorante|bar|pizzeria|hotel|b&b/i)?'Ristorante / attività locale':raw.match(/startup/i)?'Startup':raw.match(/azienda|impresa|dipendenti|team/i)?'Azienda':raw.match(/idraul|elettric|fabbro|murator|geometra|avvocat|commercialista|consulente|freelance/i)?'Professionista':'';
-    if(inferred) answers.businessType=inferred;
-    if(!Array.isArray(answers.goals)) answers.goals=[];
-    if(!answers.goals.length){
-      var goalMap=[['Clienti',/client|lead|contatt/i],['Vendite',/vendit|commercial|ordine/i],['Preventivi',/preventiv|offert|quotaz/i],['Email',/email|posta/i],['Automazioni',/automat|workflow|ripetitiv/i],['Documenti',/document|pdf|contratt/i],['Excel',/excel|foglio|dati/i],['Progetti',/progett|task|scaden/i],['E-commerce',/e-?commerce|shopify|woocommerce/i],['Marketing',/marketing|campagn|social/i]];
-      goalMap.forEach(function(g){if(g[1].test(raw)&&answers.goals.indexOf(g[0])<0)answers.goals.push(g[0]);});
-      answers.goals=answers.goals.slice(0,6);
-    }
+function callCoach(){
+  var userText=String($('input').value||'').trim();
+  if(!userText)return;
+
+  add('user',userText);
+  $('input').value='';
+  $('quick').innerHTML='';
+  $('status').textContent='Sto elaborando…';
+
+  fetch('/api/coach',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({answers:answers,messages:messages})
+  })
+  .then(function(r){return r.json()})
+  .then(function(d){
+    if(!d||!d.success)throw new Error('Coach non disponibile');
+    aiAvailable=!!d.aiAvailable;
+    answers=Object.assign(answers,d.answers||{});
+    if(!Array.isArray(answers.goals))answers.goals=[];
     save();
-  }
-  renderQuick(answers.businessType?'budget':'businessType');
-});}
+    add('assistant',d.message||'Continuiamo.');
+    done=!!d.done;
+    if(done){
+      $('result').style.display='block';
+      $('status').textContent=aiAvailable?'Profilo pronto con AI.':'Profilo pronto in modalità assistita.';
+      $('input').disabled=true;
+      $('send').disabled=true;
+    }else{
+      $('status').textContent='Una domanda alla volta.';
+      renderQuick(d.field||'');
+    }
+  })
+  .catch(function(){
+    $('status').textContent='Modalità assistita attiva.';
+    if(!answers.painPoint && userText.length>=8)answers.painPoint=userText.slice(0,800);
+
+    if(!answers.businessType){
+      var s=userText.toLowerCase();
+      if(/e-?commerce|shopify|woocommerce/.test(s))answers.businessType='E-commerce';
+      else if(/agenzia|agency/.test(s))answers.businessType='Agenzia';
+      else if(/ristorante|bar|pizzeria|hotel|b&b/.test(s))answers.businessType='Ristorante / attività locale';
+      else if(/startup/.test(s))answers.businessType='Startup';
+      else if(/azienda|impresa|dipendenti|team/.test(s))answers.businessType='Azienda';
+      else if(/idraul|elettric|fabbro|murator|geometra|avvocat|commercialista|consulente|freelance/.test(s))answers.businessType='Professionista';
+    }
+
+    if(!Array.isArray(answers.goals))answers.goals=[];
+    var goalMap=[
+      ['Clienti',/client|lead|contatt/],
+      ['Vendite',/vendit|commercial|ordine/],
+      ['Preventivi',/preventiv|offert|quotaz/],
+      ['Email',/email|posta/],
+      ['Automazioni',/automat|workflow|ripetitiv/],
+      ['Documenti',/document|pdf|contratt/],
+      ['Excel',/excel|foglio|spreadsheet|dati/],
+      ['Progetti',/progett|task|scaden/],
+      ['E-commerce',/e-?commerce|shopify|woocommerce/],
+      ['Marketing',/marketing|campagn|social/]
+    ];
+    goalMap.forEach(function(item){
+      if(item[1].test(userText.toLowerCase())&&answers.goals.indexOf(item[0])<0)answers.goals.push(item[0]);
+    });
+    answers.goals=answers.goals.slice(0,6);
+    save();
+
+    renderQuick(answers.businessType?'budget':'businessType');
+  });
+}
 function start(){add('assistant','Ciao. Dimmi in una frase che cosa ti fa perdere più tempo nel lavoro. Non serve essere tecnico.');renderQuick('');}
 $('send').addEventListener('click',callCoach);$('input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();callCoach()}});
 $('analyze').addEventListener('click',function(){save();window.location.href='/coach-result.html';});
