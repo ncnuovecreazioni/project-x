@@ -74,7 +74,7 @@
       step:'1 / 3 · RACCONTA',
       cta:'Vai alla domanda',
       action:function(){
-        var el=document.querySelector('textarea, input[type="text"], input:not([type])');
+        var el=document.getElementById('input') || document.querySelector('textarea, input[type="text"], input:not([type])');
         if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}
       },
       secondary:'Torna a PROJECT-X',
