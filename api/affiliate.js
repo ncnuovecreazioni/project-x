@@ -8,7 +8,8 @@ export default async function handler(req, res) {
       systeme: {
         name: 'Systeme.io',
         env: 'AFFILIATE_SYSTEME',
-        fallback: 'https://systeme.io/'
+        fallback: 'https://systeme.io/',
+        affiliateFallback: 'https://systeme.io/it?sa=sa02817817844c2fcfa6e47edb66d69ef939782781'
       },
       pipedrive: {
         name: 'Pipedrive',
@@ -38,7 +39,8 @@ export default async function handler(req, res) {
       make: {
         name: 'Make',
         env: 'AFFILIATE_MAKE',
-        fallback: 'https://www.make.com/'
+        fallback: 'https://www.make.com/',
+        affiliateFallback: 'https://www.make.com/en/register?pc=projectx'
       },
       brevo: {
         name: 'Brevo',
@@ -68,7 +70,11 @@ export default async function handler(req, res) {
     }
 
     const configuredUrl = String(process.env[target.env] || '').trim();
-    const destination = /^https?:\/\//i.test(configuredUrl) ? configuredUrl : target.fallback;
+    const fallbackUrl = String(target.affiliateFallback || '').trim();
+    const destination = /^https?:\/\//i.test(configuredUrl)
+      ? configuredUrl
+      : (/^https?:\/\//i.test(fallbackUrl) ? fallbackUrl : target.fallback);
+    const monetized = !!configuredUrl || !!target.affiliateFallback;
 
     const webhook = String(process.env.EVENT_WEBHOOK_URL || '').trim();
     if (webhook) {
@@ -85,7 +91,7 @@ export default async function handler(req, res) {
               tool: target.name,
               toolId: tool,
               channel: source,
-              monetized: !!configuredUrl,
+              monetized: monetized,
               destinationHost: new URL(destination).host
             }
           })
