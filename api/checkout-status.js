@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
   const paymentLinkConfigured = /^https?:\/\//i.test(checkoutUrl);
   const stripeSessionConfigured =
-    /^sk_(test|live)_/i.test(stripeSecret) && Boolean(stripePrice);
+    /^sk_(test|live)_/i.test(stripeSecret) && Boolean(paymentLinkConfigured || stripePrice);
 
   res.setHeader("Cache-Control", "no-store");
   return res.status(200).json({
@@ -18,6 +18,7 @@ export default async function handler(req, res) {
     configured: paymentLinkConfigured || stripeSessionConfigured,
     paymentLinkConfigured,
     stripeSessionConfigured,
+    automaticProfileHandoff: stripeSessionConfigured,
     deliveryVerificationConfigured: /^sk_(test|live)_/i.test(stripeSecret),
     product: "project-x-report-pro",
     price: 29,
