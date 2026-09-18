@@ -34,7 +34,7 @@
 <div class="card" id="automation"></div>
 <div class="card" id="stack"></div>
 <div class="card wide" id="roadmap"></div>
-<div class="card wide" id="next"></div>
+<div class="card wide" id="next"></div><div class="card wide" id="partner"></div>
 </div>
 </section>
 
@@ -94,6 +94,10 @@ function render(a,r){
   ['04','Giorni 22–30','Misurazione','Controlla KPI, adozione, tempo recuperato e attività rimaste manuali.']
  ];
  document.getElementById('roadmap').innerHTML='<h2>🗺 Roadmap 30 giorni</h2><p class="sub">Sequenza pratica da usare come piano di implementazione iniziale.</p><div class="steps">'+phases.map(function(s){return '<div class="step"><span class="num">'+s[0]+'</span><div><b>'+s[1]+' · '+s[2]+'</b><small>'+s[3]+'</small></div><em>fase</em></div>'}).join('')+'</div>';
+
+ document.getElementById('partner').innerHTML='<h2>🔗 Strumenti da approfondire</h2><p class="sub">Questi link seguono lo stack emerso dall’analisi. La monetizzazione non modifica il ranking del Decision Engine.</p>'+
+ (stack.length?'<div class="steps">'+stack.slice(0,4).map(function(t,i){var id=String(t.id||'').toLowerCase();var eligible=['systeme','pipedrive','getresponse','activecampaign','hubspot','shopify','make','brevo','monday','semrush','kit'].indexOf(id)>=0;if(!eligible)return '';var name=t.name||t.id||'Software';return '<div class="step"><span class="num">↗</span><div><b>'+esc(name)+'</b><small>Apri il sito del provider per verificare funzioni, prezzo e condizioni aggiornate.</small></div><em><a href="/api/affiliate?tool='+encodeURIComponent(id)+'&source=pro-report" style="color:#c9bfff;text-decoration:none">Apri →</a></em></div>'}).join('')+'</div>':'<div class="note">Nessun provider affiliate pertinente emerso dallo stack.</div>')+
+ '<div class="note" style="margin-top:12px">Alcuni collegamenti possono generare una commissione per PROJECT-X. La presenza del link non cambia la logica di scelta del motore. <a href="/affiliate-disclosure.html" style="color:#c9bfff">Dettagli trasparenza →</a></div>';
  document.getElementById('next').innerHTML='<h2>🚀 Cosa fare adesso</h2><p class="sub">Il Report PRO diventa utile quando si trasforma in una decisione eseguibile.</p>'+
  '<div class="note"><strong style="color:#fff">Primo passo:</strong> scegli il workflow con più frequenza e più attrito, definisci il trigger e il risultato atteso, quindi misura il tempo reale prima di automatizzarlo. Il motore può aiutarti a ridefinire il sistema ripetendo l’analisi con dati aggiornati.</div>';
 }
