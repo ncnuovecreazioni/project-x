@@ -163,6 +163,16 @@ function buildReadiness(feed) {
     tracking: !!String(process.env.EVENT_WEBHOOK_URL || "").trim(),
     leadCapture: !!String(process.env.LEAD_WEBHOOK_URL || "").trim(),
     proCheckout: !!String(process.env.PRO_CHECKOUT_URL || "").trim(),
+    proIntake: !!(
+      String(process.env.PRO_INTAKE_WEBHOOK_URL || "").trim() ||
+      String(process.env.LEAD_WEBHOOK_URL || "").trim()
+    ),
+    stripeVerification: !!String(process.env.STRIPE_SECRET_KEY || "").trim(),
+    stripeWebhook: !!String(process.env.STRIPE_WEBHOOK_SECRET || "").trim(),
+    receiptEmail: !!(
+      String(process.env.RESEND_API_KEY || "").trim() &&
+      String(process.env.EMAIL_FROM || "").trim()
+    ),
     affiliateRouting: true,
     dataFeed: !!feed.configured,
     measuredExperiment: variantStats.some(function (item) { return Number(item.views || 0) >= 10; }),
@@ -175,6 +185,9 @@ function buildReadiness(feed) {
   if (!readiness.tracking) actions.push("Collega EVENT_WEBHOOK_URL per non perdere i segnali di comportamento.");
   if (!readiness.leadCapture) actions.push("Collega LEAD_WEBHOOK_URL per trasformare i contatti in lead lavorabili automaticamente.");
   if (!readiness.proCheckout) actions.push("Collega PRO_CHECKOUT_URL per rendere acquistabile il Report PRO.");
+  if (readiness.proCheckout && !readiness.stripeVerification) actions.push("Aggiungi STRIPE_SECRET_KEY per attivare la verifica server-side e il checkout automatico.");
+  if (readiness.stripeVerification && !readiness.stripeWebhook) actions.push("Configura STRIPE_WEBHOOK_SECRET sul webhook Stripe per confermare gli ordini lato server.");
+  if (!readiness.receiptEmail) actions.push("Collega RESEND_API_KEY + EMAIL_FROM per inviare automaticamente la conferma PRO via email.");
   if (!readiness.dataFeed) actions.push("Collega AUTOPILOT_DATA_URL con un feed aggregato per permettere al sistema di imparare dai dati.");
   if (readiness.dataFeed && !readiness.measuredExperiment) actions.push("Accumula almeno 10 visualizzazioni per variante prima di cambiare il vincitore.");
 
