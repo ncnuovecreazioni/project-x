@@ -28,7 +28,7 @@
 </div></article>
 <aside class="card"><h2>Report PRO</h2><div class="price">€29</div><div class="once">pagamento una tantum · prezzo iniziale</div>
 <p class="sub">Il pagamento avviene su una pagina di checkout esterna configurata dal gestore.</p>
-<a class="btn" href="/api/pro-checkout?source=pro-page">Sblocca Report PRO →</a>
+<a id="proCheckoutBtn" class="btn" href="/api/pro-checkout?source=pro-page">Sblocca Report PRO →</a>
 <div class="note"><strong>Importante:</strong> prima di acquistare, verifica che il checkout collegato sia attivo e che le condizioni fiscali, commerciali e di rimborso siano quelle applicabili alla tua attività.</div>
 </aside>
 </section>
@@ -48,4 +48,39 @@
     .then(function(d){if(!d || !d.configured) show()})
     .catch(function(){show()});
 })();
-</script></main></body></html>
+<script>
+(function(){
+  var btn=document.getElementById('proCheckoutBtn');
+  if(!btn)return;
+  btn.addEventListener('click',function(ev){
+    ev.preventDefault();
+    var original=btn.textContent;
+    btn.textContent='Preparazione checkout…';
+    btn.style.pointerEvents='none';
+    var answers=null;
+    try{answers=JSON.parse(localStorage.getItem('projectx_answers_v2')||'null')}catch(e){}
+    fetch('/api/pro-intake',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        source:'pro-page',
+        answers:answers||{}
+      })
+    })
+    .then(function(r){return r.json()})
+    .then(function(d){
+      var handoff=d&&d.handoffId?encodeURIComponent(d.handoffId):'';
+      var url='/api/pro-checkout?source=pro-page';
+      if(handoff)url+='&handoffId='+handoff;
+      window.location.href=url;
+    })
+    .catch(function(){
+      window.location.href='/api/pro-checkout?source=pro-page';
+    })
+    .finally(function(){
+      btn.textContent=original;
+      btn.style.pointerEvents='';
+    });
+  });
+})();
+</script></script></main></body></html>
