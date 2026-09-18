@@ -96,6 +96,7 @@
     var v=r?(r.valueEstimate||r.value||{}):{};
     var hours=num(v.hoursPerWeek||a.hours);
     var monthly=num(v.monthlyValue||hours*num(v.hourlyValue)*4.33);
+    if(!monthly && d && d.monthlyText){ monthly=num(String(d.monthlyText).replace(/[^0-9]/g,'')); }
     var coverage=pct(r?r.stackCoverage:(d&&d.coverage));
     var stackCount=r&&Array.isArray(r.stack)?r.stack.length:(d?d.stackCount:0);
     var gaps=r&&Array.isArray(r.missingNeeds)?r.missingNeeds.length:(d?d.gapCount:0);
