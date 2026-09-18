@@ -43,6 +43,52 @@ function verifyStripeSignature(payload, signature, secret) {
   return crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
 }
 
+
+
+async function sendReceiptEmail(order) {
+  const apiKey = String(process.env.RESEND_API_KEY || "").trim();
+  const from = String(process.env.EMAIL_FROM || "").trim();
+  if (!apiKey || !from || !order.customerEmail) return false;
+
+  const appUrl = /^https?:\/\/\\i.test(process.env.APP_URL || "")
+    ? String(process.env.APP_URL).replace(/\/$/, "")
+    : "https://project-x-phi-steel.vercel.app";
+  const link = appUrl + "/pro-delivery.html?session_id=" + encodeURIComponent(order.sessionId);
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + apiKey,
+        "Content-Type": "application/json",
+        "Idempotency-Key": "projectx-stripe-" + order.eventId
+      },
+      body: JSON.stringify({
+        from,
+        to: [order.customerEmail],
+        subject: "Il tuo Report PRO — PROJECT-X",
+        html:
+          '<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#172033">' +
+          '<h1 style="font-size:28px">Il pagamento è stato verificato.</h1>' +
+          '<p>Grazie per aver acquistato il Report PRO di PROJECT-X.</p>' +
+          '<p>Puoi aprire la pagina verificata del tuo ordine e visualizzare la blueprint personalizzata.</p>' +
+          '<p><a href="' + link + '" style="display:inline-block;padding:12px 16px;background:#7c5cff;color:#fff;text-decoration:none;border-radius:10px;font-weight:700">Apri il Report PRO →</a></p>' +
+          '<p style="color:#667085;font-size:12px">Riferimento ordine: ' + order.sessionId + '</p>' +
+          '</div>'
+      })
+    });
+
+    if (!response.ok) {
+      console.error("PROJECT-X Resend error", response.status);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error("PROJECT-X Resend exception", error);
+    return false;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -141,7 +187,8 @@ export default async function handler(req, res) {
         }
       }
 
-      console.log("PROJECT-X Stripe payment confirmed:", JSON.stringify(order));
+      const emailSent = await sendReceiptEmail(order);
+      console.log("PROJECT-X Stripe payment confirmed:", JSON.stringify({ ...order, emailSent }));
     }
 
     return res.status(200).json({ received: true });
