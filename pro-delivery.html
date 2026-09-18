@@ -9,6 +9,7 @@
 <style>
 :root{--bg:#050711;--bg2:#0a0f1c;--panel:#0f1626;--line:rgba(255,255,255,.1);--text:#f7f9ff;--muted:#98a5bc;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d;--gold:#ffd166}
 *{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 8% 0%,rgba(124,92,255,.24),transparent 31%),radial-gradient(circle at 92% 12%,rgba(91,140,255,.16),transparent 28%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.wrap{width:min(1080px,calc(100% - 28px));margin:auto}.hero{text-align:center;padding:62px 0 30px}.eyebrow{display:inline-flex;padding:8px 11px;border-radius:999px;border:1px solid rgba(54,217,157,.22);background:rgba(54,217,157,.05);color:#85ebc2;font-size:10px;font-weight:900;letter-spacing:.12em}.hero h1{margin:18px 0 10px;font-size:clamp(42px,7vw,72px);line-height:.93;letter-spacing:-.07em}.grad{background:linear-gradient(100deg,#fff,#ad9dff,#79aaff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:780px;margin:auto;color:var(--muted);line-height:1.65}.gate{margin:28px auto 50px;width:min(700px,100%);padding:26px;border:1px solid var(--line);border-radius:24px;background:rgba(15,22,38,.9);text-align:center}.gate h2{margin:0 0 8px}.gate p{margin:0;color:var(--muted);line-height:1.6;font-size:13px}.gate .small{font-size:10px;color:#718096;margin-top:10px}.btn{display:inline-flex;align-items:center;justify-content:center;margin-top:17px;padding:13px 17px;border-radius:13px;border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;text-decoration:none;font-weight:900;font-size:11px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding-bottom:40px}.card{padding:22px;border:1px solid var(--line);border-radius:22px;background:rgba(15,22,38,.9);box-shadow:0 16px 55px rgba(0,0,0,.16)}.wide{grid-column:1/-1}.card h2{margin:0 0 8px;font-size:19px}.sub{margin:0 0 15px;color:var(--muted);font-size:11px;line-height:1.55}.metric{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px}.metric:last-child{border-bottom:0}.metric span{color:var(--muted)}.metric b{text-align:right}.big{font-size:36px;letter-spacing:-.06em}.steps{display:grid;gap:8px}.step{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)}.num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(124,92,255,.13);color:#c6bcff;font-weight:900;font-size:10px}.step b{font-size:11px}.step small{display:block;color:var(--muted);margin-top:3px;font-size:9px;line-height:1.4}.step em{font-style:normal;font-size:9px;color:#aab5c8}.note{padding:14px;border:1px dashed rgba(255,209,102,.2);background:rgba(255,209,102,.035);border-radius:14px;color:var(--muted);font-size:10px;line-height:1.55}.footer{text-align:center;padding:12px 0 55px;color:#65738a;font-size:9px}@media(max-width:720px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.step{grid-template-columns:29px 1fr}.step em{display:none}.btn{width:100%}}
+@media print{body{background:#fff;color:#111}.hero p,.footer,.gate,#printBtn{display:none!important}.card{box-shadow:none;background:#fff;border:1px solid #ddd;color:#111}.sub,.metric span,.step small{color:#555}.metric,.step{border-bottom-color:#ddd}}
 </style>
 </head>
 <body>
@@ -25,7 +26,7 @@
 <div id="gateActions"></div>
 </section>
 
-<section id="report" style="display:none">
+<section id="report" style="display:none"><div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:18px"><button id="printBtn" class="btn" type="button">Salva / stampa il report</button><a class="btn" href="/" style="background:rgba(255,255,255,.04);border:1px solid var(--line)">Torna a PROJECT-X</a></div>
 <div class="grid">
 <div class="card" id="profile"></div>
 <div class="card" id="value"></div>
@@ -47,6 +48,8 @@
 'use strict';
 var E=window.ProjectXEngine||window.StackPilotEngine;
 var gate=document.getElementById('gate');
+var printBtn=document.getElementById('printBtn');
+if(printBtn)printBtn.addEventListener('click',function(){window.print()});
 var report=document.getElementById('report');
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(n){return '€'+Math.round(Number(n)||0).toLocaleString('it-IT')}
@@ -117,6 +120,7 @@ async function verify(){
    var r=null;try{r=E&&E.analyzeAnswers?E.analyzeAnswers(a):null}catch(e){}
    if(!r){showGate('Report non disponibile','Il motore non è riuscito a ricostruire il report dal profilo salvato.',
      '<a class="btn" href="/">Torna a PROJECT-X →</a>');return}
+   try{localStorage.setItem('projectx_pro_verified_at',new Date().toISOString())}catch(e){}
    document.getElementById('badge').textContent='PROJECT-X · PAGAMENTO VERIFICATO';
    document.getElementById('intro').textContent='Pagamento verificato. Questa è la tua blueprint PRO personalizzata, costruita dal profilo PROJECT-X.';
    gate.style.display='none';report.style.display='block';render(a,r);
