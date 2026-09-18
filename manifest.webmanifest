@@ -6,5 +6,13 @@
   "background_color": "#050711",
   "theme_color": "#050711",
   "description": "Motore decisionale per scegliere software, automazioni e stack operativi.",
-  "lang": "it-IT"
+  "lang": "it-IT",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
