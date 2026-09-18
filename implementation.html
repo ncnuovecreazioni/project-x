@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050711">
+<meta name="description" content="Richiedi un progetto di implementazione PROJECT-X: trasforma la raccomandazione software e il workflow in un sistema operativo concreto.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="robots" content="index,follow">
+<title>PROJECT-X — Implementazione</title>
+<style>
+:root{--bg:#050711;--bg2:#0a0f1c;--panel:#0f1626;--line:rgba(255,255,255,.1);--text:#f7f9ff;--muted:#98a5bc;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d;--gold:#ffd166}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 10% 0%,rgba(124,92,255,.24),transparent 30%),radial-gradient(circle at 90% 10%,rgba(91,140,255,.16),transparent 26%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.wrap{width:min(1050px,calc(100% - 28px));margin:auto}.hero{text-align:center;padding:72px 0 35px}.eyebrow{display:inline-flex;padding:8px 11px;border:1px solid rgba(54,217,157,.22);border-radius:999px;background:rgba(54,217,157,.05);color:#88edc4;font-size:10px;font-weight:900;letter-spacing:.12em}.hero h1{font-size:clamp(45px,8vw,80px);line-height:.92;letter-spacing:-.07em;margin:18px 0 13px}.grad{background:linear-gradient(100deg,#fff,#ad9dff,#79aaff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:760px;margin:auto;color:var(--muted);line-height:1.65}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:22px}.card{padding:23px;border:1px solid var(--line);border-radius:22px;background:rgba(15,22,38,.9);box-shadow:0 16px 55px rgba(0,0,0,.16)}.card h2{margin:0 0 7px;font-size:19px}.card p{color:var(--muted);font-size:11px;line-height:1.55}.num{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:rgba(124,92,255,.12);color:#c8bfff;font-size:10px;font-weight:900;margin-bottom:13px}.big{font-size:24px;font-weight:950;letter-spacing:-.04em}.wide{grid-column:1/-1}.form{margin-top:15px}.field{display:grid;gap:6px;margin-top:11px}.field label{font-size:10px;color:#aeb8c8}.field input,.field textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:rgba(0,0,0,.18);color:#fff;outline:none;font:inherit}.field textarea{min-height:125px;resize:vertical;line-height:1.5}.consent{display:flex;gap:9px;margin-top:12px;color:#8290a8;font-size:10px;line-height:1.45}.consent input{margin-top:2px;accent-color:#7c5cff}.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:13px;padding:13px 17px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;text-decoration:none;font-weight:900;font-size:11px;cursor:pointer}.secondary{background:rgba(255,255,255,.04);border:1px solid var(--line)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.notice{display:none;margin-top:11px;padding:11px 12px;border-radius:12px;background:rgba(54,217,157,.06);border:1px solid rgba(54,217,157,.15);color:#8beac2;font-size:10px;line-height:1.5}.footer{text-align:center;padding:25px 0 55px;color:#68758c;font-size:9px}.footer a{color:#a99dff;text-decoration:none}@media(max-width:760px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.actions .btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<div class="eyebrow">PROJECT-X · IMPLEMENTAZIONE</div>
+<h1>Hai già la direzione.<br><span class="grad">Ora costruiamo il sistema.</span></h1>
+<p>Puoi partire da solo usando il report PROJECT-X oppure chiedere un progetto di implementazione: processo, strumenti, automazioni, controlli e passaggio operativo.</p>
+</section>
+
+<section class="grid">
+<article class="card"><div class="num">01</div><h2>Setup del sistema</h2><p>Mappatura del processo attuale, strumenti da mantenere, dati principali e sequenza di lavoro da rendere più ordinata.</p></article>
+<article class="card"><div class="num">02</div><h2>Automazione</h2><p>Individuazione dei workflow candidati e definizione di trigger, azioni, output e controlli.</p></article>
+<article class="card"><div class="num">03</div><h2>Misurazione</h2><p>KPI e baseline per capire cosa è cambiato dopo l'implementazione e quali attività restano manuali.</p></article>
+
+<article class="card wide">
+<h2>🚀 Richiedi il progetto</h2>
+<p>Invia il contesto che hai già raccolto con PROJECT-X. La richiesta viene classificata come <strong style="color:#fff">implementation lead</strong> e può essere inoltrata al sistema di contatto configurato.</p>
+<div class="form">
+<div class="field"><label for="name">Nome</label><input id="name" maxlength="120" placeholder="Il tuo nome"></div>
+<div class="field"><label for="email">Email</label><input id="email" type="email" maxlength="160" placeholder="nome@azienda.it"></div>
+<div class="field"><label for="context">Cosa vuoi costruire?</label><textarea id="context" maxlength="1500" placeholder="Descrivi il processo che vuoi sistemare, cosa usi oggi e cosa vorresti automatizzare…"></textarea></div>
+<label class="consent"><input id="consent" type="checkbox"><span>Acconsento al trattamento dei dati per gestire la richiesta di implementazione. <a href="/privacy.html" target="_blank" rel="noopener" style="color:#b6aaff">Privacy</a></span></label>
+<div class="actions"><button id="send" class="btn">Invia richiesta →</button><a class="btn secondary" href="/">Torna al Decision Engine</a></div>
+<div id="notice" class="notice"></div>
+</div>
+</article>
+</section>
+
+<div class="footer">PROJECT-X · <a href="/report-pro.html">Report PRO</a> · <a href="/affiliate-disclosure.html">Trasparenza affiliate</a> · <a href="/privacy.html">Privacy</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+function val(id){return String(document.getElementById(id).value||'').trim()}
+function show(msg,ok){var n=document.getElementById('notice');n.textContent=msg;n.style.display='block';n.style.color=ok?'#8beac2':'#ff9cac';}
+try{
+  var a=JSON.parse(localStorage.getItem('projectx_answers_v2')||'null');
+  if(a){
+    var parts=[];
+    if(a.painPoint)parts.push('Problema: '+a.painPoint);
+    if(a.businessType)parts.push('Attività: '+a.businessType);
+    if(a.teamSize)parts.push('Team: '+a.teamSize);
+    if(a.budget)parts.push('Budget: '+a.budget);
+    if(a.goals&&a.goals.length)parts.push('Obiettivi: '+a.goals.join(', '));
+    document.getElementById('context').value=parts.join('\n');
+  }
+}catch(e){}
+document.getElementById('send').addEventListener('click',async function(){
+  var name=val('name'),email=val('email'),context=val('context'),consent=document.getElementById('consent').checked;
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){show('Inserisci un indirizzo email valido.',false);return}
+  if(!consent){show('Accetta il trattamento dei dati per inviare la richiesta.',false);return}
+  var btn=document.getElementById('send');btn.disabled=true;btn.textContent='Invio…';
+  try{
+    var a=JSON.parse(localStorage.getItem('projectx_answers_v2')||'{}');
+    var response=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      name,email,consent:true,intent:'implementation',source:'implementation-page',
+      businessType:a.businessType||'',teamSize:a.teamSize||'',budget:a.budget||'',
+      painPoint:context||a.painPoint||'',existingTools:Array.isArray(a.existingTools)?a.existingTools:[],
+      report:{mode:'implementation',businessType:a.businessType||'',teamSize:a.teamSize||'',budget:a.budget||'',painPoint:context||a.painPoint||''}
+    })});
+    var d=await response.json();
+    if(!response.ok||!d.success)throw new Error(d.error||'Invio non riuscito');
+    show('Richiesta inviata. Il prossimo passaggio dipende dal sistema di contatto configurato.',true);
+    document.getElementById('send').textContent='Richiesta inviata ✓';
+  }catch(e){show(e.message||'Errore durante l’invio.',false);btn.disabled=false;btn.textContent='Invia richiesta →'}
+});
+})();
+</script>
+</body>
+</html>
