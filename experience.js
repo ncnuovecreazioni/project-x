@@ -223,6 +223,12 @@
     var info=findCommercial(primary);
     if(!info) return;
 
+    if(!document.getElementById('px-revenue-ladder-styles')){
+      var rs=document.createElement('style');
+      rs.id='px-revenue-ladder-styles';
+      rs.textContent='#px-revenue-ladder-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}@media(max-width:760px){#px-revenue-ladder-grid{grid-template-columns:1fr}}';
+      document.head.appendChild(rs);
+    }
     injectCommercialStyles();
 
     var card=document.createElement('section');
@@ -373,12 +379,12 @@
       '<div style="font-size:9px;letter-spacing:.16em;font-weight:950;color:#aaa0ff">IL TUO PERCORSO PROJECT-X</div>'+
       '<h3 style="margin:8px 0 7px;font-size:24px;letter-spacing:-.045em">Tre modi per trasformare la risposta in valore.</h3>'+
       '<p style="margin:0;color:#98a5bc;font-size:11px;line-height:1.55;max-width:780px">Prima capisci cosa serve. Poi scegli quanto vuoi fare da solo. Nessun passaggio cambia il ranking del motore.</p>'+
-      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px">'+
+      '<div id="px-revenue-ladder-grid">'+
         '<div style="padding:15px;border:1px solid rgba(255,255,255,.08);border-radius:15px;background:rgba(255,255,255,.025)">'+
           '<div style="font-size:9px;color:#7ce8bd;font-weight:900">01 · PARTI DAL TOOL</div>'+
           '<strong style="display:block;margin-top:7px;font-size:13px;color:#fff">'+escapeHtml(info&&info.name?info.name:'Software consigliato')+'</strong>'+
           '<p style="margin:6px 0 0;font-size:10px;color:#8290a8;line-height:1.45">Verifica direttamente funzioni, prezzo e condizioni del provider.</p>'+
-          '<a href="/api/affiliate?tool='+encodeURIComponent(info&&info.id?info.id:primary)+'&source=result-ladder" '+(info?'':'style="display:none"')+' style="display:inline-flex;margin-top:10px;padding:9px 11px;border-radius:10px;color:#fff;background:rgba(124,92,255,.18);text-decoration:none;font-size:9px;font-weight:900">Apri provider →</a>'+
+          (info?'<a href="/api/affiliate?tool='+encodeURIComponent(info.id)+'&source=result-ladder" style="display:inline-flex;margin-top:10px;padding:9px 11px;border-radius:10px;color:#fff;background:rgba(124,92,255,.18);text-decoration:none;font-size:9px;font-weight:900">Apri provider →</a>':'')+
           '<a href="/compare.html" style="display:inline-flex;margin-top:10px;padding:9px 11px;border-radius:10px;color:#c9bfff;border:1px solid rgba(255,255,255,.09);text-decoration:none;font-size:9px;font-weight:900">Confronta →</a>'+
         '</div>'+
         '<div style="padding:15px;border:1px solid rgba(255,209,102,.16);border-radius:15px;background:rgba(255,209,102,.035)">'+
