@@ -34,6 +34,7 @@ function bubble(role,text){var d=document.createElement('div');d.className='bubb
 function add(role,text){messages.push({role:role==='assistant'?'assistant':'user',content:text});bubble(role,text)}
 function save(){try{localStorage.setItem('projectx_answers_v2',JSON.stringify(answers))}catch(e){}}
 function renderQuick(field){var box=$('quick');box.innerHTML='';var opts=[];
+if(field==='')opts=['Email e richieste','Preventivi','Follow-up clienti','Excel e dati','Prenotazioni','Ordini e vendite'];
 if(field==='businessType')opts=['Professionista','Impresa di servizi','E-commerce','Agenzia','Startup','Azienda'];
 if(field==='budget')opts=['€0','€1–30','€31–50','€51–100','€101–250','€251+'];
 if(field==='goals')opts=['Clienti','Vendite','Preventivi','Email','Automazioni','Progetti','Excel','E-commerce','Marketing'];
