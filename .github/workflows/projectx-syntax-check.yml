@@ -26,6 +26,10 @@ jobs:
           node --check experience.js
           node --check autopilot.js
           node --check product-layer.js
+          node --check blueprint-layer.js
+
+      - name: Engine smoke test
+        run: node tests/engine-smoke.mjs
 
       - name: Check server JavaScript as ES modules
         run: |
