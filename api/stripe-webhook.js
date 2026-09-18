@@ -81,6 +81,21 @@ export default async function handler(req, res) {
           ? String(session.customer_details.email)
           : "";
 
+      const configuredPaymentLinkId = String(process.env.STRIPE_PAYMENT_LINK_ID || "").trim();
+      const product = session.metadata && session.metadata.product
+        ? String(session.metadata.product)
+        : "";
+      const paymentLinkId = String(session.payment_link || "").trim();
+
+      const isProjectXOrder =
+        product === "project-x-report-pro" ||
+        (configuredPaymentLinkId && paymentLinkId === configuredPaymentLinkId);
+
+      if (!isProjectXOrder) {
+        console.log("PROJECT-X Stripe event ignored: not a recognized PRO order.");
+        return res.status(200).json({ received: true, ignored: true });
+      }
+
       const order = {
         eventId: String(event.id || ""),
         type: event.type,
@@ -89,11 +104,21 @@ export default async function handler(req, res) {
         sessionId: String(session.id || ""),
         product: "project-x-report-pro",
         clientReferenceId: String(session.client_reference_id || ""),
+        paymentLinkId,
         paid: paymentStatus === "paid",
         receivedAt: new Date().toISOString()
       };
 
-      const webhookUrl = String(process.env.PRO_ORDER_WEBHOOK_URL || process.env.LEAD_WEBHOOK_URL || "").trim();
+      if (!order.paid) {
+        console.log("PROJECT-X Stripe PRO session is not paid:", JSON.stringify(order));
+        return res.status(200).json({ received: true, paid: false });
+      }
+
+      const webhookUrl = String(
+        process.env.PRO_ORDER_WEBHOOK_URL ||
+        process.env.LEAD_WEBHOOK_URL ||
+        ""
+      ).trim();
 
       if (webhookUrl && /^https?:\/\//i.test(webhookUrl)) {
         try {
@@ -103,7 +128,7 @@ export default async function handler(req, res) {
             body: JSON.stringify({
               type: "projectx_stripe_payment",
               order,
-              nextStep: order.paid ? "deliver-report" : "await-payment-confirmation"
+              nextStep: "deliver-report"
             })
           });
         } catch (forwardError) {
