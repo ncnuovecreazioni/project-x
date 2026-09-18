@@ -23,4 +23,6 @@ function card(t,label){var r=registryFor(t), needs=t.needs||{}, integrations=(t.
 function compare(){var a=find(document.getElementById('a').value),b=find(document.getElementById('b').value);if(!a||!b)return;document.getElementById('out').innerHTML=card(a,'OPZIONE A')+card(b,'OPZIONE B')}
 document.getElementById('go').onclick=compare;populate();
 })();
-</script></body></html>
+</script>
+<script src="/human-layer.js"></script>
+</body></html>
