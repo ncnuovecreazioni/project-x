@@ -46,7 +46,7 @@
   if(new URLSearchParams(location.search).get('checkout')==='missing'){show();return}
   fetch('/api/checkout-status',{cache:'no-store'})
     .then(function(r){return r.json()})
-    .then(function(d){if(!d || !d.configured) show()})
+    .then(function(d){if(!d || !d.configured) show(); else if(d.testMode){if(n){n.style.display='block';n.innerHTML='<strong style="color:#fff">Modalità TEST Stripe.</strong> Il checkout attuale è di prova: non usarlo per vendite reali finché non viene sostituito con il Payment Link live.';n.style.borderColor='rgba(255,209,102,.25)';n.style.background='rgba(255,209,102,.06)';n.style.color='#ffe08b';}}})
     .catch(function(){show()});
 })();
 </script><script>
