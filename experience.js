@@ -359,11 +359,55 @@
     send('next_best_action_view',{highIntent:high});
   }
 
+
+  function addRevenueLadder(){
+    var results=document.getElementById('results');
+    if(!results || results.style.display==='none' || document.getElementById('px-revenue-ladder')) return;
+
+    var primary=resultPrimaryId();
+    var info=findCommercial(primary);
+    var section=document.createElement('section');
+    section.id='px-revenue-ladder';
+    section.style.cssText='margin-top:15px;padding:24px;border-radius:24px;border:1px solid rgba(124,92,255,.2);background:linear-gradient(145deg,rgba(18,25,44,.96),rgba(8,12,22,.98));box-shadow:0 22px 75px rgba(0,0,0,.18);';
+    section.innerHTML=
+      '<div style="font-size:9px;letter-spacing:.16em;font-weight:950;color:#aaa0ff">IL TUO PERCORSO PROJECT-X</div>'+
+      '<h3 style="margin:8px 0 7px;font-size:24px;letter-spacing:-.045em">Tre modi per trasformare la risposta in valore.</h3>'+
+      '<p style="margin:0;color:#98a5bc;font-size:11px;line-height:1.55;max-width:780px">Prima capisci cosa serve. Poi scegli quanto vuoi fare da solo. Nessun passaggio cambia il ranking del motore.</p>'+
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px">'+
+        '<div style="padding:15px;border:1px solid rgba(255,255,255,.08);border-radius:15px;background:rgba(255,255,255,.025)">'+
+          '<div style="font-size:9px;color:#7ce8bd;font-weight:900">01 · PARTI DAL TOOL</div>'+
+          '<strong style="display:block;margin-top:7px;font-size:13px;color:#fff">'+escapeHtml(info&&info.name?info.name:'Software consigliato')+'</strong>'+
+          '<p style="margin:6px 0 0;font-size:10px;color:#8290a8;line-height:1.45">Verifica direttamente funzioni, prezzo e condizioni del provider.</p>'+
+          '<a href="/api/affiliate?tool='+encodeURIComponent(info&&info.id?info.id:primary)+'&source=result-ladder" '+(info?'':'style="display:none"')+' style="display:inline-flex;margin-top:10px;padding:9px 11px;border-radius:10px;color:#fff;background:rgba(124,92,255,.18);text-decoration:none;font-size:9px;font-weight:900">Apri provider →</a>'+
+          '<a href="/compare.html" style="display:inline-flex;margin-top:10px;padding:9px 11px;border-radius:10px;color:#c9bfff;border:1px solid rgba(255,255,255,.09);text-decoration:none;font-size:9px;font-weight:900">Confronta →</a>'+
+        '</div>'+
+        '<div style="padding:15px;border:1px solid rgba(255,209,102,.16);border-radius:15px;background:rgba(255,209,102,.035)">'+
+          '<div style="font-size:9px;color:#ffe18c;font-weight:900">02 · APPROFONDISCI · €29</div>'+
+          '<strong style="display:block;margin-top:7px;font-size:13px;color:#fff">Report PRO</strong>'+
+          '<p style="margin:6px 0 0;font-size:10px;color:#8290a8;line-height:1.45">Roadmap, workflow, KPI e blueprint operativa costruiti sul tuo profilo.</p>'+
+          '<a href="/report-pro.html?source=result-ladder" style="display:inline-flex;margin-top:10px;padding:9px 11px;border-radius:10px;color:#fff;background:linear-gradient(135deg,#7c5cff,#5b8cff);text-decoration:none;font-size:9px;font-weight:900">Vedi Report PRO →</a>'+
+        '</div>'+
+        '<div style="padding:15px;border:1px solid rgba(54,217,157,.16);border-radius:15px;background:rgba(54,217,157,.035)">'+
+          '<div style="font-size:9px;color:#7ce8bd;font-weight:900">03 · FATTI AIUTARE</div>'+
+          '<strong style="display:block;margin-top:7px;font-size:13px;color:#fff">Implementazione</strong>'+
+          '<p style="margin:6px 0 0;font-size:10px;color:#8290a8;line-height:1.45">Richiedi un progetto per trasformare la direzione in processo, automazioni e controlli concreti.</p>'+
+          '<a href="/implementation.html?source=result-ladder" style="display:inline-flex;margin-top:10px;padding:9px 11px;border-radius:10px;color:#fff;background:rgba(54,217,157,.16);text-decoration:none;font-size:9px;font-weight:900">Richiedi progetto →</a>'+
+        '</div>'+
+      '</div>'+
+      '<div style="margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.07);font-size:9px;color:#6f7c92">I link software possono essere affiliati. La monetizzazione è separata dalla decisione del motore. <a href="/affiliate-disclosure.html" style="color:#aaa0ff">Trasparenza →</a></div>';
+
+    var anchor=document.getElementById('px-next-best-action')||document.getElementById('px-commercial-card');
+    if(anchor&&anchor.parentNode) anchor.insertAdjacentElement('afterend',section);
+    else results.appendChild(section);
+    send('revenue_ladder_view',{primary:primary||'',hasAffiliate:!!info});
+  }
+
   function observeResults(){
     var observer=new MutationObserver(function(){
       addNextBestAction();
       addCommercialResultLayer();
       addCommercialBadges();
+      addRevenueLadder();
       var results=document.getElementById('results');
       if(results && results.style.display!=='none' && !memory.lastResultTracked){
         memory.analysesCompleted=(memory.analysesCompleted||0)+1;
@@ -376,6 +420,7 @@
     addNextBestAction();
     addCommercialResultLayer();
     addCommercialBadges();
+    addRevenueLadder();
   }
 
   function wire(){
