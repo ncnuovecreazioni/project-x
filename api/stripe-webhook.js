@@ -87,9 +87,12 @@ export default async function handler(req, res) {
         : "";
       const paymentLinkId = String(session.payment_link || "").trim();
 
+      const amountMatchesPro = Number(session.amount_total || 0) === 2900 &&
+        String(session.currency || "").toLowerCase() === "eur";
       const isProjectXOrder =
         product === "project-x-report-pro" ||
-        (configuredPaymentLinkId && paymentLinkId === configuredPaymentLinkId);
+        (configuredPaymentLinkId && paymentLinkId === configuredPaymentLinkId) ||
+        (!product && paymentLinkId && amountMatchesPro);
 
       if (!isProjectXOrder) {
         console.log("PROJECT-X Stripe event ignored: not a recognized PRO order.");
@@ -105,6 +108,8 @@ export default async function handler(req, res) {
         product: "project-x-report-pro",
         clientReferenceId: String(session.client_reference_id || ""),
         paymentLinkId,
+        amountTotal: Number(session.amount_total || 0),
+        currency: String(session.currency || "").toLowerCase(),
         paid: paymentStatus === "paid",
         receivedAt: new Date().toISOString()
       };
