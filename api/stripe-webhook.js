@@ -50,7 +50,7 @@ async function sendReceiptEmail(order) {
   const from = String(process.env.EMAIL_FROM || "").trim();
   if (!apiKey || !from || !order.customerEmail) return false;
 
-  const appUrl = /^https?:\/\/\\i.test(process.env.APP_URL || "")
+  const appUrl = /^https?:\/\//i.test(process.env.APP_URL || "")
     ? String(process.env.APP_URL).replace(/\/$/, "")
     : "https://project-x-phi-steel.vercel.app";
   const link = appUrl + "/pro-delivery.html?session_id=" + encodeURIComponent(order.sessionId);
