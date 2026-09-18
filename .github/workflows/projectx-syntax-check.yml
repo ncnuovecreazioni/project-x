@@ -40,3 +40,7 @@ jobs:
           node --input-type=module --check < api/event.js
           node --input-type=module --check < api/lead.js
           node --input-type=module --check < api/pro-checkout.js
+          node --input-type=module --check < api/pro-intake.js
+          node --input-type=module --check < api/stripe-session.js
+          node --input-type=module --check < api/stripe-webhook.js
+          node --input-type=module --check < api/health.js
