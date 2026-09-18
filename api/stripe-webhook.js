@@ -17,11 +17,12 @@ function verifyStripeSignature(payload, signature, secret) {
 
   const parts = signature.split(",").reduce((acc, item) => {
     const [key, value] = item.split("=", 2);
-    if (key && value) acc[key] = value;
+    if (key === "t" && value) acc.t = value;
+    if (key === "v1" && value) acc.v1.push(value);
     return acc;
-  }, {});
+  }, { t: "", v1: [] });
 
-  if (!parts.t || !parts.v1) return false;
+  if (!parts.t || !parts.v1.length) return false;
 
   const timestamp = Number(parts.t);
   if (!Number.isFinite(timestamp)) return false;
@@ -37,10 +38,11 @@ function verifyStripeSignature(payload, signature, secret) {
     .digest("hex");
 
   const expectedBuffer = Buffer.from(expected, "utf8");
-  const receivedBuffer = Buffer.from(parts.v1, "utf8");
-
-  if (expectedBuffer.length !== receivedBuffer.length) return false;
-  return crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+  return parts.v1.some((received) => {
+    const receivedBuffer = Buffer.from(received, "utf8");
+    return receivedBuffer.length === expectedBuffer.length &&
+      crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+  });
 }
 
 
