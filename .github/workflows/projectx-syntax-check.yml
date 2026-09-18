@@ -27,6 +27,7 @@ jobs:
           node --check autopilot.js
           node --check product-layer.js
           node --check blueprint-layer.js
+          node --check human-layer.js
 
       - name: Engine smoke test
         run: node tests/engine-smoke.mjs
