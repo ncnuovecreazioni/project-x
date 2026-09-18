@@ -1,6 +1,6 @@
 /* =========================================================
    PROJECT-X — SOFTWARE DECISION ENGINE
-   Versione 1.3.0 CLEAN
+   Versione 1.4.0 USER-FIRST
    ========================================================= */
 
 (function () {
@@ -11,7 +11,7 @@
      ========================================================= */
 
   const CONFIG = {
-    VERSION: "1.3.0",
+    VERSION: "1.4.0",
 
     MAX_STACK_TOOLS: 4,
 
@@ -3519,17 +3519,12 @@
               Number(
                 item.compatibility ||
                 0
-              ) * 0.72 +
+              ) * 0.82 +
 
               Number(
                 item.primaryRoleFit ||
                 0
-              ) * 0.18 +
-
-              Number(
-                item.businessScore ||
-                0
-              ) * 0.10,
+              ) * 0.18,
 
               1
             );
