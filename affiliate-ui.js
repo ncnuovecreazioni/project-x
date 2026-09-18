@@ -242,6 +242,15 @@
     document.body.appendChild(script);
   }
 
+  function loadBlueprintLayer(){
+    if(document.querySelector('script[data-projectx-blueprint-layer="1"]')) return;
+    var script=document.createElement('script');
+    script.src='/blueprint-layer.js';
+    script.async=true;
+    script.dataset.projectxBlueprintLayer='1';
+    document.body.appendChild(script);
+  }
+
   function update(){
     injectWowStyles();
     addWowHomeLayer();
@@ -250,6 +259,7 @@
     loadAutopilot();
     loadExperience();
     loadProductLayer();
+    loadBlueprintLayer();
   }
 
   var observer=new MutationObserver(update);
