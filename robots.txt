@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard.html
+Disallow: /pro-success.html
+Disallow: /pro-delivery.html
 
 Sitemap: https://project-x-phi-steel.vercel.app/sitemap.xml
