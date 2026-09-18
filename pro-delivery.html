@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#050711">
+<title>PROJECT-X — Report PRO personalizzato</title>
+<style>
+:root{--bg:#050711;--bg2:#0a0f1c;--panel:#0f1626;--line:rgba(255,255,255,.1);--text:#f7f9ff;--muted:#98a5bc;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d;--gold:#ffd166}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 8% 0%,rgba(124,92,255,.24),transparent 31%),radial-gradient(circle at 92% 12%,rgba(91,140,255,.16),transparent 28%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.wrap{width:min(1080px,calc(100% - 28px));margin:auto}.hero{text-align:center;padding:62px 0 30px}.eyebrow{display:inline-flex;padding:8px 11px;border-radius:999px;border:1px solid rgba(54,217,157,.22);background:rgba(54,217,157,.05);color:#85ebc2;font-size:10px;font-weight:900;letter-spacing:.12em}.hero h1{margin:18px 0 10px;font-size:clamp(42px,7vw,72px);line-height:.93;letter-spacing:-.07em}.grad{background:linear-gradient(100deg,#fff,#ad9dff,#79aaff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:780px;margin:auto;color:var(--muted);line-height:1.65}.gate{margin:28px auto 50px;width:min(700px,100%);padding:26px;border:1px solid var(--line);border-radius:24px;background:rgba(15,22,38,.9);text-align:center}.gate h2{margin:0 0 8px}.gate p{margin:0;color:var(--muted);line-height:1.6;font-size:13px}.gate .small{font-size:10px;color:#718096;margin-top:10px}.btn{display:inline-flex;align-items:center;justify-content:center;margin-top:17px;padding:13px 17px;border-radius:13px;border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;text-decoration:none;font-weight:900;font-size:11px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding-bottom:40px}.card{padding:22px;border:1px solid var(--line);border-radius:22px;background:rgba(15,22,38,.9);box-shadow:0 16px 55px rgba(0,0,0,.16)}.wide{grid-column:1/-1}.card h2{margin:0 0 8px;font-size:19px}.sub{margin:0 0 15px;color:var(--muted);font-size:11px;line-height:1.55}.metric{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px}.metric:last-child{border-bottom:0}.metric span{color:var(--muted)}.metric b{text-align:right}.big{font-size:36px;letter-spacing:-.06em}.steps{display:grid;gap:8px}.step{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)}.num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(124,92,255,.13);color:#c6bcff;font-weight:900;font-size:10px}.step b{font-size:11px}.step small{display:block;color:var(--muted);margin-top:3px;font-size:9px;line-height:1.4}.step em{font-style:normal;font-size:9px;color:#aab5c8}.note{padding:14px;border:1px dashed rgba(255,209,102,.2);background:rgba(255,209,102,.035);border-radius:14px;color:var(--muted);font-size:10px;line-height:1.55}.footer{text-align:center;padding:12px 0 55px;color:#65738a;font-size:9px}@media(max-width:720px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.step{grid-template-columns:29px 1fr}.step em{display:none}.btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<div class="eyebrow" id="badge">PROJECT-X · VERIFICA IN CORSO</div>
+<h1>Il tuo <span class="grad">Report PRO.</span></h1>
+<p id="intro">Sto verificando il pagamento Stripe e preparando il report sulla base del profilo PROJECT-X salvato in questo browser.</p>
+</section>
+
+<section id="gate" class="gate">
+<h2 id="gateTitle">Verifica del pagamento</h2>
+<p id="gateText">Attendi la conferma della sessione Stripe. Il report viene mostrato solo quando la sessione risulta pagata.</p>
+<div id="gateActions"></div>
+</section>
+
+<section id="report" style="display:none">
+<div class="grid">
+<div class="card" id="profile"></div>
+<div class="card" id="value"></div>
+<div class="card wide" id="decision"></div>
+<div class="card" id="automation"></div>
+<div class="card" id="stack"></div>
+<div class="card wide" id="roadmap"></div>
+<div class="card wide" id="next"></div>
+</div>
+</section>
+
+<div class="footer">PROJECT-X · Report generato dal profilo e dal Decision Engine. Le stime sono informative.</div>
+</div>
+
+<script src="/database.js"></script>
+<script src="/engine.js"></script>
+<script>
+(function(){
+'use strict';
+var E=window.ProjectXEngine||window.StackPilotEngine;
+var gate=document.getElementById('gate');
+var report=document.getElementById('report');
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function money(n){return '€'+Math.round(Number(n)||0).toLocaleString('it-IT')}
+function answers(){try{return JSON.parse(localStorage.getItem('projectx_answers_v2')||'null')}catch(e){return null}}
+function showGate(title,text,html){
+ document.getElementById('gateTitle').textContent=title;
+ document.getElementById('gateText').textContent=text;
+ document.getElementById('gateActions').innerHTML=html||'';
+}
+function render(a,r){
+ var p=r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]))||{};
+ var v=r&&(r.valueEstimate||r.value)||{};
+ var stack=Array.isArray(r&&r.stack)?r.stack:[];
+ var profile=r&&r.profile||{};
+ var labels=E&&E.NEED_LABELS||{};
+ var entries=Object.entries(profile).sort(function(x,y){return Number(y[1])-Number(x[1])});
+ var focus=entries.slice(0,4).map(function(x){return labels[x[0]]||x[0]});
+ var autos=Array.isArray(r&&(r.automationIdeas||r.automationSuggestions))?(r.automationIdeas||r.automationSuggestions).slice(0,6):[];
+ var missing=Array.isArray(r&&r.missingNeeds)?r.missingNeeds.slice(0,5):[];
+ var hours=Number(v.hoursPerWeek||0), hourly=Number(v.hourlyValue||0), monthly=Number(v.monthlyValue||hours*hourly*4.33);
+ document.getElementById('profile').innerHTML='<h2>🧠 Profilo operativo</h2><p class="sub">Il report parte dalle tue risposte, non da una configurazione predefinita.</p>'+
+ '<div class="metric"><span>Attività</span><b>'+esc(a.businessType||'—')+'</b></div>'+
+ '<div class="metric"><span>Team</span><b>'+esc(a.teamSize||'—')+'</b></div>'+
+ '<div class="metric"><span>Budget</span><b>'+esc(a.budget||'—')+'</b></div>'+
+ '<div class="metric"><span>Priorità</span><b>'+esc(focus.join(' · ')||'—')+'</b></div>';
+ document.getElementById('value').innerHTML='<h2>💰 Valore teorico</h2><p class="sub">Indicatore costruito sulle ore e sul valore orario dichiarati.</p>'+
+ '<div class="big">'+money(monthly)+'</div><div class="sub">potenziale valore mensile del tempo indicato</div>'+
+ '<div class="metric"><span>Ore ripetitive</span><b>'+esc(hours)+' h/settimana</b></div>'+
+ '<div class="metric"><span>Valore orario</span><b>'+money(hourly)+'</b></div>';
+ document.getElementById('decision').innerHTML='<h2>🎯 Direzione consigliata dal motore</h2><p class="sub">Non è una classifica commerciale: è la combinazione che il motore considera più coerente con il profilo analizzato.</p>'+
+ '<div class="metric"><span>Strumento principale</span><b>'+esc(p.name||p.id||'Da definire')+'</b></div>'+
+ '<div class="metric"><span>Bisogni prioritari</span><b>'+esc(focus.join(' · ')||'Da definire')+'</b></div>'+
+ '<div class="metric"><span>Gap principali</span><b>'+esc(missing.join(' · ')||'Nessun gap evidente')+'</b></div>';
+ document.getElementById('automation').innerHTML='<h2>⚡ Workflow da attaccare per primi</h2><p class="sub">Le aree candidate a diventare automazioni concrete.</p>'+
+ (autos.length?'<div class="steps">'+autos.map(function(x,i){var label=typeof x==='string'?x:(x.title||x.name||x.description||'Workflow '+(i+1));return '<div class="step"><span class="num">'+String(i+1).padStart(2,'0')+'</span><div><b>'+esc(label)+'</b><small>Definisci trigger → azione → output → controllo.</small></div><em>priorità '+(i<2?'alta':i<4?'media':'successiva')+'</em></div>'}).join('')+'</div>':'<div class="note">Nessuna automazione specifica restituita dal motore.</div>');
+ document.getElementById('stack').innerHTML='<h2>⚙️ Stack operativo</h2><p class="sub">Nucleo e strumenti complementari emersi dall'+'analisi.</p>'+
+ (stack.length?stack.map(function(t,i){return '<div class="metric"><span>'+esc(i===0?'Nucleo':'Complementare')+'</span><b>'+esc(t.name||t.id||'Strumento')+'</b></div>'}).join(''):'<div class="note">Stack non disponibile.</div>');
+ var phases=[
+  ['01','Giorni 1–7','Base dati e processo','Decidi dove vive il dato principale, elimina duplicazioni e definisci il flusso attuale in ingresso/uscita.'],
+  ['02','Giorni 8–14','Prima automazione','Automatizza il collo di bottiglia più frequente e misura il tempo prima/dopo.'],
+  ['03','Giorni 15–21','Collegamenti','Connetti gli strumenti necessari, gestisci errori e crea una procedura di controllo.'],
+  ['04','Giorni 22–30','Misurazione','Controlla KPI, adozione, tempo recuperato e attività rimaste manuali.']
+ ];
+ document.getElementById('roadmap').innerHTML='<h2>🗺 Roadmap 30 giorni</h2><p class="sub">Sequenza pratica da usare come piano di implementazione iniziale.</p><div class="steps">'+phases.map(function(s){return '<div class="step"><span class="num">'+s[0]+'</span><div><b>'+s[1]+' · '+s[2]+'</b><small>'+s[3]+'</small></div><em>fase</em></div>'}).join('')+'</div>';
+ document.getElementById('next').innerHTML='<h2>🚀 Cosa fare adesso</h2><p class="sub">Il Report PRO diventa utile quando si trasforma in una decisione eseguibile.</p>'+
+ '<div class="note"><strong style="color:#fff">Primo passo:</strong> scegli il workflow con più frequenza e più attrito, definisci il trigger e il risultato atteso, quindi misura il tempo reale prima di automatizzarlo. Il motore può aiutarti a ridefinire il sistema ripetendo l’analisi con dati aggiornati.</div>';
+}
+async function verify(){
+ var params=new URLSearchParams(location.search), sid=params.get('session_id');
+ if(!sid){
+   showGate('Sessione non disponibile','Questa pagina deve essere aperta dal redirect Stripe con un session_id verificabile.',
+     '<a class="btn" href="/pro.html">Torna al Report PRO →</a>');
+   return;
+ }
+ try{
+   var response=await fetch('/api/stripe-session?session_id='+encodeURIComponent(sid),{cache:'no-store'});
+   var data=await response.json();
+   if(!response.ok||!data.success) throw new Error(data.error||'Verifica non disponibile');
+   if(!data.paid||!data.validProduct){
+     document.getElementById('badge').textContent='PROJECT-X · PAGAMENTO NON CONFERMATO';
+     showGate('Pagamento non ancora confermato','Stripe non ha restituito una sessione pagata valida per il Report PRO. Se hai appena pagato, torna alla pagina di conferma o riprova dal link ricevuto.',
+       '<a class="btn" href="/pro-success.html?session_id='+encodeURIComponent(sid)+'">Aggiorna verifica →</a>');
+     return;
+   }
+   var a=answers();
+   if(!a){showGate('Profilo non trovato','Il pagamento è stato verificato, ma il profilo PROJECT-X non è disponibile in questo browser. Rifai l’analisi con lo stesso dispositivo/browser prima dell’acquisto.',
+     '<a class="btn" href="/">Rifai l’analisi →</a>');return}
+   var r=null;try{r=E&&E.analyzeAnswers?E.analyzeAnswers(a):null}catch(e){}
+   if(!r){showGate('Report non disponibile','Il motore non è riuscito a ricostruire il report dal profilo salvato.',
+     '<a class="btn" href="/">Torna a PROJECT-X →</a>');return}
+   document.getElementById('badge').textContent='PROJECT-X · PAGAMENTO VERIFICATO';
+   document.getElementById('intro').textContent='Pagamento verificato. Questa è la tua blueprint PRO personalizzata, costruita dal profilo PROJECT-X.';
+   gate.style.display='none';report.style.display='block';render(a,r);
+ }catch(e){
+   showGate('Verifica temporaneamente non disponibile','Il server non è riuscito a verificare la sessione Stripe in questo momento.',
+     '<a class="btn" href="javascript:location.reload()">Riprova →</a>');
+ }
+}
+verify();
+})();
+</script>
+</body>
+</html>
