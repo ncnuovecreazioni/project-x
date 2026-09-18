@@ -24,6 +24,10 @@ export default async function handler(req, res) {
 
   const body = safeObject(req.body);
   const answers = safeObject(body.answers);
+  const consent = body.consent === true;
+  if (!consent) {
+    return res.status(400).json({ success: false, error: "Consenso richiesto." });
+  }
 
   const handoffId =
     "pxh-" +
