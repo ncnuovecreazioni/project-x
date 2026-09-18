@@ -22,7 +22,7 @@
       var questionnaire=document.getElementById('questionnaire');
       if(results && getComputedStyle(results).display!=='none'){
         return {
-          title:'Hai la risposta. Ora trasformamosela in un’azione.',
+          title:'Hai la risposta. Ora trasformiamola in un’azione.',
           text:'Non devi capire tutto subito. Guarda prima la scelta principale, poi il piano dei prossimi 7 giorni.',
           step:'3 / 4 · DECIDI',
           cta:'Vedi il mio piano',
@@ -31,7 +31,10 @@
             if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
           },
           secondary:'Salva il risultato',
-          secondaryAction:'saveResultLink'
+          secondaryAction:function(){
+            var b=document.getElementById('saveLinkBtn');
+            if(b) b.click();
+          }
         };
       }
       if(questionnaire && getComputedStyle(questionnaire).display!=='none'){
@@ -45,7 +48,10 @@
             if(b) b.click();
           },
           secondary:'Indietro',
-          secondaryAction:'prev'
+          secondaryAction:function(){
+            var b=document.getElementById('backBtn');
+            if(b) b.click();
+          }
         };
       }
       return {
@@ -173,7 +179,15 @@
     document.body.appendChild(wrap);
 
     var ctx=context();
-    document.getElementById('px-human-step').textContent=ctx.step;
+    function renderContext(){
+      ctx=context();
+      document.getElementById('px-human-step').textContent=ctx.step;
+      document.getElementById('px-human-title').textContent=ctx.title;
+      document.getElementById('px-human-text').textContent=ctx.text;
+      document.getElementById('px-human-primary').textContent=ctx.cta;
+      document.getElementById('px-human-secondary').textContent=ctx.secondary;
+    }
+    renderContext();
     document.getElementById('px-human-title').textContent=ctx.title;
     document.getElementById('px-human-text').textContent=ctx.text;
     document.getElementById('px-human-primary').textContent=ctx.cta;
@@ -183,13 +197,25 @@
     var toggle=document.getElementById('px-human-toggle');
     var close=document.getElementById('px-human-close');
 
-    function open(){panel.classList.add('open');toggle.setAttribute('aria-expanded','true');}
+    function open(){
+      renderContext();
+      panel.classList.add('open');
+      toggle.setAttribute('aria-expanded','true');
+    }
     function shut(){panel.classList.remove('open');toggle.setAttribute('aria-expanded','false');}
 
     toggle.onclick=function(){panel.classList.contains('open')?shut():open();};
     close.onclick=shut;
-    document.getElementById('px-human-primary').onclick=function(){if(typeof ctx.action==='function')ctx.action();else handle(ctx.action);shut();};
-    document.getElementById('px-human-secondary').onclick=function(){handle(ctx.secondaryAction);shut();};
+    document.getElementById('px-human-primary').onclick=function(){
+      renderContext();
+      if(typeof ctx.action==='function')ctx.action();else handle(ctx.action);
+      shut();
+    };
+    document.getElementById('px-human-secondary').onclick=function(){
+      renderContext();
+      if(typeof ctx.secondaryAction==='function')ctx.secondaryAction();else handle(ctx.secondaryAction);
+      shut();
+    };
     document.addEventListener('keydown',function(e){if(e.key==='Escape')shut();});
 
     try{
