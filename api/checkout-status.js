@@ -17,6 +17,7 @@ export default async function handler(req, res) {
     success: true,
     configured: paymentLinkConfigured || stripeSessionConfigured,
     paymentLinkConfigured,
+    testMode: paymentLinkConfigured && /stripe\\.com\/test_/i.test(checkoutUrl),
     stripeSessionConfigured,
     automaticProfileHandoff: stripeSessionConfigured,
     deliveryVerificationConfigured: /^sk_(test|live)_/i.test(stripeSecret),
