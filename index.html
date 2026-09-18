@@ -88,8 +88,26 @@ function analyze(){setView('loading');var msgs=['Leggo il tuo problema…','Inte
 function primary(r){return r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]))}
 function toolName(t){return t&&(t.name||t.id)||'Strumento'}
 function fit(t){return Math.round(Number(t&&(t.compatibility!=null?t.compatibility:t.score))||0)}
-function safeUrl(u){return /^https?:\/\//i.test(u||'')?u:''}
-function commercialUrl(t){return safeUrl(t&&t.affiliateUrl)||safeUrl(t&&t.pricingUrl)||safeUrl(t&&t.url)||''}
+function safeUrl(u){
+  return /^https?:\/\//i.test(u||'') || /^\/api\/affiliate\?tool=[a-z0-9-]+$/i.test(u||'')
+    ? u
+    : '';
+}
+function commercialToolId(t){
+  var id=String(t&&(t.id||'')||'').toLowerCase().trim();
+  var eligible={
+    systeme:1,pipedrive:1,getresponse:1,activecampaign:1,hubspot:1,
+    shopify:1,make:1,brevo:1,monday:1,semrush:1,kit:1
+  };
+  return eligible[id]?id:'';
+}
+function commercialUrl(t){
+  var direct=safeUrl(t&&t.affiliateUrl);
+  if(direct) return direct;
+  var id=commercialToolId(t);
+  if(id) return '/api/affiliate?tool='+encodeURIComponent(id)+'&source=results';
+  return safeUrl(t&&t.pricingUrl)||safeUrl(t&&t.url)||'';
+}
 function renderResults(r){var p=primary(r);$('resultModeText').textContent=mode==='quick'?'Prima direzione generata rapidamente. Puoi affinarla con l’analisi completa.':'Configurazione costruita intorno alle risposte che hai fornito.';if(!p){$('primaryMount').innerHTML='<div class="card panel"><strong>Nessun risultato disponibile.</strong></div>';return}renderPrimary(p);renderValue(r.valueEstimate||r.value||{});renderArchitecture(r);renderPlan(r,p);renderStack(r.stack||[]);renderAutomations(r.automationIdeas||r.automationSuggestions||[]);renderRanking(r.rankedTools||[]);renderMissing(r.missingNeeds||[]);renderNeeds(r.profile||{});renderWhy(r,p);$('aiBadge').style.display=r.aiAvailable?'inline-flex':'none';if(mode==='quick'){$('refineBtn').textContent='Rendi il risultato più preciso →'}else{$('refineBtn').textContent='Nuova analisi completa →'}}
 function renderPrimary(p){var s=Math.max(0,Math.min(100,fit(p))),u=commercialUrl(p),cta=u?'<a id="primaryLink" class="btn primary" href="'+esc(u)+'" target="_blank" rel="noopener">Vai a '+esc(toolName(p))+' →</a>':'<button id="copyTop" class="btn primary">Copia il mio piano →</button>';$('primaryMount').innerHTML='<div class="resulthero"><div class="label">01 · SCELTA PRINCIPALE</div><div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ '+s+'% compatibilità</span><div class="hero-actions">'+cta+'<button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div><div class="commercial"><strong>La logica:</strong> PROJECT-X combina bisogno, ruolo, budget, tecnologia, team e strumenti già presenti. La CTA commerciale usa l’eventuale link affiliato presente nel catalogo.</div></div>';if($('primaryLink'))$('primaryLink').addEventListener('click',function(){event('affiliate_click',{tool:toolName(p),url:u,hasAffiliate:!!safeUrl(p.affiliateUrl)})});if($('copyTop'))$('copyTop').onclick=copyReport;if($('planTop'))$('planTop').onclick=function(){$('planMount').scrollIntoView({behavior:'smooth'})}}
 function renderValue(v){var h=Number(v.hoursPerWeek||0)||0,rate=Number(v.hourlyValue||0)||0,monthly=Number(v.monthlyValue||h*rate*4.33)||0,annual=Number(v.annualValue||monthly*12)||0;$('valueMount').innerHTML='<h3>💰 Il valore del tempo</h3><div class="sub">Stima teorica basata sulle ore ripetitive indicate. Non è una promessa di risparmio.</div><div class="money">€'+Math.round(monthly).toLocaleString('it-IT')+'</div><div class="moneylabel">valore potenziale / mese</div><div class="moneyrow"><div class="moneymini"><b>€'+Math.round(annual).toLocaleString('it-IT')+'</b><span>su base annua</span></div><div class="moneymini"><b>'+h+' h</b><span>a settimana</span></div></div><div class="metric"><span style="color:var(--muted)">Valore orario</span><strong>€'+rate+'</strong></div>'}
