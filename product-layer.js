@@ -109,7 +109,7 @@
     var bar=document.createElement('div');
     bar.id='px-product-homebar';
     bar.className='px-product-homebar';
-    bar.innerHTML='<a href="/soluzioni.html">Soluzioni</a><a href="/faq.html">FAQ</a><a href="/report-pro.html">Report PRO</a><a href="/coach.html">AI Coach</a><a href="/affiliate.html">Partner</a>';
+    bar.innerHTML='<a href="/soluzioni.html">Soluzioni</a><a href="/faq.html">FAQ</a><a href="/report-pro.html">Report PRO</a><a href="/coach.html">AI Coach</a><a href="/affiliate.html">Partner</a><a href="/affiliate-disclosure.html">Trasparenza</a>';
     hero.appendChild(bar);
   }
 
