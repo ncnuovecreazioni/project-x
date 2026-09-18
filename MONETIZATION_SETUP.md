@@ -43,7 +43,20 @@ Set the Vercel Production environment variable:
 
 - `PRO_CHECKOUT_URL`
 
-The checkout redirect adds `source=project-x` and `product=project-x-report-pro`.
+The checkout starts through `/api/pro-checkout`. When `STRIPE_SECRET_KEY` is configured, PROJECT-X creates a native Stripe Checkout Session with `client_reference_id` and metadata; otherwise it keeps `PRO_CHECKOUT_URL` as a fallback.
+
+### PRO automatico
+
+Variabili principali:
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `PRO_CHECKOUT_URL`
+- `STRIPE_PRICE_ID` (opzionale: il sistema prova a ricavare il Price dal Payment Link)
+- `APP_URL` (opzionale)
+- `RESEND_API_KEY` + `EMAIL_FROM` (opzionali per la ricevuta email automatica)
+- `PRO_INTAKE_WEBHOOK_URL` + `PRO_ORDER_WEBHOOK_URL` (opzionali per archivio/automation esterni)
+
+Il successo viene verificato lato server tramite `/api/stripe-session`; il Report PRO viene mostrato da `/pro-delivery.html` solo quando la sessione risulta pagata.
 
 ## AI Coach
 
