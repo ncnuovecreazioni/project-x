@@ -70,7 +70,7 @@
     if(document.getElementById('px-product-styles')) return;
     var style=document.createElement('style');
     style.id='px-product-styles';
-    style.textContent=\`
+    style.textContent=`
       .px-product-wrap{margin-top:15px;padding:24px;border-radius:24px;border:1px solid rgba(124,92,255,.2);background:radial-gradient(circle at 88% 0%,rgba(124,92,255,.08),transparent 35%),linear-gradient(145deg,rgba(17,23,40,.94),rgba(8,12,21,.96));box-shadow:0 24px 75px rgba(0,0,0,.16)}
       .px-product-kicker{font-size:9px;letter-spacing:.15em;font-weight:950;color:#b8adff}
       .px-product-title{margin:8px 0 6px;font-size:23px;line-height:1.05;letter-spacing:-.04em}
@@ -97,7 +97,7 @@
       .px-product-homebar a{padding:7px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);color:#7f8ca3;text-decoration:none;font-size:8px;font-weight:800}
       .px-product-homebar a:hover{color:#d7deeb;border-color:rgba(124,92,255,.25)}
       @media(max-width:760px){.px-product-grid{grid-template-columns:1fr 1fr}.px-product-steps{grid-template-columns:1fr}.px-product-wrap{padding:19px}}
-    \`;
+    `;
     document.head.appendChild(style);
   }
 
