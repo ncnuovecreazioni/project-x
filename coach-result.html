@@ -34,4 +34,6 @@ $('content').innerHTML=
 '<div class="card wide"><h2>🚀 Cosa fare adesso</h2><div class="notice"><strong style="color:#fff">1.</strong> Parti dalla scelta principale. <strong style="color:#fff">2.</strong> Sistema il collo di bottiglia che hai descritto. <strong style="color:#fff">3.</strong> Trasforma il passaggio ripetitivo in un workflow misurabile. <strong style="color:#fff">4.</strong> Usa il Report PRO per la blueprint dettagliata.</div><div class="cta"><a class="btn primary" href="/report-pro.html">Costruisci la blueprint PRO →</a><a class="btn secondary" href="/coach.html">Affina la conversazione</a></div></div>';
 try{fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'coach_result_view',sessionId:'coach-'+Date.now(),meta:{primary:p&&p.name||'',business:a.businessType||'',budget:a.budget||''}})}).catch(function(){})}catch(e){}
 })();
-</script></body></html>
+</script>
+<script src="/human-layer.js"></script>
+</body></html>
