@@ -75,3 +75,16 @@ The score uses declared intent, budget, team size, time at stake, problem detail
 ## Data handling
 
 PROJECT-X does not intentionally persist Coach conversations or AI responses in the repository. The AI request uses `store: false`. Leads and analytics are sent only to the webhooks configured by the site owner.
+
+## Configurazione checkout PRO
+
+PROJECT-X usa la variabile Vercel `PRO_CHECKOUT_URL`. La soluzione più semplice per partire è Stripe Payment Links: Stripe indica che i Payment Links permettono di vendere prodotti o servizi tramite una pagina di pagamento senza codice e che il prodotto standard non prevede canoni mensili; si applicano le commissioni sulle transazioni. Verifica sempre le tariffe applicabili al tuo account e al metodo di pagamento. 
+
+1. Apri Stripe e crea il prodotto **PROJECT-X Report PRO**.
+2. Imposta il prezzo iniziale a **29 EUR**, una tantum.
+3. Crea un **Payment Link** per il prodotto.
+4. Imposta, nella configurazione di Stripe, l'eventuale pagina di ritorno dopo il pagamento su `https://project-x-phi-steel.vercel.app/pro-success.html`.
+5. In Vercel aggiungi `PRO_CHECKOUT_URL` con il Payment Link.
+6. Ridistribuisci il progetto e prova un acquisto in modalità reale solo dopo aver verificato prezzo, dati fiscali, condizioni e consegna del prodotto.
+
+Fonte ufficiale Stripe: https://stripe.com/it/payments/payment-links
