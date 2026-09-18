@@ -242,6 +242,15 @@
     document.body.appendChild(script);
   }
 
+  function loadConversionLayer(){
+    if(document.querySelector('script[data-projectx-conversion-layer="1"]')) return;
+    var script=document.createElement('script');
+    script.src='/conversion-layer.js';
+    script.async=true;
+    script.dataset.projectxConversionLayer='1';
+    document.body.appendChild(script);
+  }
+
   function loadBlueprintLayer(){
     if(document.querySelector('script[data-projectx-blueprint-layer="1"]')) return;
     var script=document.createElement('script');
@@ -260,6 +269,7 @@
     loadExperience();
     loadProductLayer();
     loadBlueprintLayer();
+    loadConversionLayer();
   }
 
   var observer=new MutationObserver(update);
