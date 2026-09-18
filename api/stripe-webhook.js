@@ -88,10 +88,12 @@ export default async function handler(req, res) {
         customerEmail: email,
         sessionId: String(session.id || ""),
         product: "project-x-report-pro",
+        clientReferenceId: String(session.client_reference_id || ""),
+        paid: paymentStatus === "paid",
         receivedAt: new Date().toISOString()
       };
 
-      const webhookUrl = String(process.env.LEAD_WEBHOOK_URL || "").trim();
+      const webhookUrl = String(process.env.PRO_ORDER_WEBHOOK_URL || process.env.LEAD_WEBHOOK_URL || "").trim();
 
       if (webhookUrl && /^https?:\/\//i.test(webhookUrl)) {
         try {
@@ -100,7 +102,8 @@ export default async function handler(req, res) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               type: "projectx_stripe_payment",
-              order
+              order,
+              nextStep: order.paid ? "deliver-report" : "await-payment-confirmation"
             })
           });
         } catch (forwardError) {
