@@ -233,6 +233,15 @@
     document.body.appendChild(script);
   }
 
+  function loadProductLayer(){
+    if(document.querySelector('script[data-projectx-product-layer="1"]')) return;
+    var script=document.createElement('script');
+    script.src='/product-layer.js';
+    script.async=true;
+    script.dataset.projectxProductLayer='1';
+    document.body.appendChild(script);
+  }
+
   function update(){
     injectWowStyles();
     addWowHomeLayer();
@@ -240,6 +249,7 @@
     rewriteAffiliateLinks();
     loadAutopilot();
     loadExperience();
+    loadProductLayer();
   }
 
   var observer=new MutationObserver(update);
