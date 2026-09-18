@@ -1,3 +1,23 @@
+async function trackCheckoutStart(source, handoffId, mode) {
+  const webhook = String(process.env.EVENT_WEBHOOK_URL || "").trim();
+  if (!webhook || !/^https?:\/\//i.test(webhook)) return;
+  try {
+    await fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source: "PROJECT-X",
+        createdAt: new Date().toISOString(),
+        event: "pro_checkout_start",
+        sessionId: handoffId || "",
+        meta: { source, mode }
+      })
+    });
+  } catch (error) {
+    console.error("PROJECT-X checkout event error", error);
+  }
+}
+
 async function stripeRequest(secret, path, options = {}) {
   const response = await fetch("https://api.stripe.com/v1" + path, {
     method: options.method || "GET",
@@ -45,6 +65,7 @@ export default async function handler(req, res) {
   const secret = String(process.env.STRIPE_SECRET_KEY || "").trim();
 
   if (secret && /^sk_(test|live)_/i.test(secret)) {
+    await trackCheckoutStart(source, handoffId, "stripe-session");
     try {
       const priceId = await resolvePriceId(secret);
 
@@ -84,6 +105,7 @@ export default async function handler(req, res) {
   }
 
   // Fallback: keep the currently working Payment Link.
+  await trackCheckoutStart(source, handoffId, "payment-link");
   const checkoutUrl = String(process.env.PRO_CHECKOUT_URL || "").trim();
   if (!checkoutUrl || !/^https?:\/\//i.test(checkoutUrl)) {
     return res.redirect(302, "/pro.html?checkout=missing");
