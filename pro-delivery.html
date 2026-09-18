@@ -119,8 +119,11 @@ async function verify(){
      return;
    }
    var a=answers();
-   if(!a){showGate('Profilo non trovato','Il pagamento è stato verificato, ma il profilo PROJECT-X non è disponibile in questo browser. Rifai l’analisi con lo stesso dispositivo/browser prima dell’acquisto.',
-     '<a class="btn" href="/">Rifai l’analisi →</a>');return}
+   if(!a){
+     showGate('Pagamento verificato · manca il profilo','Il pagamento è stato verificato, ma il profilo dell’analisi non è presente su questo dispositivo. Non è un errore del pagamento: per ora il report viene ricostruito dal browser usato durante l’analisi.',
+       '<a class="btn" href="/">Rifai l’analisi →</a><a class="btn secondary" href="/pro.html">Torna a PRO →</a>');
+     return;
+   }
    var r=null;try{r=E&&E.analyzeAnswers?E.analyzeAnswers(a):null}catch(e){}
    if(!r){showGate('Report non disponibile','Il motore non è riuscito a ricostruire il report dal profilo salvato.',
      '<a class="btn" href="/">Torna a PROJECT-X →</a>');return}
