@@ -38,4 +38,14 @@
 <div class="step"><span class="num">03</span><div><b>Implementa</b><p>Usa blueprint, workflow e KPI come base del progetto reale.</p></div></div>
 </div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px"><a class="btn" style="width:auto;padding:11px 13px" href="/">← Torna al Decision Engine</a><a class="btn" style="width:auto;padding:11px 13px" href="/coach.html">Parla con AI Coach →</a></div></section>
 <div class="foot">PROJECT-X · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Termini</a> · <a href="/affiliate-disclosure.html">Trasparenza</a></div>
-<script>(function(){if(new URLSearchParams(location.search).get('checkout')==='missing'){var n=document.getElementById('checkoutNotice');if(n)n.style.display='block'}})();</script></main></body></html>
+<script>
+(function(){
+  var n=document.getElementById('checkoutNotice');
+  function show(){if(n)n.style.display='block'}
+  if(new URLSearchParams(location.search).get('checkout')==='missing'){show();return}
+  fetch('/api/checkout-status',{cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(d){if(!d || !d.configured) show()})
+    .catch(function(){show()});
+})();
+</script></main></body></html>
