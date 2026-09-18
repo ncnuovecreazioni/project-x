@@ -62,5 +62,7 @@ document.getElementById('premium').innerHTML='<h2>🔐 Cosa aggiunge il PRO</h2>
 try{fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'pro_report_view',sessionId:'pro-'+Date.now(),meta:{primary:p&&p.name||'',business:a.businessType||'',budget:a.budget||''}})}).catch(function(){})}catch(e){}
 })();
 </script>
+
+<script src="/human-layer.js"></script>
 </body>
 </html>
