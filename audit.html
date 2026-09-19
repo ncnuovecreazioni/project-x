@@ -102,6 +102,7 @@ function analyze(){
  $('dup').textContent=duplicates.length;
  $('auto').textContent=automation;
  $('bar').style.width=efficiency+'%';
+ try{localStorage.setItem('projectx_audit_v1',JSON.stringify({efficiency:efficiency,manualScore:manualScore,duplicates:duplicates.length,automation:automation,updatedAt:Date.now()}))}catch(e){}
  $('findings').innerHTML=findings.map(function(x){return '<div class="finding '+x.c+'"><strong>'+esc(x.t)+'</strong><span>'+esc(x.d)+'</span></div>'}).join('');
  $('lead').textContent='Il punto non è aggiungere strumenti: è capire dove il sistema attuale crea attrito.';
  $('result').style.display='block';
