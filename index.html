@@ -295,71 +295,217 @@ body{
 .px-result-details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 12px 12px}
 .px-result-details-grid .panel{margin:0}
 @media(max-width:760px){.px-result-details-grid{grid-template-columns:1fr}}
+</style><style id="px-simple-redesign">
+.px-simple-hero{text-align:left;padding:68px 0 48px}
+.px-simple-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.85fr);gap:42px;align-items:center}
+.px-simple-copy h1{max-width:780px;margin:20px 0 15px;font-size:clamp(47px,6vw,78px);line-height:.94;letter-spacing:-.075em}
+.px-simple-copy .px-lead{max-width:770px;margin:0;color:#a8b3c5;font-size:18px;line-height:1.72}
+.px-promise{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:21px 0 19px}
+.px-promise>div{display:flex;gap:8px;align-items:flex-start;padding:11px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.018)}
+.px-promise span{display:grid;place-items:center;width:24px;height:24px;flex:0 0 24px;border-radius:8px;background:rgba(124,92,255,.12);color:#c9c0ff;font-weight:950;font-size:10px}
+.px-promise b{display:block;font-size:10px}.px-promise small{display:block;margin-top:3px;color:#7f8ca2;font-size:8.5px;line-height:1.4}
+.px-simple-quick{margin:0;max-width:none;padding:18px;border-radius:20px}
+.px-simple-quick .quickhead{margin-bottom:10px}.px-simple-quick .quickhead b{font-size:14px}.px-simple-quick .quickhead span{margin-left:7px;color:#7b879b}
+.px-simple-label{display:block;margin:0 0 7px;color:#aeb8c8;font-size:10px;font-weight:900;letter-spacing:.06em}
+.px-simple-quick textarea{min-height:104px;font-size:15px}
+.px-simple-quick .quickactions .primary{min-width:250px}
+.px-simple-visual{position:relative;min-height:560px;display:flex;align-items:center;justify-content:center}
+.px-visual-card{width:min(455px,100%);padding:19px;border:1px solid rgba(124,92,255,.24);border-radius:28px;background:linear-gradient(145deg,rgba(18,26,46,.96),rgba(8,12,23,.98));box-shadow:0 34px 100px rgba(0,0,0,.3);position:relative;z-index:2}
+.px-visual-top{display:flex;align-items:center;gap:8px;color:#dfe6f2;font-size:11px}.px-visual-top span:last-child{margin-left:auto;color:#78869d;font-size:9px}
+.px-live-dot{width:8px;height:8px;border-radius:50%;background:#36d99d;box-shadow:0 0 0 6px rgba(54,217,157,.08)}
+.px-visual-quote{margin-top:13px;padding:15px;border-radius:16px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.065);color:#b8c3d4;font-size:12px;line-height:1.55}
+.px-visual-arrow{text-align:center;color:#7c5cff;font-size:22px;margin:9px 0}
+.px-visual-answer{padding:15px;border-radius:18px;background:rgba(124,92,255,.07);border:1px solid rgba(124,92,255,.18)}
+.px-answer-label{color:#a99cff;font-size:8px;letter-spacing:.14em;font-weight:950}.px-visual-answer>strong{display:block;margin:6px 0 10px;font-size:17px;line-height:1.15}
+.px-mini-choice{display:grid;grid-template-columns:27px 1fr 18px;gap:8px;align-items:center;padding:9px 0;border-top:1px solid rgba(255,255,255,.065)}
+.px-mini-choice>span{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:rgba(255,255,255,.04);color:#919db2;font-size:8px;font-weight:900}
+.px-mini-choice b{display:block;font-size:10px}.px-mini-choice small{display:block;margin-top:2px;color:#7c899e;font-size:8px}.px-mini-choice em{font-style:normal;color:#7ce8bd;font-size:12px}
+.px-visual-bottom{margin-top:13px;padding:12px;border-radius:13px;border:1px solid rgba(54,217,157,.12);background:rgba(54,217,157,.025);display:flex;justify-content:space-between;gap:10px;align-items:center}.px-visual-bottom span{color:#77859a;font-size:9px}.px-visual-bottom b{color:#8beac4;font-size:10px}
+.px-vector-art{position:absolute;right:-25px;bottom:2px;width:365px;opacity:.36}
+.px-vector-art svg{width:100%;height:auto}
+.px-help-section{padding-top:42px}.px-help-section .title{margin-bottom:23px}.px-help-section .title p{max-width:900px;font-size:15px}
+.px-help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.px-help-card{padding:25px;min-height:305px}.px-help-number{font-size:9px;letter-spacing:.14em;color:#a99cff;font-weight:950}.px-help-card h3{font-size:22px;letter-spacing:-.04em;line-height:1.12;margin:13px 0 10px}.px-help-card p{margin:0;color:#a3aec0;font-size:13px;line-height:1.72}.px-help-example{margin-top:15px;padding:11px 12px;border-left:2px solid rgba(124,92,255,.45);border-radius:0 11px 11px 0;background:rgba(124,92,255,.04);color:#8f9bae;font-size:10px;line-height:1.55}.px-help-example b{color:#e4e8f0}
+.px-long-help{display:grid;grid-template-columns:1.12fr .88fr;gap:18px;margin-top:18px}.px-long-help-copy,.px-quote-card{padding:28px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(16,23,40,.86),rgba(8,12,22,.92))}.px-long-kicker{font-size:9px;letter-spacing:.16em;color:#a99cff;font-weight:950}.px-long-help-copy h3{margin:10px 0 12px;font-size:30px;line-height:1.08;letter-spacing:-.05em}.px-long-help-copy h3 span{color:#a9b7c9}.px-long-help-copy p{margin:0 0 12px;color:#98a5b8;font-size:14px;line-height:1.72}.px-long-help-copy .btn{margin-top:7px}.px-quote-card>span{color:#7f8da4;font-size:9px;letter-spacing:.13em;font-weight:900}.px-quote-card>b{display:block;margin:12px 0 13px;font-size:20px;line-height:1.2}.px-step-line{display:flex;gap:9px;align-items:center;padding:9px 0;border-top:1px solid rgba(255,255,255,.065)}.px-step-line i{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:rgba(124,92,255,.09);color:#c8c0ff;font-style:normal;font-size:9px;font-weight:900}.px-step-line span{color:#b2bdcd;font-size:10px}.px-quote-card small{display:block;margin-top:11px;color:#75839a;font-size:9px;line-height:1.5}
+.px-cases{margin-top:46px}.px-cases-title{margin-bottom:20px}.px-cases-title h2{font-size:32px}.px-cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.px-cases-grid a{padding:15px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.018);text-decoration:none;color:#fff;transition:.18s ease}.px-cases-grid a:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.3)}.px-cases-grid b{display:block;font-size:11px}.px-cases-grid span{display:block;margin-top:5px;color:#7f8ca1;font-size:9px;line-height:1.45}
+.px-simple-nav{font-size:10px;font-weight:850;color:#aeb8c8;text-decoration:none;padding:8px 9px}.px-simple-nav:hover{color:#fff}
+@media(max-width:950px){.px-simple-grid{grid-template-columns:1fr;gap:25px}.px-simple-visual{min-height:500px}.px-vector-art{right:0}.px-promise{grid-template-columns:1fr}.px-help-grid,.px-cases-grid{grid-template-columns:1fr}.px-long-help{grid-template-columns:1fr}}
+@media(max-width:600px){.px-simple-hero{padding:53px 0 38px}.px-simple-copy h1{font-size:clamp(41px,12vw,58px)}.px-simple-copy .px-lead{font-size:16px}.px-simple-quick .quickactions .btn{width:100%;min-width:0}.px-simple-visual{min-height:415px}.px-visual-card{padding:15px;border-radius:22px}.px-vector-art{width:290px;right:-15px;bottom:0;opacity:.28}.px-long-help-copy h3{font-size:25px}}
 </style></head>
 <body>
-<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><a class="px-nav-cta" href="#home">Analizza gratis →</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div><button type="button" id="pxMobileNavBtn" class="px-mobile-nav-btn" aria-expanded="false" aria-controls="pxMobileNav">☰ Menu</button><div id="pxMobileNav" class="px-mobile-nav" hidden><div class="px-mobile-nav-head"><strong>PROJECT-X</strong><button type="button" id="pxMobileNavClose" aria-label="Chiudi menu">×</button></div><a href="#home">Home</a><a href="/metodo.html">Metodo</a><a href="/software-index.html">Software Index</a><a href="/atlas.html">Decision Atlas</a><a href="/landscape.html">Landscape</a><a href="/coach.html">✦ AI Coach</a><a href="/pro.html">Report PRO →</a></div></div></header>
-<main>
-<section id="home" class="hero"><div class="wrap">
-<div class="eyebrow">✦ PARTI DA COME LAVORI. NON DAL SOFTWARE.</div>
-<h1>Raccontami cosa ti fa perdere tempo.<br><span class="grad">Ti mostro cosa fare dopo.</span></h1>
-<p>Tu descrivi il lavoro come lo descriveresti a una persona. PROJECT-X mette ordine, individua la soluzione più coerente e ti dice quale passaggio affrontare per primo.</p>
-<div class="quickbox">
-<div class="journey" aria-label="Percorso PROJECT-X"><div class="journey-step"><b>01 · RACCONTA</b><span>Il problema reale</span></div><div class="journey-step"><b>02 · CAPISCI</b><span>Poche domande utili</span></div><div class="journey-step"><b>03 · DECIDI</b><span>Scelta + confronto</span></div><div class="journey-step"><b>04 · AGISCI</b><span>Piano + prossima azione</span></div></div>
-<div class="quickhead"><b>⚡ Analisi rapida</b><span>Scrivi il caso · PROJECT-X costruisce la prima direzione</span></div>
-<textarea id="quickProblem" maxlength="800" placeholder="Esempio: perdo ore con email, preventivi e follow-up; uso Excel e mi dimentico di richiamare i clienti…"></textarea>
-<div class="quickgrid"><select id="quickBusiness" class="select"><option value="">Attività (facoltativa)</option><option>Professionista</option><option>Impresa di servizi</option><option>E-commerce</option><option>Agenzia</option><option>Ristorante / attività locale</option><option>Startup</option><option>Azienda</option></select><select id="quickBudget" class="select"><option value="">Budget mensile (facoltativo)</option><option>€0</option><option>€1–30</option><option>€31–50</option><option>€51–100</option><option>€101–250</option><option>€251+</option></select></div><div class="px-example-row"><span class="px-example-label">Inizia da un esempio:</span><button type="button" class="px-example" data-example="Perdo ore tra email e follow-up dei clienti">Email + follow-up</button><button type="button" class="px-example" data-example="Faccio preventivi a mano e copio sempre gli stessi dati">Preventivi</button><button type="button" class="px-example" data-example="Uso Excel per gestire dati e attività e vorrei automatizzare i passaggi ripetitivi">Excel + automazioni</button><button type="button" class="px-example" data-example="Gestisco ordini online, marketing e assistenza clienti in modo manuale">E-commerce</button></div>
-<div class="quickactions"><button type="button" id="quickBtn" class="btn primary">Fai partire PROJECT-X →</button><button type="button" id="fullBtn" class="btn secondary">Voglio capirlo fino in fondo</button><button type="button" id="demoBtn" class="btn secondary px-demo-btn">Guarda un esempio →</button></div><div class="micro">Gratis per iniziare · nessuna carta · prima risposta subito</div>
-</div>
-<div class="px-showcase" aria-label="Anteprima del Decision Engine">
-  <div class="px-showcase-card">
-    <div class="px-mini-label">Il punto di partenza</div>
-    <div class="px-live-problem">“Ho troppi strumenti, perdo tempo tra email e attività e non so cosa automatizzare per primo.”</div>
-    <div class="px-flow" aria-hidden="true">
-      <div class="px-flow-node"><b>Il tuo problema</b><span>Come lavori davvero</span></div>
-      <div class="px-flow-arrow">→</div>
-      <div class="px-flow-node"><b>Decision Engine</b><span>La soluzione + vincoli</span></div>
-      <div class="px-flow-arrow">→</div>
-      <div class="px-flow-node"><b>Sistema</b><span>Scelta + piano</span></div>
+<header class="top">
+  <div class="wrap nav">
+    <a href="#home" class="logo" aria-label="PROJECT-X Home">PROJECT-<b>X</b></a>
+    <div class="topnav">
+      <a href="#benefits" class="px-simple-nav">Come ti aiuta</a>
+      <a href="#examples" class="px-simple-nav">Esempi</a>
+      <a class="px-nav-cta" href="#quickProblem">Analizza gratis →</a>
     </div>
-    <div class="px-showcase-note">Non vende una singola app: costruisce una direzione coerente con il tuo lavoro.</div>
+    <button type="button" id="pxMobileNavBtn" class="px-mobile-nav-btn" aria-expanded="false" aria-controls="pxMobileNav">☰</button>
+    <div id="pxMobileNav" class="px-mobile-nav" hidden>
+      <div class="px-mobile-nav-head"><strong>PROJECT-X</strong><button type="button" id="pxMobileNavClose" aria-label="Chiudi menu">×</button></div>
+      <a href="#benefits">Come ti aiuta</a>
+      <a href="#examples">Esempi</a>
+      <a href="/pro.html">Report PRO →</a>
+      <a href="/compare.html">Confronta software</a>
+      <a href="/faq.html">Domande frequenti</a>
+    </div>
   </div>
-  <div class="px-showcase-card">
-    <div class="px-mini-label">Anteprima del risultato</div>
-    <div class="px-result">
-      <div class="px-result-top"><div class="px-result-name">Close</div><div class="px-score">93 / 100 · compatibilità</div></div>
-      <div class="px-result-meta"><span>CRM & Vendite</span><span>Automazioni</span><span>Follow-up</span><span>Microsoft 365</span></div>
-      <div class="px-bars">
-        <div class="px-bar"><span>La soluzione</span><i style="width:96%"></i><b>96</b></div>
-        <div class="px-bar"><span>Il tuo prossimo passo</span><i style="width:91%"></i><b>91</b></div>
-        <div class="px-bar"><span>Semplicità</span><i style="width:88%"></i><b>88</b></div>
+</header>
+<main>
+<section id="home" class="hero px-simple-hero">
+  <div class="wrap">
+    <div class="px-simple-grid">
+      <div class="px-simple-copy">
+        <div class="eyebrow">✦ TI AIUTIAMO A SCEGLIERE E A PARTIRE</div>
+        <h1>Non sai quale software usare?<br><span class="grad">Partiamo dal tuo problema.</span></h1>
+        <p class="px-lead">
+          Non devi conoscere CRM, automazioni o strumenti di intelligenza artificiale.
+          Raccontaci semplicemente cosa fai oggi e cosa ti fa perdere tempo.
+          PROJECT-X trasforma quella frase in una scelta comprensibile e in un primo passo che puoi davvero fare.
+        </p>
+
+        <div class="px-promise">
+          <div><span>1</span><div><b>Ti capiamo</b><small>Leggiamo il lavoro reale, non solo il nome della tua attività.</small></div></div>
+          <div><span>2</span><div><b>Ti diciamo cosa serve</b><small>Ti proponiamo lo strumento o il sistema più coerente con quello che hai descritto.</small></div></div>
+          <div><span>3</span><div><b>Ti insegniamo a usarlo</b><small>Ricevi una guida pratica, un esempio e il primo workflow da provare.</small></div></div>
+        </div>
+
+        <div class="quickbox px-simple-quick" id="px-start">
+          <div class="quickhead">
+            <div><b>Cominciamo da una frase.</b><span>Non serve sapere altro.</span></div>
+          </div>
+          <label class="px-simple-label" for="quickProblem">Cosa ti fa perdere tempo?</label>
+          <textarea id="quickProblem" maxlength="800" placeholder="Es. preparo preventivi a mano, rispondo alle stesse email e poi devo ricordarmi di richiamare i clienti…"></textarea>
+          <div class="quickgrid">
+            <select id="quickBusiness" class="select" aria-label="La tua attività">
+              <option value="">La tua attività (facoltativa)</option><option>Professionista</option><option>Impresa di servizi</option><option>E-commerce</option>
+              <option>Agenzia</option><option>Ristorante / attività locale</option><option>Startup</option><option>Azienda</option>
+            </select>
+            <select id="quickBudget" class="select" aria-label="Budget mensile">
+              <option value="">Budget mensile (facoltativo)</option><option>€0</option><option>€1–30</option><option>€31–50</option>
+              <option>€51–100</option><option>€101–250</option><option>€251+</option>
+            </select>
+          </div>
+          <div class="px-example-row">
+            <span class="px-example-label">Non sai cosa scrivere?</span>
+            <button type="button" class="px-example" data-example="Faccio preventivi a mano e copio sempre gli stessi dati">Preventivi</button>
+            <button type="button" class="px-example" data-example="Rispondo spesso alle stesse richieste via email e perdo tempo nei follow-up">Email</button>
+            <button type="button" class="px-example" data-example="Uso Excel per gestire dati e attività e vorrei automatizzare i passaggi ripetitivi">Excel</button>
+            <button type="button" class="px-example" data-example="Gestisco richieste e clienti in posti diversi e rischio di dimenticare i follow-up">Clienti</button>
+          </div>
+          <div class="quickactions">
+            <button type="button" id="quickBtn" class="btn primary">Dimmi da dove partire →</button>
+            <button type="button" id="demoBtn" class="btn secondary px-demo-btn">Fammi vedere un esempio</button>
+            <button type="button" id="fullBtn" class="btn secondary">Analisi completa</button>
+          </div>
+          <div class="micro">Gratis · nessuna carta · risultato immediato</div>
+        </div>
+      </div>
+
+      <div class="px-simple-visual" aria-label="Esempio di come PROJECT-X aiuta">
+        <div class="px-visual-card">
+          <div class="px-visual-top"><span class="px-live-dot"></span><b>Un problema normale</b><span>1 frase</span></div>
+          <div class="px-visual-quote">“Perdo tempo tra email, preventivi e richiami. Non so cosa automatizzare per primo.”</div>
+          <div class="px-visual-arrow">↓</div>
+          <div class="px-visual-answer">
+            <div class="px-answer-label">PROJECT-X TI RESTITUISCE</div>
+            <strong>La direzione più semplice da provare</strong>
+            <div class="px-mini-choice"><span>01</span><div><b>Scelta principale</b><small>Il sistema più coerente con il tuo lavoro</small></div><em>✓</em></div>
+            <div class="px-mini-choice"><span>02</span><div><b>Primo workflow</b><small>Un processo concreto, non teoria</small></div><em>✓</em></div>
+            <div class="px-mini-choice"><span>03</span><div><b>Guida pratica</b><small>Passo 1 → passo 2 → prova</small></div><em>✓</em></div>
+          </div>
+          <div class="px-visual-bottom"><span>Non devi imparare tutto.</span><b>Devi riuscire a fare il primo passo.</b></div>
+        </div>
+        <div class="px-vector-art" aria-hidden="true">
+          <svg viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="pxg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#5b8cff"/></linearGradient><linearGradient id="pxg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#36d99d"/><stop offset="1" stop-color="#7c5cff"/></linearGradient></defs>
+            <rect x="54" y="46" width="312" height="216" rx="30" fill="#0d1424" stroke="#27314a"/>
+            <rect x="78" y="70" width="160" height="20" rx="10" fill="#1b2540"/><rect x="78" y="104" width="112" height="11" rx="5.5" fill="#33405c"/><rect x="78" y="126" width="208" height="11" rx="5.5" fill="#1b2540"/>
+            <rect x="78" y="157" width="86" height="58" rx="16" fill="#171f34" stroke="#303d5b"/><rect x="176" y="157" width="86" height="58" rx="16" fill="#171f34" stroke="#303d5b"/><rect x="274" y="157" width="62" height="58" rx="16" fill="url(#pxg1)" opacity=".88"/>
+            <circle cx="121" cy="186" r="13" fill="#7c5cff" opacity=".25"/><path d="M117 186l4 4 7-9" fill="none" stroke="#cfc7ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="219" cy="186" r="13" fill="#36d99d" opacity=".2"/><path d="M213 186h12M219 180v12" stroke="#84e9c0" stroke-width="3" stroke-linecap="round"/>
+            <path d="M103 236h208" stroke="#33405c" stroke-width="8" stroke-linecap="round"/>
+            <path d="M332 112c22-22 38-18 44-5 5 10-1 22-12 24-14 2-27-5-32-19Z" fill="#161f34" stroke="#3b4a6d"/><path d="M329 111l12 4 9-10" fill="none" stroke="#36d99d" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="66" cy="76" r="9" fill="#7c5cff"/><circle cx="66" cy="102" r="6" fill="#36d99d"/>
+            <path d="M36 274c72 18 271 19 349 0" fill="none" stroke="url(#pxg2)" stroke-width="5" stroke-linecap="round" opacity=".65"/>
+          </svg>
+        </div>
       </div>
     </div>
-    <div class="px-showcase-note">Poi arrivano stack, automazioni, piano 7 giorni e confronto con le alternative.</div>
   </div>
-</div>
-<div class="px-proof"><span>⚡ Analisi locale gratuita</span><span>🔒 Nessuna carta</span><span>🧩 Stack ragionato</span><span>🎯 Prima azione concreta</span></div>
-<div class="trust"><span>✓ Parti dal problema</span><span>✓ Rispetta il budget</span><span>✓ Valorizza ciò che hai</span><span>✓ Suggerisce cosa automatizzare</span></div>
-</div></section>
-<section id="benefits" class="section"><div class="wrap">
-  <div class="title">
-    <h2>Da problema a soluzione. Senza perderti.</h2>
-    <p>Non devi conoscere il software giusto. Racconta cosa succede oggi e PROJECT-X ti porta alla prossima azione concreta.</p>
-  </div>
-  <div class="cards">
-    <div class="card feature"><div class="icon">01</div><h3>Racconta</h3><p>Scrivi il problema con parole normali. Anche una sola frase basta per iniziare.</p></div>
-    <div class="card feature"><div class="icon">02</div><h3>Capisci</h3><p>Il motore collega bisogni, vincoli e strumenti già presenti, evitando doppioni inutili.</p></div>
-    <div class="card feature"><div class="icon">03</div><h3>Fai</h3><p>Ricevi una scelta, un primo workflow e una guida pratica da provare subito.</p></div>
-  </div>
-  <div class="px-home-examples">
-    <div class="px-home-examples-head"><div><span class="px-story-kicker">PARTI DA UN CASO REALE</span><h3>Non sai cosa scrivere? Parti da qui.</h3></div><span>1 clic → analisi pronta</span></div>
-    <div class="px-home-example-grid">
-      <a href="/?case=preventivi"><b>📄 Preventivi</b><span>“Creo preventivi a mano e perdo tempo nel follow-up.”</span></a>
-      <a href="/?case=email"><b>✉️ Email</b><span>“Rispondo spesso alle stesse richieste.”</span></a>
-      <a href="/?case=excel"><b>📊 Excel</b><span>“Faccio troppo copia-incolla tra fogli.”</span></a>
-      <a href="/?case=clienti"><b>👥 Clienti</b><span>“Richieste e attività sono sparse ovunque.”</span></a>
+</section><section id="benefits" class="section px-help-section">
+  <div class="wrap">
+    <div class="title">
+      <div class="eyebrow">✦ COSA FACCIAMO PER TE</div>
+      <h2>Non ti lasciamo solo davanti al risultato.</h2>
+      <p>Molti siti ti dicono quale software guardare e poi ti lasciano davanti a decine di impostazioni. PROJECT-X prova a coprire anche quel pezzo: capire, scegliere, iniziare e imparare.</p>
+    </div>
+
+    <div class="px-help-grid">
+      <article class="card px-help-card">
+        <div class="px-help-number">01 · CAPIRE</div>
+        <h3>Partiamo dalle tue parole.</h3>
+        <p>Puoi scrivere una frase semplice: “faccio preventivi”, “ricevo troppe email”, “uso Excel per tutto”, “mi dimentico i richiami”. Non devi sapere il nome della soluzione. Noi trasformiamo il problema in esigenze concrete da soddisfare.</p>
+        <div class="px-help-example"><b>Tu dici:</b> “copio sempre gli stessi dati.”<br><b>PROJECT-X cerca:</b> quale passaggio può essere eliminato o automatizzato.</div>
+      </article>
+
+      <article class="card px-help-card">
+        <div class="px-help-number">02 · SCEGLIERE</div>
+        <h3>Ti spieghiamo la scelta.</h3>
+        <p>Non vogliamo darti una lista infinita di software. Ti mostriamo cosa entra nella tua situazione, cosa può fare per te, cosa conviene fare prima e quali strumenti che già utilizzi possono restare al loro posto.</p>
+        <div class="px-help-example"><b>Non:</b> “ha 200 funzioni.”<br><b>Sì:</b> “puoi usarlo per prendere una richiesta, creare il prossimo passo e fare il follow-up.”</div>
+      </article>
+
+      <article class="card px-help-card">
+        <div class="px-help-number">03 · FARE</div>
+        <h3>Ti guidiamo mentre lo usi.</h3>
+        <p>Dopo la scelta arriva una guida costruita sul caso. Ti accompagniamo dal primo accesso al primo workflow: cosa impostare, cosa provare, cosa controllare e come capire se sta funzionando. Prima un caso piccolo, poi il resto.</p>
+        <div class="px-help-example"><b>Esempio:</b> “crea 1 contatto → imposta 1 attività → prova 1 follow-up → controlla il risultato.”</div>
+      </article>
+    </div>
+
+    <div class="px-long-help">
+      <div class="px-long-help-copy">
+        <div class="px-long-kicker">L'IDEA DIETRO PROJECT-X</div>
+        <h3>La vera difficoltà non è trovare un software.<br><span>È sapere cosa farne.</span></h3>
+        <p>Quando inizi a cercare uno strumento, trovi subito migliaia di pagine, recensioni e confronti. Il rischio è scegliere in base alla popolarità, alla quantità di funzioni o a quello che usa qualcun altro.</p>
+        <p>PROJECT-X parte invece da una domanda più semplice: <strong>“Qual è il lavoro che vuoi rendere più facile?”</strong> Da lì prova a collegare problema, esigenze, budget, strumenti già presenti e livello di automazione.</p>
+        <p>Il risultato non deve essere una lettura da studiare. Deve diventare un’azione. Per questo la guida pratica ti mostra un primo caso, ti propone i passaggi in ordine e ti fa verificare il risultato prima di aggiungere altra complessità.</p>
+        <p>Puoi usarlo anche quando non hai idea di cosa comprare. Puoi usarlo quando hai già cinque strumenti e vuoi capire cosa tenere. E puoi tornarci quando il tuo processo cambia.</p>
+        <a href="#quickProblem" class="btn primary">Raccontami il mio problema →</a>
+      </div>
+
+      <div class="px-long-help-side">
+        <div class="px-quote-card">
+          <span>UN ESEMPIO CONCRETO</span>
+          <b>“Faccio preventivi a mano e poi inseguo il cliente.”</b>
+          <div class="px-step-line"><i>1</i><span>Capire dove si ripete il lavoro</span></div>
+          <div class="px-step-line"><i>2</i><span>Individuare lo strumento coerente</span></div>
+          <div class="px-step-line"><i>3</i><span>Costruire il primo flusso</span></div>
+          <div class="px-step-line"><i>4</i><span>Provare con un caso reale</span></div>
+          <div class="px-step-line"><i>5</i><span>Misurare prima e dopo</span></div>
+          <small>Questo è il livello di aiuto che PROJECT-X deve portarti.</small>
+        </div>
+      </div>
+    </div>
+
+    <div id="examples" class="px-cases">
+      <div class="title px-cases-title">
+        <div class="eyebrow">✦ ESEMPI</div>
+        <h2>Puoi partire da qualunque problema.</h2>
+        <p>Gli esempi qui sotto compilano tutto da soli e avviano l'analisi. Servono per capire subito come funziona.</p>
+      </div>
+      <div class="px-cases-grid">
+        <a href="/?case=preventivi"><b>Preventivi</b><span>“Creo, ricopio e rincorro.”</span></a>
+        <a href="/?case=email"><b>Email</b><span>“Rispondo sempre alle stesse cose.”</span></a>
+        <a href="/?case=excel"><b>Excel</b><span>“Copio dati da un foglio all’altro.”</span></a>
+        <a href="/?case=clienti"><b>Clienti</b><span>“Rischio di perdere un richiamo.”</span></a>
+        <a href="/?case=ecommerce"><b>E-commerce</b><span>“Dopo l’ordine faccio troppi passaggi.”</span></a>
+        <a href="/?case=progetti"><b>Progetti</b><span>“Le scadenze sono sparse.”</span></a>
+      </div>
     </div>
   </div>
-</div></section><section id="questionnaire" hidden><div class="wrap qwrap"><div class="progressline"><span id="progressLabel"></span><span id="progressPct"></span></div><div class="progress"><div id="progressBar" class="bar"></div></div><div class="qmeta"><span id="questionWhy"></span><span id="modeLabel">ANALISI COMPLETA</span></div><div class="card qcard"><h2 id="qTitle"></h2><p id="qDesc" class="desc"></p><div id="qContent"></div><div class="actions"><button id="backBtn" class="btn secondary">← Indietro</button><button id="nextBtn" class="btn primary">Continua →</button></div><div class="hint">Puoi tornare indietro. Le risposte vengono mantenute durante l'analisi.</div></div></div></section>
+</section><section id="questionnaire" hidden><div class="wrap qwrap"><div class="progressline"><span id="progressLabel"></span><span id="progressPct"></span></div><div class="progress"><div id="progressBar" class="bar"></div></div><div class="qmeta"><span id="questionWhy"></span><span id="modeLabel">ANALISI COMPLETA</span></div><div class="card qcard"><h2 id="qTitle"></h2><p id="qDesc" class="desc"></p><div id="qContent"></div><div class="actions"><button id="backBtn" class="btn secondary">← Indietro</button><button id="nextBtn" class="btn primary">Continua →</button></div><div class="hint">Puoi tornare indietro. Le risposte vengono mantenute durante l'analisi.</div></div></div></section>
 <section id="loading" hidden><div class="wrap"><div class="spinner"></div><div class="loadtitle">Sto costruendo il tuo sistema…</div><div id="loadingText" class="loadtext">Leggo il tuo problema.</div><div class="chips"><span class="chip">Il tuo problema</span><span class="chip">Le tue esigenze</span><span class="chip">La soluzione</span><span class="chip">Quanto combacia</span><span class="chip">Il tuo prossimo passo</span><span class="chip">Automazioni</span></div></div></section>
 <section id="results" hidden><div class="wrap"><div class="resulthead"><div class="eyebrow">✦ IL RISULTATO È PRONTO</div><h1>Ora hai una direzione.<br><span class="grad">Vediamo cosa farne.</span></h1><p id="resultModeText">Ti mostro una sola cosa alla volta: cosa scegliere, cosa fare adesso e come provarlo.</p><div id="aiBadge" class="ai">✦ Il tuo problema affinato con Le tue esigenze</div></div><div id="insightMount"></div><div id="primaryMount"></div><div class="resultgrid"><div id="valueMount" class="card panel valuebox"></div><div id="architectureMount" class="card panel"></div><div id="planMount" class="card panel wide"></div><div id="stackMount" class="card panel"></div><div id="automationMount" class="card panel"></div><div id="rankingMount" class="card panel"></div><div id="gapMount" class="card panel"></div><div id="needsMount" class="card panel"></div><div id="whyMount" class="card panel wide"></div></div><div class="bottom"><button id="copyBtn" class="btn secondary">Copia il mio risultato</button><button id="shareBtn" class="btn secondary">Condividi</button><button id="leadBtn" class="btn secondary">📩 Mandami il risultato</button><button id="implementationBtn" class="btn secondary">🛠 Voglio trasformarlo in un sistema</button><button id="printBtn" class="btn secondary">Salva il risultato</button><button id="refineBtn" class="btn primary">Rendi la scelta più precisa →</button><button id="resetBtn" class="btn secondary">Riparti da zero</button></div><div id="savebar" style="margin-top:13px;padding:13px 14px;border:1px solid rgba(54,217,157,.16);background:rgba(54,217,157,.045);border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="color:var(--muted);font-size:10px;line-height:1.45"><b style="display:block;color:#fff;font-size:11px;margin-bottom:3px">🔗 Salva il tuo risultato</b>Il link ricrea questa analisi senza database: le risposte restano nel frammento del browser e non vengono inviate al server dal link.</div><button id="saveLinkBtn" class="btn secondary" style="padding:10px 13px;white-space:nowrap">Crea link →</button></div></div></section>
 </main>
