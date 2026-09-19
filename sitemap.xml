@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://project-x-phi-steel.vercel.app/</loc><lastmod>2026-09-18</lastmod><priority>1.0</priority></url>
+  <url><loc>https://project-x-phi-steel.vercel.app/</loc><lastmod>2026-09-19</lastmod><priority>1.0</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/affiliate.html</loc><lastmod>2026-09-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/affiliate-disclosure.html</loc><lastmod>2026-09-18</lastmod><priority>0.6</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/coach.html</loc><lastmod>2026-09-18</lastmod><priority>0.95</priority></url>
@@ -12,7 +12,9 @@
   <url><loc>https://project-x-phi-steel.vercel.app/gestione-progetti.html</loc><lastmod>2026-09-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/microsoft-365-automazioni.html</loc><lastmod>2026-09-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/recupero-carrelli-ecommerce.html</loc><lastmod>2026-09-18</lastmod><priority>0.8</priority></url>
-  <url><loc>https://project-x-phi-steel.vercel.app/report-pro.html</loc><lastmod>2026-09-18</lastmod><priority>0.8</priority></url>
+  <url><loc>https://project-x-phi-steel.vercel.app/report-pro.html</loc><lastmod>2026-09-19</lastmod><priority>0.85</priority></url>
+  <url><loc>https://project-x-phi-steel.vercel.app/audit.html</loc><lastmod>2026-09-19</lastmod><priority>0.85</priority></url>
+  <url><loc>https://project-x-phi-steel.vercel.app/simulator.html</loc><lastmod>2026-09-19</lastmod><priority>0.85</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/software-per-agenzie.html</loc><lastmod>2026-09-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/software-per-professionisti.html</loc><lastmod>2026-09-18</lastmod><priority>0.8</priority></url>
   <url><loc>https://project-x-phi-steel.vercel.app/automazione-documenti-pmi.html</loc><lastmod>2026-09-18</lastmod><priority>0.75</priority></url>
