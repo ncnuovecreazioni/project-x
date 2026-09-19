@@ -163,21 +163,11 @@
     if(f2) f2.onclick=function(e){if(e)e.preventDefault();launch('full');};
   }
 
-  function auto(){
-    if(location.hash.indexOf('#px=')===0) return;
-    if(location.search.indexOf('case=')>=0) return;
-    setTimeout(function(){
-      var r=id('results');
-      if(r && getComputedStyle(r).display==='none'){
-        cinematic(function(){return launch('demo')});
-      }
-    },900);
-  }
+  function auto(){ return; }
 
   ready(function(){
     bind();
     setTimeout(bind,400);
     setTimeout(bind,1200);
-    auto();
   });
 })();
