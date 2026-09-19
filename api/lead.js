@@ -13,6 +13,100 @@
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
 }
+function escapeHtml(value) {
+  return String(value == null ? "" : value)
+    .replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+}
+
+async function sendResendEmail({ to, from, subject, html, replyTo }) {
+  const apiKey = String(process.env.RESEND_API_KEY || "").trim();
+  if (!apiKey || !to || !from) return { sent: false, configured: false };
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + apiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from,
+        to: [to],
+        subject,
+        html,
+        ...(replyTo ? { reply_to: [replyTo] } : {})
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    return { sent: response.ok, configured: true, id: data && data.id ? data.id : "" };
+  } catch (error) {
+    console.error("PROJECT-X Resend lead email error", error);
+    return { sent: false, configured: true };
+  }
+}
+
+async function sendLeadEmails(payload) {
+  const from = String(process.env.EMAIL_FROM || "").trim();
+  const notifyTo = String(process.env.LEAD_NOTIFY_TO || "").trim();
+
+  if (!String(process.env.RESEND_API_KEY || "").trim() || !from) {
+    return { configured: false, notify: false, confirmation: false };
+  }
+
+  const report = payload.report && typeof payload.report === "object" ? payload.report : {};
+  const primary = escapeHtml(report.primary || "");
+  const pain = escapeHtml(payload.painPoint || report.painPoint || "");
+  const intent = escapeHtml(payload.intent || "report");
+  const score = escapeHtml(payload.leadScore);
+  const temperature = escapeHtml(payload.leadTemperature);
+
+  const notification = notifyTo
+    ? await sendResendEmail({
+        to: notifyTo,
+        from,
+        subject: "PROJECT-X · Nuovo contatto · " + String(payload.leadId || ""),
+        replyTo: payload.email,
+        html:
+          "<div style=\"font-family:Arial,sans-serif;line-height:1.6;color:#111\">" +
+          "<h2>Nuovo contatto PROJECT-X</h2>" +
+          "<p><strong>Nome:</strong> " + escapeHtml(payload.name || "—") + "</p>" +
+          "<p><strong>Email:</strong> " + escapeHtml(payload.email) + "</p>" +
+          "<p><strong>Intento:</strong> " + intent + "</p>" +
+          "<p><strong>Priorità:</strong> " + score + " · " + temperature + "</p>" +
+          "<p><strong>Software principale:</strong> " + primary + "</p>" +
+          "<p><strong>Problema:</strong><br>" + pain + "</p>" +
+          "<p><strong>Seguito consigliato:</strong> " + escapeHtml((payload.recommendedFollowup || []).join(" → ")) + "</p>" +
+          "<hr><p style=\"font-size:12px;color:#666\">Contatto raccolto da PROJECT-X. Nessuna iscrizione marketing è stata attivata da questo flusso.</p>" +
+          "</div>"
+      })
+    : { sent: false, configured: true };
+
+  const confirmation = await sendResendEmail({
+    to: payload.email,
+    from,
+    subject: "PROJECT-X · Abbiamo ricevuto la tua richiesta",
+    html:
+      "<div style=\"font-family:Arial,sans-serif;line-height:1.6;color:#111\">" +
+      "<h2>Ricevuto.</h2>" +
+      "<p>PROJECT-X ha registrato la tua richiesta. Il prossimo passo dipende dal percorso che hai scelto.</p>" +
+      "<p><strong>Decisione:</strong> " + primary + "</p>" +
+      "<p><strong>Problema analizzato:</strong><br>" + pain + "</p>" +
+      "<p>Puoi tornare al risultato dal sito PROJECT-X e continuare da lì.</p>" +
+      "<p><a href=\"https://project-x-phi-steel.vercel.app/\">Apri PROJECT-X →</a></p>" +
+      "<p style=\"font-size:12px;color:#666\">Questa email è una conferma della richiesta effettuata e non attiva comunicazioni marketing.</p>" +
+      "</div>"
+  });
+
+  return {
+    configured: true,
+    notify: !!notification.sent,
+    confirmation: !!confirmation.sent
+  };
+}
+
 
 function scoreLead(body, intent, report) {
   let score = intent === "implementation" ? 30 : 10;
@@ -108,52 +202,51 @@ export default async function handler(req, res) {
     report
   };
 
-  if (!webhook) {
+  let webhookSent = false;
+  let emailStatus = { configured: false, notify: false, confirmation: false };
+
+  if (webhook) {
+    try {
+      const response = await fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      webhookSent = response.ok;
+      if (!response.ok) console.error("PROJECT-X lead webhook error", response.status);
+    } catch (error) {
+      console.error("PROJECT-X lead network error", error);
+    }
+  }
+
+  if (!webhookSent) {
+    emailStatus = await sendLeadEmails(payload);
+  }
+
+  const persisted = webhookSent || emailStatus.notify;
+
+  if (!persisted) {
     return res.status(200).json({
       success: true,
       configured: false,
       leadId,
       leadScore: lead.score,
       leadTemperature: lead.temperature,
-      error: "Webhook lead non configurato: il contatto non è stato salvato da PROJECT-X."
+      error: "Nessun canale automatico per salvare il contatto è configurato."
     });
   }
 
-  try {
-    const response = await fetch(webhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      console.error("PROJECT-X lead webhook error", response.status);
-      return res.status(200).json({
-        success: false,
-        configured: true,
-        leadId,
-        leadScore: lead.score,
-        leadTemperature: lead.temperature,
-        error: "Impossibile consegnare il contatto."
-      });
+  return res.status(200).json({
+    success: true,
+    configured: true,
+    leadId,
+    leadScore: lead.score,
+    leadTemperature: lead.temperature,
+    delivery: {
+      webhook: webhookSent,
+      emailNotification: emailStatus.notify,
+      emailConfirmation: emailStatus.confirmation
     }
-
-    return res.status(200).json({
-      success: true,
-      configured: true,
-      leadId,
-      leadScore: lead.score,
-      leadTemperature: lead.temperature
-    });
-  } catch (error) {
-    console.error("PROJECT-X lead network error", error);
-    return res.status(200).json({
-      success: false,
-      configured: true,
-      leadId,
-      leadScore: lead.score,
-      leadTemperature: lead.temperature,
-      error: "Errore durante l'invio del contatto."
-    });
-  }
+  });
 }
