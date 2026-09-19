@@ -30,7 +30,7 @@
 'use strict';
 var $=function(id){return document.getElementById(id)};
 var answers={businessType:'',teamSize:'',goals:[],painPoint:'',budget:'',techLevel:'Medio',automationLevel:'Smart',hours:'4–7',hourlyValue:'€30',existingTools:[],doNotChange:[],doNotReplace:[],keepTools:[],toolsToKeep:[]};
-var messages=[];var done=false;var aiAvailable=false;
+var messages=[];var done=false;var aiAvailable=false;var questionCount=0;
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function bubble(role,text){var d=document.createElement('div');d.className='bubble '+(role==='assistant'?'ai':'user');d.textContent=text;$('messages').appendChild(d);$('messages').scrollTop=$('messages').scrollHeight;}
 function add(role,text){messages.push({role:role==='assistant'?'assistant':'user',content:text});bubble(role,text)}
