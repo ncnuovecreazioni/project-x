@@ -297,7 +297,11 @@ function commercialUrl(t){
   var direct=safeUrl(t&&t.affiliateUrl);
   if(direct) return direct;
   var id=commercialToolId(t);
-  if(id) return '/api/affiliate?tool='+encodeURIComponent(id)+'&source=results';
+  if(id){
+    var consent='';
+    try{consent=localStorage.getItem('projectx_privacy_consent_v1')||''}catch(e){}
+    return '/api/affiliate?tool='+encodeURIComponent(id)+'&source=results'+(consent==='analytics'?'&analyticsConsent=1':'');
+  }
   return safeUrl(t&&t.pricingUrl)||safeUrl(t&&t.url)||'';
 }
 function renderInsight(r,p){
