@@ -1,0 +1,42 @@
+name: PROJECT-X Quality Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate JavaScript
+        shell: bash
+        run: |
+          set -e
+          while IFS= read -r -d '' file; do
+            echo "Checking $file"
+            node --check "$file"
+          done < <(find . -type f -name "*.js"             -not -path "./node_modules/*"             -not -path "./.git/*" -print0)
+
+      - name: Validate JSON
+        node - <<'NODE'
+          const fs = require("fs");
+          for (const file of ["vercel.json", "manifest.webmanifest"]) {
+            JSON.parse(fs.readFileSync(file, "utf8"));
+            console.log("Valid JSON:", file);
+          }
+        NODE
