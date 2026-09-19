@@ -68,6 +68,45 @@
       };
     }
 
+    if(p==='audit.html') return {
+      title:'Prima troviamo l’attrito.',
+      text:'Descrivi gli strumenti che usi oggi e il passaggio che ti fa perdere più tempo. L’audit serve a capire cosa semplificare prima di comprare altro.',
+      step:'2 / 4 · CONTROLLA',
+      cta:'Vai al campo Audit',
+      action:function(){
+        var el=document.getElementById('stack');
+        if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}
+      },
+      secondary:'Apri Value Simulator',
+      secondaryAction:function(){location.href='/simulator.html?source=audit-guide';}
+    };
+
+    if(p==='simulator.html') return {
+      title:'Ora metti il tempo in numeri.',
+      text:'Regola ore, valore orario, persone e recupero realistico. Usa il risultato come business case iniziale, non come promessa.',
+      step:'3 / 4 · MISURA',
+      cta:'Modifica i parametri',
+      action:function(){
+        var el=document.getElementById('hours');
+        if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}
+      },
+      secondary:'Apri Business Audit',
+      secondaryAction:function(){location.href='/audit.html?source=simulator-guide';}
+    };
+
+    if(p==='workspace.html') return {
+      title:'Riprendi da dove eri arrivato.',
+      text:'La Workspace riunisce i dati salvati dal browser. Guarda il prossimo passo e apri solo lo strumento che ti serve adesso.',
+      step:'PROJECT-X · WORKSPACE',
+      cta:'Vai al prossimo passo',
+      action:function(){
+        var el=document.getElementById('nextBtn');
+        if(el)el.click();
+      },
+      secondary:'Torna al motore',
+      secondaryAction:'goHome'
+    };
+
     if(p==='coach.html') return {
       title:'Non devi sapere cosa chiedere.',
       text:'Racconta il problema come lo diresti a una persona. Il Coach ti aiuta a trasformarlo in un profilo operativo.',
