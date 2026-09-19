@@ -337,62 +337,48 @@ function humanImpact(p){
 var cat=String(p&&p.category||'').toLowerCase();
 var goals=Array.isArray(answers.goals)?answers.goals:[];
 var pain=String(answers.painPoint||'').trim();
-var data={
+var map={
 crm:{
-headline:'Porti ordine dove oggi perdi il filo.',
-intro:''+(pain||'Clienti, richieste e richiami possono essere difficili da tenere sotto controllo.')+'',
-today:'Il lavoro resta distribuito tra persone, email, fogli e memoria.',
-action:'Raccogli contatti e opportunità in un unico posto, assegni uno stato e rendi visibile il prossimo passo.',
-after:'Sai subito chi seguire, cosa fare e dove trovare le informazioni.',
-result:'meno dispersione e follow-up più facili da gestire'
+title:'Metti ordine a clienti, richieste e richiami.',
+today:'Oggi molte informazioni possono essere sparse tra email, fogli e memoria.',
+action:'Con '+String(toolName(p))+' puoi raccogliere i contatti, vedere a che punto sono e sapere chi seguire dopo.',
+result:'Il lavoro diventa più visibile: sai chi contattare e qual è il prossimo passo.'
 },
 marketing:{
-headline:'Trasformi tante attività in un flusso leggibile.',
-intro:'Comunicazioni, campagne e contatti smettono di essere attività scollegate.',
-today:'Più passaggi manuali significano più tempo e più possibilità di dimenticare qualcosa.',
-action:'Imposti un percorso semplice: evento → messaggio → attesa → azione successiva.',
-after:'Il processo continua con meno interventi manuali e resta più facile da controllare.',
-result:'un flusso di marketing più ordinato e ripetibile'
+title:'Fai lavorare insieme contatti e comunicazioni.',
+today:'Oggi campagne, email e contatti possono richiedere diversi passaggi manuali.',
+action:'Con '+String(toolName(p))+' puoi creare un percorso semplice che parte da un contatto e porta alla comunicazione successiva.',
+result:'Ripeti il processo con meno interventi manuali e meno passaggi scollegati.'
 },
 ecommerce:{
-headline:'Dai continuità a ciò che succede dopo un ordine.',
-intro:'Il valore non è solo vendere: è rendere più semplice tutto ciò che viene dopo.',
-today:'Ordini, clienti e comunicazioni possono richiedere diversi interventi manuali.',
-action:'Colleghi il negozio alle attività successive e parti da una sola automazione post-acquisto.',
-after:'Una parte del lavoro parte da sola e tu intervieni solo dove serve.',
-result:'meno operazioni ripetitive intorno agli ordini'
+title:'Semplifica tutto ciò che succede dopo l’ordine.',
+today:'Oggi alcuni passaggi dopo un acquisto possono richiedere controlli o messaggi manuali.',
+action:'Con '+String(toolName(p))+' puoi collegare l’ordine alle attività successive e automatizzare il primo passaggio utile.',
+result:'Una parte del lavoro parte da sola e tu intervieni solo quando serve.'
 },
 automation:{
-headline:'Elimini un passaggio che oggi fai a mano.',
-intro:'Non devi automatizzare tutto: devi togliere il peso dal punto giusto.',
-today:'La stessa informazione viene copiata, spostata o controllata più volte.',
-action:'Definisci cosa fa partire il flusso e quale risultato deve produrre.',
-after:'Quel passaggio diventa ripetibile, controllabile e più veloce.',
-result:'meno lavoro manuale nel collo di bottiglia scelto'
+title:'Togli di mezzo il passaggio che ripeti di continuo.',
+today:'Oggi la stessa informazione può essere copiata, spostata o controllata più volte.',
+action:'Con '+String(toolName(p))+' definisci cosa fa partire il flusso e cosa deve succedere dopo.',
+result:'Quel passaggio diventa ripetibile e molto più semplice da controllare.'
 },
 projects:{
-headline:'Rendi visibile il lavoro che oggi è disperso.',
-intro:'Attività, scadenze e responsabilità diventano leggibili in un unico spazio.',
-today:'Per capire cosa manca devi spesso cercare informazioni in più posti.',
-action:'Organizzi il lavoro per stato, responsabile e scadenza.',
-after:'Ogni persona vede cosa deve fare e quale passaggio viene dopo.',
-result:'più chiarezza e meno rincorse'
+title:'Fai capire subito a tutti cosa c’è da fare.',
+today:'Oggi attività, scadenze e responsabilità possono essere distribuite in più posti.',
+action:'Con '+String(toolName(p))+' organizzi il lavoro per stato, responsabile e scadenza.',
+result:'Ogni persona vede cosa deve fare e qual è il passaggio successivo.'
 },
 documents:{
-headline:'Riduci la ricerca e la preparazione ripetitiva.',
-intro:'Il sistema diventa il punto ordinato in cui gestire documenti e passaggi ricorrenti.',
-today:'File, versioni e richieste possono essere sparsi tra cartelle ed email.',
-action:'Centralizzi il materiale e standardizzi il passaggio che ripeti più spesso.',
-after:'Trovi prima ciò che ti serve e ripeti meno volte le stesse operazioni.',
-result:'meno tempo perso su documenti e ricerca'
+title:'Trova e prepara i documenti con meno fatica.',
+today:'Oggi file, versioni e richieste possono essere sparsi tra cartelle ed email.',
+action:'Con '+String(toolName(p))+' centralizzi il materiale e standardizzi il passaggio che fai più spesso.',
+result:'Cerchi meno, ripeti meno e perdi meno tempo nella preparazione.'
 },
 general:{
-headline:'Trasformi un problema quotidiano in un flusso più semplice.',
-intro:'La proposta non serve a farti comprare un’altra app: serve a togliere attrito dal lavoro.',
-today:'Una parte del processo richiede troppi passaggi, controlli o copia-incolla.',
-action:'Parti dal punto che pesa di più e costruisci un unico flusso misurabile.',
-after:'Hai un processo più chiaro, con meno lavoro manuale dove conta davvero.',
-result:'un miglioramento concreto sul problema che hai indicato'
+title:'Trasforma un lavoro complicato in un processo più semplice.',
+today:'Oggi una parte del lavoro richiede troppi passaggi o troppo controllo manuale.',
+action:'Con '+String(toolName(p))+' parti dal punto che pesa di più e costruisci un solo flusso chiaro.',
+result:'Hai un modo più semplice per fare il lavoro e capire cosa succede.'
 }
 };
 var type='general';
@@ -402,13 +388,20 @@ else if(/e-?commerce|ecommerce|shop/.test(cat))type='ecommerce';
 else if(/automation|integration|workflow/.test(cat))type='automation';
 else if(/project|task|work management/.test(cat))type='projects';
 else if(/document|pdf|esign/.test(cat))type='documents';
-var d=data[type];
-return {headline:d.headline,intro:d.intro,today:d.today,action:d.action,after:d.after,result:d.result,goal:goals[0]||'lavorare in modo più semplice',pain:pain};
+var d=map[type];
+return {
+title:d.title,
+today:d.today,
+action:d.action,
+result:d.result,
+goal:goals[0]||'lavorare in modo più semplice',
+pain:pain
+};
 }
 function renderPrimary(p){
 var s=Math.max(0,Math.min(100,fit(p))),u=commercialUrl(p);
 var isCommercial=String(u||'').indexOf('/api/affiliate?tool=')===0;
-var cta=u?'<a id="primaryLink" class="btn primary" href="'+esc(u)+'" target="_blank" rel="noopener">Vai a '+esc(toolName(p))+' →</a>':'<button id="copyTop" class="btn primary">Copia il mio piano →</button>';
+var cta=u?'<a id="primaryLink" class="btn primary" href="'+esc(u)+'" target="_blank" rel="noopener">Apri '+esc(toolName(p))+' →</a>':'<button id="copyTop" class="btn primary">Copia il mio piano →</button>';
 var disclosure=isCommercial?'<div class="commercial" style="margin-top:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018);color:#7f8da3;font-size:8px;line-height:1.45"><strong style="color:#dfe5ef">Collegamento commerciale.</strong> PROJECT-X può ricevere una commissione se ti registri o acquisti tramite questo collegamento. Questo non modifica la compatibilità calcolata dal motore.</div>':'';
 var impact=humanImpact(p);
 $('primaryMount').innerHTML=
@@ -419,16 +412,16 @@ $('primaryMount').innerHTML=
   disclosure+
 '</div>'+
 '<div class="px-human-impact">'+
-  '<div class="px-hi-top"><div><div class="px-hi-kicker">02 · COSA CAMBIA</div><div class="px-hi-title">'+esc(impact.headline)+'</div><p class="px-hi-intro">'+esc(impact.intro)+'</p></div><div class="px-hi-badge">Te lo traduco in pratica</div></div>'+
+  '<div class="px-hi-top"><div><div class="px-hi-kicker">02 · IN PRATICA</div><div class="px-hi-title">'+esc(impact.title)+'</div></div><div class="px-hi-badge">Te lo mostro in 3 passaggi</div></div>'+
   '<div class="px-hi-flow">'+
     '<div class="px-hi-stage"><div class="px-hi-index">01</div><div class="px-hi-label">OGGI</div><div class="px-hi-text">'+esc(impact.pain||impact.today)+'</div><div class="px-hi-muted">'+esc(impact.today)+'</div></div>'+
-    '<div class="px-hi-connector"><i></i><span>→</span><i></i></div>'+
-    '<div class="px-hi-stage focus"><div class="px-hi-index">02</div><div class="px-hi-label">COSA FA '+esc(toolName(p).toUpperCase())+'</div><div class="px-hi-text">'+esc(impact.action)+'</div><div class="px-hi-muted">Questo è il primo pezzo da configurare.</div></div>'+
-    '<div class="px-hi-connector"><i></i><span>→</span><i></i></div>'+
-    '<div class="px-hi-stage done"><div class="px-hi-index">03</div><div class="px-hi-label">COSA CAMBIA</div><div class="px-hi-text">'+esc(impact.after)+'</div><div class="px-hi-muted">Risultato iniziale da cercare: '+esc(impact.result)+'.</div></div>'+
+    '<div class="px-hi-connector"><span>→</span></div>'+
+    '<div class="px-hi-stage focus"><div class="px-hi-index">02</div><div class="px-hi-label">COSA FAI CON '+esc(toolName(p).toUpperCase())+'</div><div class="px-hi-text">'+esc(impact.action)+'</div><div class="px-hi-muted">Questo è il primo pezzo da impostare.</div></div>'+
+    '<div class="px-hi-connector"><span>→</span></div>'+
+    '<div class="px-hi-stage done"><div class="px-hi-index">03</div><div class="px-hi-label">COSA OTTIENI</div><div class="px-hi-text">'+esc(impact.result)+'</div><div class="px-hi-muted">Non serve cambiare tutto insieme.</div></div>'+
   '</div>'+
-  '<div class="px-hi-bottom"><div><span>OBIETTIVO</span><strong>'+esc(impact.goal)+'</strong></div><div><span>PRIMO RISULTATO</span><strong>'+esc(impact.result)+'</strong></div></div>'+
-  '<div class="px-hi-note"><b>Non serve imparare tutto il software.</b> Parti da questo solo passaggio con un caso reale. Quando funziona, PROJECT-X ti mostra il passo successivo.</div>'+
+  '<div class="px-hi-goal"><span>IL TUO OBIETTIVO</span><strong>'+esc(impact.goal)+'</strong></div>'+
+  '<div class="px-hi-note"><b>La parte importante:</b> non devi diventare esperto del software. Devi far funzionare bene questo primo passaggio. Il resto viene dopo.</div>'+
 '</div>';
 if($('primaryLink'))$('primaryLink').addEventListener('click',function(){event('affiliate_click',{tool:toolName(p),url:u,hasAffiliate:isCommercial})});
 if($('copyTop'))$('copyTop').onclick=copyReport;
