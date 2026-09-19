@@ -1,10 +1,39 @@
 import fs from "node:fs/promises";
 
 const database = await fs.readFile("database.js", "utf8");
+
+/*
+  Parse only top-level software objects.
+  database.js contains nested needs/integrations objects, so a simple
+  id -> pricingUrl regex can accidentally stop at nested braces.
+*/
+const lines = database.split(/\r?\n/);
 const items = [];
-const re = /id:\s*"([^"]+)"[\s\S]*?name:\s*"([^"]+)"[\s\S]*?pricingUrl:\s*"([^"]+)"/g;
-let m;
-while ((m = re.exec(database))) items.push({ id: m[1], name: m[2], url: m[3] });
+let block = null;
+
+for (const line of lines) {
+  if (/^\s{4}\{\s*$/.test(line)) {
+    block = [];
+    continue;
+  }
+
+  if (block) {
+    block.push(line);
+
+    if (/^\s{4}\},?\s*$/.test(line)) {
+      const text = block.join("\n");
+      const id = text.match(/\bid:\s*"([^"]+)"/)?.[1];
+      const name = text.match(/\bname:\s*"([^"]+)"/)?.[1];
+      const pricingUrl = text.match(/\bpricingUrl:\s*"([^"]+)"/)?.[1];
+
+      if (id && name && pricingUrl) {
+        items.push({ id, name, url: pricingUrl });
+      }
+
+      block = null;
+    }
+  }
+}
 
 const checked = [];
 for (const tool of items) {
