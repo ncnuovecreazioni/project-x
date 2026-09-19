@@ -258,14 +258,22 @@ Restituisci esclusivamente il JSON richiesto.`;
   };
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(function () {
+      controller.abort();
+    }, 12000);
+
     const upstream = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
     });
+
+    clearTimeout(timeout);
 
     if (!upstream.ok) {
       return res.status(200).json(Object.assign({ success: true, aiAvailable: false }, deterministicReply(answers, messages)));
