@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050711">
+<meta name="description" content="PROJECT-X Business Audit: analizza gli strumenti che usi oggi e trova sovrapposizioni, attività manuali e opportunità di automazione.">
+<title>PROJECT-X — Business Audit</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/premium.css?v=1">
+<style>
+:root{--bg:#050711;--bg2:#0a0f1c;--panel:#10182a;--line:rgba(255,255,255,.09);--text:#f7f9ff;--muted:#98a5bc;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d;--gold:#ffd166;--danger:#ff7285}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 10% 0%,rgba(124,92,255,.24),transparent 30%),radial-gradient(circle at 90% 8%,rgba(91,140,255,.14),transparent 27%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.wrap{width:min(1060px,calc(100% - 28px));margin:auto}.top{height:68px;border-bottom:1px solid var(--line);background:rgba(5,7,17,.8);backdrop-filter:blur(18px)}.nav{height:100%;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:950;letter-spacing:.18em}.logo b{color:var(--p)}.link{color:#c9bfff;text-decoration:none;font-size:10px;font-weight:900}.hero{padding:70px 0 30px;text-align:center}.eyebrow{display:inline-flex;padding:8px 11px;border-radius:999px;border:1px solid rgba(124,92,255,.3);background:rgba(124,92,255,.07);color:#c9bfff;font-size:10px;font-weight:900;letter-spacing:.12em}.hero h1{font-size:clamp(44px,8vw,78px);line-height:.92;letter-spacing:-.075em;margin:18px 0 13px}.grad{background:linear-gradient(100deg,#fff,#ad9dff,#79aaff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:750px;margin:auto;color:var(--muted);line-height:1.65}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.card{padding:23px;border:1px solid var(--line);border-radius:22px;background:rgba(15,22,38,.9);box-shadow:0 18px 60px rgba(0,0,0,.18)}.wide{grid-column:1/-1}.card h2{margin:0 0 8px;font-size:20px}.sub{margin:0;color:var(--muted);font-size:11px;line-height:1.55}.field{display:grid;gap:7px;margin-top:13px}.field label{color:#aeb8ca;font-size:10px}.field textarea,.field input{width:100%;padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.2);color:#fff;outline:none;font:inherit}.field textarea{min-height:170px;resize:vertical;line-height:1.5}.btn{border:0;border-radius:13px;padding:13px 17px;color:#fff;font-weight:900;cursor:pointer;text-decoration:none;font-size:11px;display:inline-flex;align-items:center;justify-content:center}.primary{background:linear-gradient(135deg,var(--p),var(--p2))}.secondary{background:rgba(255,255,255,.04);border:1px solid var(--line)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.chip{border:1px solid var(--line);background:rgba(255,255,255,.025);color:#aab5c9;padding:8px 10px;border-radius:999px;font-size:9px;cursor:pointer}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}.stat{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.02)}.stat b{display:block;font-size:21px}.stat span{display:block;margin-top:3px;color:#7d8ba1;font-size:8px;line-height:1.35}.findings{display:grid;gap:8px;margin-top:13px}.finding{padding:13px;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:rgba(255,255,255,.02)}.finding strong{display:block;font-size:11px}.finding span{display:block;margin-top:4px;color:#8895aa;font-size:9px;line-height:1.45}.finding.warn{border-color:rgba(255,114,133,.16);background:rgba(255,114,133,.03)}.finding.good{border-color:rgba(54,217,157,.16);background:rgba(54,217,157,.03)}.scorebar{height:8px;margin-top:14px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}.scorebar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--p2),var(--ok));width:0;transition:width .4s ease}.hint{margin-top:11px;color:#6f7c92;font-size:9px;line-height:1.5}.foot{text-align:center;padding:28px 0 54px;color:#66748a;font-size:9px}.foot a{color:#a99dff;text-decoration:none}@media(max-width:720px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.summary{grid-template-columns:1fr 1fr}.hero{text-align:left}.hero p{margin:0}.actions .btn{width:100%}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><a class="link" href="/">← Decision Engine</a></div></header>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">✦ PROJECT-X BUSINESS AUDIT</div>
+<h1>Non aggiungere software.<br><span class="grad">Controlla quello che hai.</span></h1>
+<p>Inserisci gli strumenti che usi oggi e descrivi dove perdi tempo. PROJECT-X costruisce un audit rapido su sovrapposizioni, attività manuali e prime opportunità di automazione.</p>
+</section>
+<section class="grid">
+<article class="card">
+<h2>1 · Racconta il sistema attuale</h2>
+<p class="sub">Puoi scrivere nomi di software, fogli Excel, email, procedure manuali o passaggi che usi ogni giorno.</p>
+<div class="chips">
+<button class="chip" data-fill="Uso Excel per clienti e preventivi">Excel + preventivi</button>
+<button class="chip" data-fill="Outlook + Excel + CRM">Email + CRM</button>
+<button class="chip" data-fill="Shopify + email + fogli">E-commerce</button>
+<button class="chip" data-fill="WhatsApp + email + appuntamenti">Appuntamenti</button>
+</div>
+<div class="field"><label for="stack">STRUMENTI / PROCESSO</label><textarea id="stack" placeholder="Esempio: Excel, Outlook, WhatsApp e un CRM. Ogni giorno copio i dati dal CRM a Excel, preparo preventivi e mando follow-up manualmente…"></textarea></div>
+<div class="field"><label for="manual">QUALE PASSAGGIO TI FA PERDERE PIÙ TEMPO?</label><input id="manual" maxlength="240" placeholder="Es. copiare dati tra due sistemi"></div>
+<div class="actions"><button id="audit" class="btn primary">Esegui Business Audit →</button><a class="btn secondary" href="/">Torna all'analisi</a></div>
+</article>
+<article class="card">
+<h2>2 · Il metodo PROJECT-X</h2>
+<p class="sub">L’audit non decide quale software comprare: prima cerca dove esiste attrito.</p>
+<div class="findings">
+<div class="finding"><strong>🔁 Duplicazioni</strong><span>Due strumenti che svolgono attività simili possono creare più lavoro invece di ridurlo.</span></div>
+<div class="finding"><strong>📋 Passaggi manuali</strong><span>Copie, incolla, re-inserimenti e follow-up ripetitivi sono candidati naturali all’automazione.</span></div>
+<div class="finding"><strong>🧩 Integrazioni mancanti</strong><span>Quando i dati passano da un sistema all’altro senza collegamento, il processo si spezza.</span></div>
+<div class="finding good"><strong>🎯 Regola</strong><span>Prima semplifica il processo. Solo dopo valuta un nuovo strumento.</span></div>
+</div>
+<div class="hint">L’output è una diagnosi orientativa: non inventa costi o risparmi che non hai indicato.</div>
+</article>
+<article class="card wide" id="result" style="display:none">
+<h2>3 · Il tuo Audit</h2>
+<p class="sub" id="lead">Ecco dove PROJECT-X vede il primo margine di intervento.</p>
+<div class="summary">
+<div class="stat"><b id="eff">0</b><span>indice di efficienza del processo</span></div>
+<div class="stat"><b id="manualScore">0</b><span>pressione del lavoro manuale</span></div>
+<div class="stat"><b id="dup">0</b><span>possibili sovrapposizioni</span></div>
+<div class="stat"><b id="auto">0</b><span>candidati all'automazione</span></div>
+</div>
+<div class="scorebar"><i id="bar"></i></div>
+<div class="findings" id="findings"></div>
+<div class="actions"><a id="sim" class="btn primary" href="/simulator.html">Calcola il valore del tempo →</a><button id="copy" class="btn secondary">Copia audit</button></div>
+<div class="hint">Gli indici sono euristici e servono per orientare la discussione. Non equivalgono a una diagnosi tecnica o finanziaria.</div>
+</article>
+</section>
+<div class="foot">PROJECT-X · <a href="/simulator.html">Simulator</a> · <a href="/report-pro.html">Report PRO</a> · <a href="/privacy.html">Privacy</a></div>
+</main>
+<script>
+(function(){
+'use strict';
+function $(id){return document.getElementById(id)}
+function track(event,meta){try{if(window.ProjectXAutopilot&&window.ProjectXAutopilot.track)window.ProjectXAutopilot.track(event,meta||{})}catch(e){}}
+function key(s){return String(s||'').toLowerCase()}
+$$('.chip').forEach(function(b){b.onclick=function(){$('stack').value=b.dataset.fill+'\n'+$('stack').value}});
+function analyze(){
+ var text=key($('stack').value), manual=key($('manual').value), all=text+' '+manual;
+ if(!text){alert('Scrivi almeno gli strumenti o il processo attuale.');return}
+ var duplicatePairs=[
+   [/excel.*crm|crm.*excel/,'CRM + Excel: possibile doppio inserimento dati.'],
+   [/outlook.*gmail|gmail.*outlook/,'Due canali email principali: verifica se entrambi sono necessari.'],
+   [/shopify.*woocommerce|woocommerce.*shopify/,'Due piattaforme e-commerce: verifica se una è realmente necessaria.'],
+   [/trello.*monday|monday.*trello/,'Due sistemi di project/work management: possibile sovrapposizione.'],
+   [/slack.*teams|teams.*slack/,'Due hub di comunicazione: possibile dispersione delle conversazioni.'],
+   [/hubspot.*pipedrive|pipedrive.*hubspot/,'Due CRM: forte probabilità di processi duplicati.'],
+   [/zapier.*make|make.*zapier/,'Due strumenti di automazione: verifica se entrambi servono.']
+ ];
+ var duplicates=duplicatePairs.filter(function(p){return p[0].test(all)}).map(function(p){return p[1]});
+ var manualTerms=['excel','copia','incolla','manual','whatsapp','email','outlook','pdf','preventiv','follow','re-inser','trascr','foglio','csv'];
+ var hits=manualTerms.filter(function(t){return all.indexOf(t)>=0}).length;
+ var automation=Math.max(0,Math.min(8,Math.round(hits/1.7)+(manual.length>35?2:0)+(duplicates.length?1:0)));
+ var manualScore=Math.max(10,Math.min(100,20+hits*9+(manual.length>45?15:0)));
+ var efficiency=Math.max(25,Math.min(100,100-manualScore+duplicates.length*4));
+ var findings=[];
+ if(duplicates.length) duplicates.slice(0,4).forEach(function(x){findings.push({c:'warn',t:'Possibile sovrapposizione',d:x})});
+ if(hits>=2) findings.push({c:'warn',t:'Lavoro manuale rilevante',d:'Sono presenti più segnali di copia, gestione manuale o passaggi tra strumenti. Questo è il primo candidato da mappare.'});
+ if(/whatsapp|email|outlook/.test(all)) findings.push({c:'',t:'Follow-up e comunicazioni',d:'Valuta un workflow che raccolga richieste, stato e prossima azione in un unico punto.'});
+ if(/excel|csv|foglio/.test(all)) findings.push({c:'',t:'Dati dispersi',d:'Valuta un’unica fonte dati e una sola sincronizzazione invece di aggiornare più copie.'});
+ if(/preventiv/.test(all)) findings.push({c:'',t:'Preventivi',d:'Se il preventivo parte da dati già disponibili, il precompilamento è un candidato all’automazione.'});
+ if(!findings.length) findings.push({c:'good',t:'Nessun attrito evidente dal testo',d:'Per un audit più preciso descrivi un processo completo dall’inizio alla fine.'});
+ findings.push({c:'good',t:'Prossimo passo',d:'Scegli un solo workflow, misura quanti passaggi richiede e poi valuta cosa eliminare o automatizzare.'});
+ $('eff').textContent=efficiency;
+ $('manualScore').textContent=manualScore;
+ $('dup').textContent=duplicates.length;
+ $('auto').textContent=automation;
+ $('bar').style.width=efficiency+'%';
+ $('findings').innerHTML=findings.map(function(x){return '<div class="finding '+x.c+'"><strong>'+esc(x.t)+'</strong><span>'+esc(x.d)+'</span></div>'}).join('');
+ $('lead').textContent='Il punto non è aggiungere strumenti: è capire dove il sistema attuale crea attrito.';
+ $('result').style.display='block';
+ $('sim').href='/simulator.html?hours='+encodeURIComponent(extractHours(text))+'&source=audit';
+ $('result').scrollIntoView({behavior:'smooth',block:'start'});
+ track('business_audit_complete',{efficiency,manualScore,duplicates:duplicates.length,automationCandidates:automation});
+}
+function extractHours(text){
+ var m=text.match(/(\d+)\s*(?:ore|h)\s*(?:a\s*settimana|\/settimana)?/);return m?m[1]:'4';
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+$('audit').onclick=analyze;
+$('copy').onclick=function(){
+ var t='PROJECT-X BUSINESS AUDIT\nEfficienza: '+$('eff').textContent+'%\nLavoro manuale: '+$('manualScore').textContent+'/100\nSovrapposizioni: '+$('dup').textContent+'\nCandidati automazione: '+$('auto').textContent;
+ if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){track('business_audit_copy',{})});
+};
+try{var a=JSON.parse(localStorage.getItem('projectx_answers_v2')||'{}');if(a.painPoint&&!$('manual').value)$('manual').value=a.painPoint;if(Array.isArray(a.existingTools)&&a.existingTools.length)$('stack').value=a.existingTools.join(', ')}catch(e){}
+})();
+</script>
+<script src="/human-layer.js"></script>
+</body></html>
