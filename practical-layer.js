@@ -103,6 +103,9 @@
     }catch(e){}
 
     var d=getData(p,a);
+    var key='projectx_practical_'+String(p.id||p.name||'tool').toLowerCase().replace(/[^a-z0-9_-]+/g,'_');
+    var saved={};
+    try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
     var url=String(p.url||p.pricingUrl||'');
     var link=/^https?:\/\//i.test(url)
       ? '<a class="px-practical-open" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Apri '+esc(p.name||p.id)+' ↗</a>'
@@ -132,7 +135,12 @@
     guide.appendChild(box);
 
     box.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
+      var idx=cb.getAttribute('data-i')||'0';
+      cb.checked=!!saved[idx];
+      cb.parentNode.classList.toggle('done',cb.checked);
       cb.addEventListener('change',function(){
+        saved[idx]=!!cb.checked;
+        try{localStorage.setItem(key,JSON.stringify(saved))}catch(e){}
         cb.parentNode.classList.toggle('done',cb.checked);
       });
     });
