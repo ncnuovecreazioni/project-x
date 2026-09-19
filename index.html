@@ -286,6 +286,15 @@ body{
 }
 </style><style id="px-view-visibility-fix">
 [hidden]{display:none!important}
+</style><style id="px-focused-results-style">
+.px-result-details{margin-top:15px;padding:0;border:1px solid var(--line);border-radius:22px;background:rgba(15,21,38,.72);overflow:hidden}
+.px-result-details>summary{list-style:none;cursor:pointer;padding:16px 18px;color:#dfe6f2;font-size:12px;font-weight:900}
+.px-result-details>summary::-webkit-details-marker{display:none}
+.px-result-details>summary:after{content:"+";float:right;color:#9f91ff;font-size:17px;line-height:1}
+.px-result-details[open]>summary:after{content:"−"}
+.px-result-details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 12px 12px}
+.px-result-details-grid .panel{margin:0}
+@media(max-width:760px){.px-result-details-grid{grid-template-columns:1fr}}
 </style></head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><a class="px-nav-cta" href="#home">Analizza gratis →</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div><button type="button" id="pxMobileNavBtn" class="px-mobile-nav-btn" aria-expanded="false" aria-controls="pxMobileNav">☰ Menu</button><div id="pxMobileNav" class="px-mobile-nav" hidden><div class="px-mobile-nav-head"><strong>PROJECT-X</strong><button type="button" id="pxMobileNavClose" aria-label="Chiudi menu">×</button></div><a href="#home">Home</a><a href="/metodo.html">Metodo</a><a href="/software-index.html">Software Index</a><a href="/atlas.html">Decision Atlas</a><a href="/landscape.html">Landscape</a><a href="/coach.html">✦ AI Coach</a><a href="/pro.html">Report PRO →</a></div></div></header>
@@ -443,95 +452,78 @@ function renderInsight(r,p){
   var entries=Object.entries(r.profile||{}).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
   var focus=entries.map(function(x){return labels[x[0]]||x[0]});
   var problem=(answers.painPoint||'').trim();
-  var role=(r.dominantRole&&r.dominantRole.label)||(r.primaryRole&&r.primaryRole.label)||'il tuo lavoro';
   var value=Number((r.valueEstimate||{}).monthlyValue||0);
   var valueText=value?'€'+Math.round(value).toLocaleString('it-IT')+'/mese':'da misurare';
+
   $('insightMount').innerHTML=
     '<div class="px-result-story">'+
       '<div class="px-story-card">'+
         '<div class="px-story-kicker">PROJECT-X · COSA HO CAPITO</div>'+
-        '<div class="px-story-title">Il problema non è solo il software.</div>'+
-        '<p class="px-story-copy">Dal tuo profilo emerge una priorità su <strong style="color:#fff">'+esc(focus.join(' · ')||'un bisogno operativo')+'</strong>. Il motore cerca una configurazione che resti coerente con '+esc(role)+'.</p>'+
+        '<div class="px-story-title">'+esc(toolName(p))+' entra perché combacia con il problema.</div>'+
+        '<p class="px-story-copy">Le priorità emerse sono <strong style="color:#fff">'+esc(focus.join(' · ')||'un bisogno operativo')+'</strong>. La scelta tiene conto di ciò che hai descritto, del budget e degli strumenti che usi già.</p>'+
         (problem?'<div class="px-story-quote">“'+esc(problem)+'”</div>':'')+
       '</div>'+
       '<div class="px-story-card">'+
-        '<div class="px-story-kicker">ORA · DA DOVE PARTIRE</div>'+
-        '<div class="px-story-title">'+esc(toolName(p))+'</div>'+
-        '<div class="px-story-next">'+
-          '<div class="px-story-step"><b>01</b><span>Parti dal nucleo che hai appena trovato.</span></div>'+
-          '<div class="px-story-step"><b>02</b><span>Automatizza il collo di bottiglia più evidente.</span></div>'+
-          '<div class="px-story-step"><b>03</b><span>Misura il tempo prima e dopo.</span></div>'+
-        '</div>'+
-        '<div class="px-story-action"><span>Valore teorico del tempo</span><strong>'+valueText+'</strong></div>'+
+        '<div class="px-story-kicker">IL NUMERO DA TENERE A MENTE</div>'+
+        '<div class="px-story-title">'+valueText+'</div>'+
+        '<p class="px-story-copy">È il valore teorico del tempo che hai indicato. Non è una promessa: serve a capire quanto può valere la riduzione dei passaggi ripetitivi.</p>'+
       '</div>'+
     '</div>';
 }
-function renderResults(r){var p=primary(r);renderInsight(r,p);$('resultModeText').textContent=mode==='quick'?'Prima direzione generata rapidamente. Attività e budget non indicati sono stati impostati su un profilo base: puoi affinarli per rendere il risultato più preciso.':'Configurazione costruita intorno alle risposte che hai fornito.';if(r.aiAvailable===false){$('resultModeText').textContent+=' L’analisi è stata completata con il motore locale gratuito di PROJECT-X: nessun abbonamento Le tue esigenze necessario.';}if(!p){$('primaryMount').innerHTML='<div class="card panel"><strong>Nessun risultato disponibile.</strong></div>';return}renderPrimary(p);renderValue(r.valueEstimate||r.value||{});renderArchitecture(r);renderPlan(r,p);renderStack(r.stack||[]);renderAutomations(r.automationIdeas||r.automationSuggestions||[]);renderRanking(r.rankedTools||[]);renderMissing(r.missingNeeds||[]);renderNeeds(r.profile||{});renderWhy(r,p);$('aiBadge').style.display=r.aiAvailable?'inline-flex':'none';if(mode==='quick'){$('refineBtn').textContent='Rendi il risultato più preciso →'}else{$('refineBtn').textContent='Rifai l’analisi completa →'}}
-function humanImpact(p){
-var cat=String(p&&p.category||'').toLowerCase();
-var goals=Array.isArray(answers.goals)?answers.goals:[];
-var pain=String(answers.painPoint||'').trim();
-var map={
-crm:{
-title:'Metti ordine a clienti, richieste e richiami.',
-today:'Oggi molte informazioni possono essere sparse tra email, fogli e memoria.',
-action:'Con '+String(toolName(p))+' puoi raccogliere i contatti, vedere a che punto sono e sapere chi seguire dopo.',
-result:'Il lavoro diventa più visibile: sai chi contattare e qual è il prossimo passo.'
-},
-marketing:{
-title:'Fai lavorare insieme contatti e comunicazioni.',
-today:'Oggi campagne, email e contatti possono richiedere diversi passaggi manuali.',
-action:'Con '+String(toolName(p))+' puoi creare un percorso semplice che parte da un contatto e porta alla comunicazione successiva.',
-result:'Ripeti il processo con meno interventi manuali e meno passaggi scollegati.'
-},
-ecommerce:{
-title:'Semplifica tutto ciò che succede dopo l’ordine.',
-today:'Oggi alcuni passaggi dopo un acquisto possono richiedere controlli o messaggi manuali.',
-action:'Con '+String(toolName(p))+' puoi collegare l’ordine alle attività successive e automatizzare il primo passaggio utile.',
-result:'Una parte del lavoro parte da sola e tu intervieni solo quando serve.'
-},
-automation:{
-title:'Togli di mezzo il passaggio che ripeti di continuo.',
-today:'Oggi la stessa informazione può essere copiata, spostata o controllata più volte.',
-action:'Con '+String(toolName(p))+' definisci cosa fa partire il flusso e cosa deve succedere dopo.',
-result:'Quel passaggio diventa ripetibile e molto più semplice da controllare.'
-},
-projects:{
-title:'Fai capire subito a tutti cosa c’è da fare.',
-today:'Oggi attività, scadenze e responsabilità possono essere distribuite in più posti.',
-action:'Con '+String(toolName(p))+' organizzi il lavoro per stato, responsabile e scadenza.',
-result:'Ogni persona vede cosa deve fare e qual è il passaggio successivo.'
-},
-documents:{
-title:'Trova e prepara i documenti con meno fatica.',
-today:'Oggi file, versioni e richieste possono essere sparsi tra cartelle ed email.',
-action:'Con '+String(toolName(p))+' centralizzi il materiale e standardizzi il passaggio che fai più spesso.',
-result:'Cerchi meno, ripeti meno e perdi meno tempo nella preparazione.'
-},
-general:{
-title:'Trasforma un lavoro complicato in un processo più semplice.',
-today:'Oggi una parte del lavoro richiede troppi passaggi o troppo controllo manuale.',
-action:'Con '+String(toolName(p))+' parti dal punto che pesa di più e costruisci un solo flusso chiaro.',
-result:'Hai un modo più semplice per fare il lavoro e capire cosa succede.'
+
+function renderResults(r){
+  var p=primary(r);
+
+  renderInsight(r,p);
+
+  $('resultModeText').textContent=mode==='quick'
+    ? 'Hai una prima direzione. Adesso guarda la scelta e fai il primo passo.'
+    : 'Hai completato l’analisi. Parti dalla scelta e dalla guida: il resto è approfondimento.';
+
+  if(r.aiAvailable===false){
+    $('resultModeText').textContent+=' Analisi eseguita con il motore locale gratuito di PROJECT-X.';
+  }
+
+  if(!p){
+    $('primaryMount').innerHTML='<div class="card panel"><strong>Nessun risultato disponibile.</strong></div>';
+    return;
+  }
+
+  renderPrimary(p);
+  renderValue(r.valueEstimate||r.value||{});
+  renderArchitecture(r);
+  renderPlan(r,p);
+  renderStack(r.stack||[]);
+  renderAutomations(r.automationIdeas||r.automationSuggestions||[]);
+  renderRanking(r.rankedTools||[]);
+  renderMissing(r.missingNeeds||[]);
+  renderNeeds(r.profile||{});
+  renderWhy(r,p);
+
+  var grid=document.querySelector('.resultgrid');
+  if(grid){
+    var old=document.getElementById('px-result-details');
+    if(old)old.remove();
+
+    var extraIds=['architectureMount','stackMount','rankingMount','gapMount','needsMount','whyMount'];
+    var details=document.createElement('details');
+    details.id='px-result-details';
+    details.className='px-result-details';
+    details.innerHTML='<summary>Approfondisci il sistema, le alternative e i criteri</summary><div class="px-result-details-grid"></div>';
+
+    var inner=details.querySelector('.px-result-details-grid');
+    extraIds.forEach(function(id){
+      var el=document.getElementById(id);
+      if(el)inner.appendChild(el);
+    });
+
+    grid.insertAdjacentElement('afterend',details);
+  }
+
+  $('aiBadge').style.display=r.aiAvailable?'inline-flex':'none';
+  $('refineBtn').textContent='Rendi la scelta più precisa →';
 }
-};
-var type='general';
-if(/crm|sales|customer/.test(cat))type='crm';
-else if(/email|marketing|lead/.test(cat))type='marketing';
-else if(/e-?commerce|ecommerce|shop/.test(cat))type='ecommerce';
-else if(/automation|integration|workflow/.test(cat))type='automation';
-else if(/project|task|work management/.test(cat))type='projects';
-else if(/document|pdf|esign/.test(cat))type='documents';
-var d=map[type];
-return {
-title:d.title,
-today:d.today,
-action:d.action,
-result:d.result,
-goal:goals[0]||'lavorare in modo più semplice',
-pain:pain
-};
-}
+
 function renderPrimary(p){
 var s=Math.max(0,Math.min(100,fit(p))),u=commercialUrl(p);
 var isCommercial=String(u||'').indexOf('/api/affiliate?tool=')===0;
