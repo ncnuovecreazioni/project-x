@@ -1592,3 +1592,33 @@ body.px-large-text .px-hi-title{
 .quickhead span{
   color:#aeb9ca !important;
 }
+
+
+/* =========================================================
+   HOME — REMOVE DECORATIVE CIRCLE/OVERLAY FROM QUICK ANALYSIS
+   ========================================================= */
+.hero .quickbox{
+  position:relative !important;
+  z-index:10 !important;
+  overflow:visible !important;
+  isolation:isolate !important;
+}
+.hero .quickbox:before,
+.hero .quickbox:after,
+.hero:after{
+  content:none !important;
+  display:none !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+.hero .quickbox .journey,
+.hero .quickbox .quickhead,
+.hero .quickbox textarea,
+.hero .quickbox .quickgrid,
+.hero .quickbox .px-example-row,
+.hero .quickbox .quickactions,
+.hero .quickbox .micro{
+  position:relative !important;
+  z-index:20 !important;
+}
