@@ -47,13 +47,13 @@
 <div class="hint">L’output è una diagnosi orientativa: non inventa costi o risparmi che non hai indicato.</div>
 </article>
 <article class="card wide" id="result" style="display:none">
-<h2>3 · Il tuo Audit</h2>
-<p class="sub" id="lead">Ecco dove PROJECT-X vede il primo margine di intervento.</p>
+<h2>3 · Cosa abbiamo trovato</h2>
+<p class="sub" id="lead">Ecco dove vediamo il primo punto da migliorare.</p>
 <div class="summary">
-<div class="stat"><b id="eff">0</b><span>indice di efficienza del processo</span></div>
-<div class="stat"><b id="manualScore">0</b><span>pressione del lavoro manuale</span></div>
-<div class="stat"><b id="dup">0</b><span>possibili sovrapposizioni</span></div>
-<div class="stat"><b id="auto">0</b><span>candidati all'automazione</span></div>
+<div class="stat"><b id="eff">0</b><span>quanto è snello il processo</span></div>
+<div class="stat"><b id="manualScore">0</b><span>quanto lavoro manuale c’è</span></div>
+<div class="stat"><b id="dup">0</b><span>strumenti che fanno cose simili</span></div>
+<div class="stat"><b id="auto">0</b><span>passaggi da automatizzare</span></div>
 </div>
 <div class="scorebar"><i id="bar"></i></div>
 <div class="findings" id="findings"></div>
@@ -104,7 +104,7 @@ function analyze(){
  $('bar').style.width=efficiency+'%';
  try{localStorage.setItem('projectx_audit_v1',JSON.stringify({efficiency:efficiency,manualScore:manualScore,duplicates:duplicates.length,automation:automation,updatedAt:Date.now()}))}catch(e){}
  $('findings').innerHTML=findings.map(function(x){return '<div class="finding '+x.c+'"><strong>'+esc(x.t)+'</strong><span>'+esc(x.d)+'</span></div>'}).join('');
- $('lead').textContent='Il punto non è aggiungere strumenti: è capire dove il sistema attuale crea attrito.';
+ $('lead').textContent='Il punto non è comprare altro: è capire dove perdi tempo.';
  $('result').style.display='block';
  var saved=null;try{saved=JSON.parse(localStorage.getItem('projectx_answers_v2')||'null')}catch(e){}
  var rate=saved&&String(saved.hourlyValue||'').replace(/[^0-9]/g,'')||'30';
