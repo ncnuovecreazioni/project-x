@@ -11,6 +11,7 @@
   const VARIANT_KEY = 'projectx_autopilot_variant_v1';
   const START_KEY = 'projectx_autopilot_start_v1';
   const CONSENT_KEY = 'projectx_privacy_consent_v1';
+  let trackingStarted = false;
 
   function id() {
     return 'pxs-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
@@ -137,6 +138,8 @@
   }
 
   function trackBasicEvents() {
+    if (trackingStarted || !hasAnalyticsConsent()) return;
+    trackingStarted = true;
     ensureStartTime();
     send('page_view', {
       path: location.pathname,
@@ -160,6 +163,8 @@
   }
 
   function trackClicks() {
+    if (trackingStarted && document.documentElement.dataset.pxClicksTracked === '1') return;
+    document.documentElement.dataset.pxClicksTracked = '1';
     document.addEventListener('click', function (event) {
       const target = event.target && event.target.closest ? event.target.closest('a,button') : null;
       if (!target) return;
@@ -241,7 +246,7 @@
 
     const style = document.createElement('style');
     style.id = 'px-privacy-style';
-    style.textContent = '#px-privacy-banner{position:fixed;left:14px;right:14px;bottom:14px;z-index:10050;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(9,13,24,.97);backdrop-filter:blur(20px);box-shadow:0 24px 80px rgba(0,0,0,.45);color:#fff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}#px-privacy-banner .copy{font-size:9px;line-height:1.5;color:#8996aa;max-width:720px}#px-privacy-banner .copy strong{color:#e8edf6}#px-privacy-banner .links{margin-top:4px}#px-privacy-banner a{color:#b9adff;text-decoration:none}#px-privacy-banner .actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.px-privacy-btn{border:1px solid rgba(255,255,255,.10);border-radius:10px;padding:9px 11px;background:rgba(255,255,255,.04);color:#dfe5ef;font-size:9px;font-weight:900;cursor:pointer}.px-privacy-btn.primary{border-color:rgba(124,92,255,.35);background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff}.px-privacy-manage{position:fixed;left:12px;bottom:12px;z-index:10049;padding:7px 9px;border:1px solid rgba(255,255,255,.07);border-radius:999px;background:rgba(9,13,24,.82);color:#718097;font:800 8px Inter,system-ui,sans-serif;cursor:pointer;display:none}.px-privacy-manage.show{display:block}@media(max-width:700px){#px-privacy-banner{display:block}.px-privacy-banner .actions{margin-top:10px;justify-content:flex-start}}';
+    style.textContent = '#px-privacy-banner{position:fixed;left:14px;right:14px;bottom:14px;z-index:10050;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(9,13,24,.97);backdrop-filter:blur(20px);box-shadow:0 24px 80px rgba(0,0,0,.45);color:#fff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}#px-privacy-banner .copy{font-size:9px;line-height:1.5;color:#8996aa;max-width:720px}#px-privacy-banner .copy strong{color:#e8edf6}#px-privacy-banner .links{margin-top:4px}#px-privacy-banner a{color:#b9adff;text-decoration:none}#px-privacy-banner .actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.px-privacy-btn{border:1px solid rgba(255,255,255,.10);border-radius:10px;padding:9px 11px;background:rgba(255,255,255,.04);color:#dfe5ef;font-size:9px;font-weight:900;cursor:pointer}.px-privacy-btn.primary{border-color:rgba(124,92,255,.35);background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff}.px-privacy-manage{position:fixed;left:12px;bottom:12px;z-index:10049;padding:7px 9px;border:1px solid rgba(255,255,255,.07);border-radius:999px;background:rgba(9,13,24,.82);color:#718097;font:800 8px Inter,system-ui,sans-serif;cursor:pointer;display:none}.px-privacy-manage.show{display:block}@media(max-width:700px){#px-privacy-banner{display:block}#px-privacy-banner .actions{margin-top:10px;justify-content:flex-start}}';
     document.head.appendChild(style);
 
     const banner = document.createElement('div');
