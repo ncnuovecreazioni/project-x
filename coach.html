@@ -47,6 +47,7 @@ function callCoach(){
   if(!userText)return;
 
   add('user',userText);
+  questionCount++;
   $('input').value='';
   $('quick').innerHTML='';
   $('status').textContent='Sto elaborando…';
@@ -60,14 +61,22 @@ function callCoach(){
   .then(function(d){
     if(!d||!d.success)throw new Error('Coach non disponibile');
     aiAvailable=!!d.aiAvailable;
-    answers=Object.assign(answers,d.answers||{});
+    var incoming=d.answers&&typeof d.answers==='object'?d.answers:{};
+    Object.keys(incoming).forEach(function(key){
+      var value=incoming[key];
+      if(key==='goals'){
+        if(Array.isArray(value)&&value.length) answers.goals=value.slice(0,6);
+      }else if(value!==null && value!==undefined && String(value).trim()!==''){
+        answers[key]=String(value).trim();
+      }
+    });
     if(!Array.isArray(answers.goals))answers.goals=[];
     save();
     add('assistant',d.message||'Continuiamo.');
     done=!!d.done;
     if(done){
       $('result').style.display='block';
-      $('status').textContent=aiAvailable?'Profilo pronto con AI.':'Profilo pronto in modalità assistita.';
+      $('status').textContent=aiAvailable?'Profilo pronto. Ho già abbastanza informazioni.':'Profilo pronto in modalità assistita.';
       $('input').disabled=true;
       $('send').disabled=true;
     }else{
@@ -76,7 +85,7 @@ function callCoach(){
     }
   })
   .catch(function(){
-    $('status').textContent='Modalità assistita attiva.';
+    $('status').textContent='Ti accompagno con la modalità guidata.';
     if(!answers.painPoint && userText.length>=8)answers.painPoint=userText.slice(0,800);
 
     if(!answers.businessType){
@@ -111,7 +120,7 @@ function callCoach(){
     renderQuick(answers.businessType?'budget':'businessType');
   });
 }
-function start(){add('assistant','Ciao. Dimmi in una frase che cosa ti fa perdere più tempo nel lavoro. Non serve essere tecnico.');renderQuick('');}
+function start(){add('assistant','Ciao. Partiamo dal problema, non dal software. Scrivimi in una frase cosa ti fa perdere più tempo oggi. Puoi parlare in modo semplice: penso io a tradurlo in qualcosa di utile.');renderQuick('');}
 $('send').addEventListener('click',callCoach);$('input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();callCoach()}});
 $('analyze').addEventListener('click',function(){save();window.location.href='/coach-result.html';});
 start();
