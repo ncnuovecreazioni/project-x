@@ -59,13 +59,29 @@
   function full(){
     var ui=getUI();
     if(!ui) return false;
-
     try{
       ui.startFull();
       return true;
     }catch(e){
       return false;
     }
+  }
+
+  function caseDemo(type){
+    var map={
+      preventivi:'Faccio preventivi a mano e copio sempre gli stessi dati',
+      email:'Rispondo spesso alle stesse richieste via email e perdo tempo nei follow-up',
+      excel:'Uso Excel per gestire dati e attività e vorrei automatizzare i passaggi ripetitivi',
+      clienti:'Gestisco richieste e clienti in posti diversi e rischio di dimenticare i follow-up'
+    };
+    var problem=id('quickProblem');
+    var business=id('quickBusiness');
+    var budget=id('quickBudget');
+    if(problem) problem.value=map[type]||map.preventivi;
+    if(business && !business.value) business.value='Impresa di servizi';
+    if(budget && !budget.value) budget.value='€31–50';
+    if(problem) problem.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){ quick(false); },180);
   }
 
   function styles(){
@@ -89,6 +105,17 @@
     var fullBtn=id('fullBtn');
     var fullBtn2=id('fullBtn2');
     var demoBtn=id('demoBtn');
+
+    document.querySelectorAll('.px-home-example-grid a').forEach(function(a){
+      if(a.dataset.pxCaseWired==='1') return;
+      a.dataset.pxCaseWired='1';
+      a.onclick=function(e){
+        e.preventDefault();
+        var href=a.getAttribute('href')||'';
+        var type=(href.split('case=')[1]||'').split('&')[0];
+        caseDemo(type);
+      };
+    });
 
     if(quickBtn){
       quickBtn.onclick=function(e){
