@@ -167,8 +167,8 @@ function callCoach(){
       renderQuick(next);
       $('status').textContent='Perfetto. Continuiamo con un solo passaggio alla volta.';
     }
-  });
-.finally(function(){
+  })
+  .finally(function(){
     $('send').dataset.busy='0';
     $('send').classList.remove('send-busy');
     if(!done){$('send').disabled=false;$('send').textContent='Invia →';}
