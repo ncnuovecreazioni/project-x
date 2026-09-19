@@ -110,7 +110,7 @@
     var ref=one('.px-example-row',quick)||one('.quickactions',quick);if(ref)ref.insertAdjacentElement('beforebegin',box);else quick.appendChild(box);
     function sync(){var v=(input.value||'').trim();document.getElementById('px-live-preview-text').textContent=v?'“'+v+'”':'Scrivi il problema qui sopra e questa frase diventerà il punto di partenza della tua analisi.';}
     input.addEventListener('input',sync);
-    $('.px-example',quick).forEach(function(btn){btn.addEventListener('click',function(){setTimeout(sync,0);});});
+    $$('.px-example',quick).forEach(function(btn){btn.addEventListener('click',function(){setTimeout(sync,0);});});
     sync();
   }
 
@@ -324,7 +324,7 @@
     var cta=document.getElementById('px-results-bottom-cta');
     if(cta) cta.insertAdjacentElement('beforebegin',box);
     else results.appendChild(box);
-    $('.px-dr-actions a',box).forEach(function(link){link.addEventListener('click',function(){track('decision_receipt_click',{href:link.getAttribute('href')||'',primary:name});});});
+    $$('.px-dr-actions a',box).forEach(function(link){link.addEventListener('click',function(){track('decision_receipt_click',{href:link.getAttribute('href')||'',primary:name});});});
     track('decision_receipt_view',{primary:name,fit:fitScore});
   }
 
@@ -339,10 +339,10 @@
     var cta=document.getElementById('px-results-bottom-cta');
     if(cta) cta.insertAdjacentElement('beforebegin',box);
     else results.appendChild(box);
-    $('.px-rf-btn',box).forEach(function(btn){
+    $$('.px-rf-btn',box).forEach(function(btn){
       btn.onclick=function(){
         var value=btn.getAttribute('data-v')||'';
-        $('.px-rf-btn',box).forEach(function(x){x.disabled=true});
+        $$('.px-rf-btn',box).forEach(function(x){x.disabled=true});
         var thanks=value==='yes'?'Perfetto. Questa è la direzione da cui partire.':value==='maybe'?'Ricevuto. Il prossimo passo è capire meglio cosa manca.':'Ricevuto. Puoi approfondire con il confronto o il Report PRO.';
         var t=one('.px-rf-thanks',box);if(t)t.textContent=thanks;
         track('result_feedback',{value:value,mode:(window.result&&window.result.mode)||'result'});
