@@ -1560,3 +1560,35 @@ body.px-large-text .px-hi-title{
   white-space:nowrap !important;
   border:0 !important;
 }
+
+
+/* =========================================================
+   HOME QUICKBOX — CONTENT ALWAYS ABOVE DECORATION
+   ========================================================= */
+.hero .quickbox{
+  isolation:isolate;
+}
+.hero .quickbox > *{
+  position:relative;
+  z-index:2;
+}
+.hero .quickbox:before,
+.hero .quickbox:after{
+  z-index:0 !important;
+  pointer-events:none !important;
+}
+.hero .quickbox:after{
+  opacity:.28 !important;
+}
+.quickhead,
+.quickhead b,
+.quickhead span{
+  position:relative;
+  z-index:3;
+}
+.quickhead b{
+  color:#ffffff !important;
+}
+.quickhead span{
+  color:#aeb9ca !important;
+}
