@@ -182,7 +182,7 @@
 <link rel="stylesheet" href="/premium.css?v=1">
 </head>
 <body>
-<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div></div></header>
+<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div></div></header>
 <main>
 <section id="home" class="hero"><div class="wrap">
 <div class="eyebrow">✦ PARTI DA COME LAVORI. NON DAL SOFTWARE.</div>
@@ -349,6 +349,39 @@ function closeLead(){ $('leadBack').style.display='none' }
 function sendLead(){var name=($('leadName').value||'').trim(),email=($('leadEmail').value||'').trim(),consent=$('leadConsent')&&$('leadConsent').checked;if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('Inserisci un indirizzo email valido.');return}if(!consent){alert('Per inviare il contatto devi accettare il trattamento dei dati.');return}var p=primary(result),v=result&&result.valueEstimate||{};fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,email:email,intent:leadIntent,source:'PROJECT-X',report:{mode:mode,primary:toolName(p),compatibility:fit(p),stack:((result&&result.stack)||[]).map(toolName),monthlyValue:Number(v.monthlyValue||0),annualValue:Number(v.annualValue||0),businessType:answers.businessType,budget:answers.budget,painPoint:answers.painPoint}})}).then(function(r){return r.json()}).then(function(d){if(d&&d.success&&d.configured){closeLead();event('lead_submit',{intent:leadIntent,configured:true});toast('Contatto inviato.')}else if(d&&d.success&&!d.configured){event('lead_submit',{intent:leadIntent,configured:false,unsaved:true});toast('Il contatto non è stato salvato: il canale email non è ancora collegato. Puoi usare “Copia il mio risultato”.')}else{event('lead_submit',{intent:leadIntent,configured:!!(d&&d.configured),failed:true});toast('Invio non riuscito. Riprova.')}}).catch(function(){event('lead_submit',{intent:leadIntent,networkError:true});toast('Connessione non riuscita. Riprova tra poco.')})}
 function refine(){if(mode==='quick'){startFull()}else{startFull()}}
 function reset(){resetAnswers();result=null;mode='full';$('quickProblem').value='';$('quickBusiness').value='';$('quickBudget').value='';setView('home');window.scrollTo({top:0,behavior:'smooth'})}
+function presetFromCase(){
+  try{
+    var key=new URLSearchParams(location.search).get('case');
+    if(!key)return false;
+    var presets={
+      preventivi:{problem:'Creo preventivi a mano, ricopio dati e perdo tempo nel follow-up.',business:'Impresa di servizi',budget:'€31–50'},
+      email:{problem:'Rispondo spesso alle stesse email e voglio automatizzare le comunicazioni ricorrenti.',business:'Professionista',budget:'€1–30'},
+      clienti:{problem:'Clienti, richieste e attività sono distribuiti tra email, fogli e app diverse.',business:'Azienda',budget:'€51–100'},
+      excel:{problem:'Uso Excel per gestire processi ripetitivi e voglio ridurre copia-incolla e passaggi manuali.',business:'Impresa di servizi',budget:'€31–50'},
+      followup:{problem:'Alcuni richiami commerciali si perdono o vengono fatti troppo tardi.',business:'Impresa di servizi',budget:'€31–50'},
+      ecommerce:{problem:'Gestisco ordini, assistenza e comunicazioni post-acquisto in modo troppo manuale.',business:'E-commerce',budget:'€51–100'},
+      marketing:{problem:'Campagne, contenuti, lead ed email richiedono troppi passaggi manuali.',business:'Agenzia',budget:'€51–100'},
+      progetti:{problem:'Scadenze, attività e responsabilità sono sparse e difficili da controllare.',business:'Agenzia',budget:'€31–50'},
+      documenti:{problem:'Genero, cerco e condivido molti documenti con procedure ripetitive.',business:'Azienda',budget:'€31–50'},
+      appuntamenti:{problem:'Le richieste di appuntamento richiedono troppo coordinamento manuale.',business:'Professionista',budget:'€1–30'},
+      acquisizione:{problem:'Voglio trasformare contatti e richieste in un processo commerciale più ordinato.',business:'Professionista',budget:'€31–50'},
+      automazioni:{problem:'Ho già più strumenti e voglio capire cosa collegare prima senza creare altro caos.',business:'Azienda',budget:'€31–50'},
+      crm:{problem:'Sto valutando un CRM ma non so quali funzioni servono davvero al mio processo.',business:'Impresa di servizi',budget:'€31–50'},
+      ai:{problem:'Voglio capire dove usare AI senza introdurre strumenti che non risolvono un problema reale.',business:'Azienda',budget:'€31–50'},
+      microsoft365:{problem:'Uso Outlook, Excel, Teams e Microsoft 365 e voglio automatizzare senza buttare via ciò che già ho.',business:'Azienda',budget:'€31–50'},
+      artigiano:{problem:'Preventivi, richiami, clienti e interventi mi assorbono troppo tempo ogni settimana.',business:'Impresa di servizi',budget:'€31–50'},
+      consulente:{problem:'Il lavoro è distribuito tra email, clienti, documenti e attività amministrative.',business:'Professionista',budget:'€31–50'},
+      agenzia:{problem:'Clienti, progetti, approvazioni e comunicazioni richiedono troppi passaggi coordinati.',business:'Agenzia',budget:'€51–100'},
+      startup:{problem:'Devo scegliere uno stack iniziale senza sovraccaricarmi di software.',business:'Startup',budget:'€51–100'},
+      zero:{problem:'Non so quale software mi serve: voglio partire dal problema e capire cosa costruire.',business:'Professionista',budget:'€1–30'}
+    };
+    var p=presets[key];if(!p)return false;
+    $('quickProblem').value=p.problem;$('quickBusiness').value=p.business;$('quickBudget').value=p.budget;
+    document.querySelectorAll('.px-example').forEach(function(x){x.classList.remove('is-active')});
+    return true;
+  }catch(e){return false}
+}
+
 document.querySelectorAll('.px-example').forEach(function(btn){
   btn.addEventListener('click',function(){
     $('quickProblem').value=btn.getAttribute('data-example')||'';
@@ -360,7 +393,7 @@ document.querySelectorAll('.px-example').forEach(function(btn){
   });
 });
 $('quickBtn').onclick=startQuick;$('quickBtn2').onclick=function(){window.scrollTo({top:0,behavior:'smooth'});$('quickProblem').focus()};$('fullBtn').onclick=startFull;$('demoBtn').onclick=function(){$('quickProblem').value='Perdo ore tra email, preventivi e follow-up dei clienti e vorrei automatizzare il lavoro ripetitivo.';$('quickBusiness').value='Impresa di servizi';$('quickBudget').value='€31–50';document.querySelectorAll('.px-example').forEach(function(x){x.classList.remove('is-active')});var first=document.querySelector('.px-example[data-example="Perdo ore tra email e follow-up dei clienti"]');if(first)first.classList.add('is-active');$('quickBtn').click()};$('fullBtn2').onclick=startFull;$('nextBtn').onclick=next;$('backBtn').onclick=prev;$('copyBtn').onclick=copyReport;$('shareBtn').onclick=share;$('saveLinkBtn').onclick=saveResultLink;$('leadBtn').onclick=function(){openLead('report')};$('implementationBtn').onclick=function(){openLead('implementation')};$('leadCancel').onclick=closeLead;$('leadSend').onclick=sendLead;$('printBtn').onclick=printReport;$('refineBtn').onclick=refine;$('resetBtn').onclick=reset;$('stickyBtn').onclick=function(){$('primaryMount').scrollIntoView({behavior:'smooth'})};$('leadBack').addEventListener('click',function(e){if(e.target===$('leadBack'))closeLead()});
-var sharedResult=loadHash();if(!sharedResult)load();$('quickProblem').value=answers.painPoint||'';$('quickBusiness').value=answers.businessType||'';$('quickBudget').value=answers.budget||'';if(sharedResult){setTimeout(function(){analyze()},120)}
+var sharedResult=loadHash();if(!sharedResult)load();var casePreset=presetFromCase();if(!casePreset){$('quickProblem').value=answers.painPoint||'';$('quickBusiness').value=answers.businessType||'';$('quickBudget').value=answers.budget||'';}if(sharedResult){setTimeout(function(){analyze()},120)}
 if(!E){document.body.innerHTML='<div style="padding:50px;color:white;font-family:system-ui">PROJECT-X non riesce a caricare il Decision Engine. Controlla engine.js e database.js.</div>'}
 })();
 </script>
