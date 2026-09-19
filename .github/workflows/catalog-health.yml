@@ -2,11 +2,12 @@ name: PROJECT-X catalog check
 
 on:
   schedule:
-    - cron: "17 4 * * 1"
+    - cron: "17 4 * * *"
   workflow_dispatch:
   push:
     paths:
       - "database.js"
+      - "scripts/catalog-health.mjs"
 
 permissions:
   contents: write
