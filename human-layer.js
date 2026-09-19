@@ -203,6 +203,103 @@
     }catch(e){}
   }
 
+  function plainLanguage(){
+    if(document.getElementById('px-plain-language')) return;
+
+    var p=page();
+    var mode='home';
+    if(p==='index.html'){
+      var results=document.getElementById('results');
+      var questionnaire=document.getElementById('questionnaire');
+      if(results && getComputedStyle(results).display!=='none') mode='results';
+      else if(questionnaire && getComputedStyle(questionnaire).display!=='none') mode='questionnaire';
+    }
+
+    var data={
+      home:{
+        kicker:'IN PAROLE SEMPLICI',
+        title:'Tu racconti il problema. PROJECT-X fa il resto.',
+        steps:[['1','RACCONTA','Scrivi cosa ti fa perdere tempo.'],['2','CAPISCI','Il sistema traduce il problema in bisogni e vincoli.'],['3','DECIDI','Ricevi una direzione software e il prossimo passo.']]
+      },
+      questionnaire:{
+        kicker:'COME LEGGERLA',
+        title:'Non ci sono risposte “giuste”.',
+        steps:[['1','DESCRIVI','Rispondi come lavori davvero.'],['2','NON PENSARE AL SOFTWARE','Il nome dell’app non serve per arrivare alla scelta.'],['3','AVANTI','Una domanda alla volta: il motore mette insieme il quadro.']]
+      },
+      results:{
+        kicker:'COME LEGGERE IL RISULTATO',
+        title:'Guarda queste 3 cose, in quest’ordine.',
+        steps:[['1','SCELTA PRINCIPALE','È il nucleo che il motore considera più coerente con il tuo profilo.'],['2','PERCHÉ','Controlla bisogni, copertura, gap e motivazione della scelta.'],['3','COSA FARE','Segui il piano e automatizza un solo collo di bottiglia per volta.']]
+      },
+      audit:{
+        kicker:'COME FUNZIONA',
+        title:'L’Audit risponde a una domanda molto semplice.',
+        steps:[['1','COSA HAI','Scrivi strumenti e processo che usi oggi.'],['2','DOVE ATTRITO','PROJECT-X cerca duplicazioni e lavoro manuale.'],['3','COSA CAMBIARE','Scegli un workflow da semplificare prima di aggiungere software.']]
+      },
+      simulator:{
+        kicker:'COME LEGGERLO',
+        title:'Il numero non è una promessa: è un punto di partenza.',
+        steps:[['1','ORE','Quante ore vengono assorbite dal processo?'],['2','VALORE','Quanto vale, in media, un’ora di quel lavoro?'],['3','SCENARIO','Quanto di quel tempo pensi realisticamente di poter recuperare?']]
+      },
+      workspace:{
+        kicker:'COME USARLA',
+        title:'La Workspace ti dice semplicemente cosa fare adesso.',
+        steps:[['1','ANALISI','Il profilo che hai già compilato.'],['2','AUDIT + SIMULATOR','Capisci attrito e valore prima di decidere.'],['3','PROSSIMO PASSO','Apri solo il tassello successivo, non tutto insieme.']]
+      },
+      pro:{
+        kicker:'COSA STAI COMPRANDO',
+        title:'Report PRO significa istruzioni più dettagliate.',
+        steps:[['1','ROADMAP','Cosa fare e in quale ordine.'],['2','WORKFLOW','Come trasformare il processo in automazioni concrete.'],['3','MISURA','Quali numeri controllare per capire se ha funzionato.']]
+      },
+      report:{
+        kicker:'COME USARLO',
+        title:'Il Report PRO va letto come un progetto.',
+        steps:[['1','PRIMA','Capisci il problema e il nucleo del sistema.'],['2','POI','Segui le automazioni e la sequenza di implementazione.'],['3','INFINE','Misura il risultato con KPI semplici.']]
+      },
+      implementation:{
+        kicker:'COSA SUCCEDE',
+        title:'Qui trasformi il piano in lavoro reale.',
+        steps:[['1','CONTESTO','Racconti cosa vuoi realizzare.'],['2','VALUTAZIONE','Si definisce cosa serve davvero.'],['3','ESECUZIONE','Il sistema passa dalla pagina al processo.']]
+      },
+      compare:{
+        kicker:'COME USARLO',
+        title:'Confronta solo ciò che serve alla tua decisione.',
+        steps:[['1','PARTI DAL BISOGNO','Non dal nome della marca.'],['2','RIDUCI LE OPZIONI','Guarda differenze concrete.'],['3','TORNA AL PIANO','La scelta ha senso solo se risolve il problema.']]
+      },
+      generic:{
+        kicker:'IN PAROLE SEMPLICI',
+        title:'Non devi conoscere il gergo.',
+        steps:[['1','CAPISCI','Guarda cosa stai cercando di ottenere.'],['2','SCEGLI','Usa il minimo numero di strumenti necessari.'],['3','AGISCI','Fai il prossimo passo concreto.']]
+      }
+    };
+    var key=mode;
+    if(mode==='home' && p!=='index.html') key=p==='audit.html'?'audit':p==='simulator.html'?'simulator':p==='workspace.html'?'workspace':p==='pro.html'?'pro':p==='report-pro.html'?'report':p==='implementation.html'?'implementation':p==='compare.html'?'compare':'generic';
+    var d=data[key]||data.generic;
+    var host=null;
+    if(p==='index.html' && mode==='results') host=document.querySelector('.resulthead');
+    else if(p==='index.html' && mode==='questionnaire') host=document.querySelector('#questionnaire .qwrap');
+    else host=document.querySelector('.hero');
+    if(!host) return;
+
+    var card=document.createElement('section');
+    card.id='px-plain-language';
+    card.setAttribute('aria-label','Spiegazione in parole semplici');
+    card.innerHTML='<div class="pxpl-kicker">'+d.kicker+'</div><div class="pxpl-title">'+d.title+'</div><div class="pxpl-steps">'+d.steps.map(function(x){return '<div class="pxpl-step"><b>'+x[0]+'</b><div><strong>'+x[1]+'</strong><span>'+x[2]+'</span></div></div>'}).join('')+'</div>';
+
+    if(p==='index.html' && mode==='results') host.insertAdjacentElement('afterend',card);
+    else if(p==='index.html' && mode==='questionnaire'){
+      var qcard=host.querySelector('.qcard');
+      if(qcard) host.insertBefore(card,qcard); else host.appendChild(card);
+    }else{
+      var hp=host.querySelector('p');
+      if(hp) hp.insertAdjacentElement('afterend',card); else host.appendChild(card);
+    }
+
+    var st=document.createElement('style');
+    st.textContent='#px-plain-language{width:min(920px,calc(100% - 30px));margin:16px auto 0;padding:16px 17px;text-align:left;border:1px solid rgba(124,92,255,.16);border-radius:18px;background:linear-gradient(145deg,rgba(18,25,44,.72),rgba(8,12,22,.76));box-shadow:0 18px 60px rgba(0,0,0,.14)}.pxpl-kicker{font-size:8px;letter-spacing:.15em;font-weight:950;color:#a99cff}.pxpl-title{margin-top:6px;font-size:15px;font-weight:950;letter-spacing:-.025em}.pxpl-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}.pxpl-step{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start;padding:10px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.018)}.pxpl-step>b{width:25px;height:25px;display:grid;place-items:center;border-radius:8px;background:rgba(124,92,255,.11);color:#c8bfff;font-size:9px}.pxpl-step strong{display:block;font-size:9px}.pxpl-step span{display:block;margin-top:3px;color:#8190a6;font-size:8px;line-height:1.42}@media(max-width:680px){#px-plain-language{width:calc(100% - 22px)}.pxpl-steps{grid-template-columns:1fr}.pxpl-step{grid-template-columns:28px 1fr}}';
+    document.head.appendChild(st);
+  }
+
   function inject(){
     if(document.getElementById('px-human-guidance')) return;
 
@@ -216,6 +313,8 @@
     wrap.id='px-human-guidance';
     wrap.innerHTML='<div id="px-human-panel"><div class="pxh-top"><span id="px-human-step" class="pxh-step"></span><button id="px-human-close" class="pxh-close" aria-label="Chiudi guida">×</button></div><div id="px-human-title" class="pxh-title"></div><p id="px-human-text" class="pxh-text"></p><div class="pxh-actions"><button id="px-human-primary" class="pxh-btn"></button><button id="px-human-secondary" class="pxh-btn secondary"></button></div><div class="pxh-foot">Guida PROJECT-X · puoi chiuderla in qualsiasi momento.</div></div><button id="px-human-toggle" aria-expanded="false"><span class="dot"></span><span>Ti guido io</span></button>';
     document.body.appendChild(wrap);
+
+    plainLanguage();
 
     var ctx=context();
     function renderContext(){
