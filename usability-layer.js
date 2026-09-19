@@ -73,11 +73,34 @@
 
     var problem=$('#quickProblem');
     if(problem && !$('#quickProblemHelp')){
+      var label=document.createElement('div');
+      label.className='px-form-label';
+      label.textContent='1 · IL PROBLEMA DA RISOLVERE';
+      problem.insertAdjacentElement('beforebegin',label);
+
       var h=document.createElement('div');
       h.id='quickProblemHelp';
       h.className='px-field-help';
       h.textContent='Puoi scrivere anche una sola frase: PROJECT-X parte dal problema reale.';
       problem.insertAdjacentElement('afterend',h);
+    }
+
+    var business=$('#quickBusiness');
+    if(business && !business.dataset.pxLabeled){
+      var l=document.createElement('div');
+      l.className='px-form-label';
+      l.textContent='2 · LA TUA ATTIVITÀ';
+      business.insertAdjacentElement('beforebegin',l);
+      business.dataset.pxLabeled='1';
+    }
+
+    var budget=$('#quickBudget');
+    if(budget && !budget.dataset.pxLabeled){
+      var l2=document.createElement('div');
+      l2.className='px-form-label';
+      l2.textContent='3 · IL TUO BUDGET MENSILE';
+      budget.insertAdjacentElement('beforebegin',l2);
+      budget.dataset.pxLabeled='1';
     }
   }
 
