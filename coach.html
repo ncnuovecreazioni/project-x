@@ -43,6 +43,22 @@ if(field==='goals')opts=['Clienti','Vendite','Preventivi','Email','Automazioni',
 opts.forEach(function(o){var b=document.createElement('button');b.className='chip';b.textContent=o;b.onclick=function(){
 if(field==='goals'){if(answers.goals.indexOf(o)<0)answers.goals.push(o);$('input').value=answers.goals.join(', ');}else{$('input').value=o;}$('input').focus();};box.appendChild(b)});
 }
+function nextFallbackField(){
+  if(!String(answers.businessType||'').trim())return 'businessType';
+  if(String(answers.painPoint||'').trim().length<8)return 'painPoint';
+  if(!Array.isArray(answers.goals)||!answers.goals.length)return 'goals';
+  if(!String(answers.budget||'').trim())return 'budget';
+  return 'complete';
+}
+function fallbackQuestion(field){
+  var q={
+    businessType:'Che tipo di attività hai? Puoi dirlo con parole semplici.',
+    painPoint:'Qual è il lavoro che ti fa perdere più tempo oggi? Raccontami un esempio concreto.',
+    goals:'Qual è il primo risultato che vuoi ottenere? Per esempio: più clienti, più vendite, meno lavoro manuale o meno errori.',
+    budget:'Quanto vuoi investire al mese? Anche 0 € va bene.'
+  };
+  return q[field]||'Perfetto. Ho già abbastanza informazioni: procediamo.';
+}
 function callCoach(){
   if(done || $('send').dataset.busy==='1')return;
   var userText=String($('input').value||'').trim();
@@ -90,17 +106,18 @@ function callCoach(){
     }
   })
   .catch(function(){
-    $('status').textContent='Ti accompagno con la modalità guidata.';
+    $('status').textContent='Modalità guidata attiva. Possiamo continuare anche senza AI.';
+    var text=userText.toLowerCase();
+
     if(!answers.painPoint && userText.length>=8)answers.painPoint=userText.slice(0,800);
 
     if(!answers.businessType){
-      var s=userText.toLowerCase();
-      if(/e-?commerce|shopify|woocommerce/.test(s))answers.businessType='E-commerce';
-      else if(/agenzia|agency/.test(s))answers.businessType='Agenzia';
-      else if(/ristorante|bar|pizzeria|hotel|b&b/.test(s))answers.businessType='Ristorante / attività locale';
-      else if(/startup/.test(s))answers.businessType='Startup';
-      else if(/azienda|impresa|dipendenti|team/.test(s))answers.businessType='Azienda';
-      else if(/idraul|elettric|fabbro|murator|geometra|avvocat|commercialista|consulente|freelance/.test(s))answers.businessType='Professionista';
+      if(/e-?commerce|shopify|woocommerce/.test(text))answers.businessType='E-commerce';
+      else if(/agenzia|agency/.test(text))answers.businessType='Agenzia';
+      else if(/ristorante|bar|pizzeria|hotel|b&b/.test(text))answers.businessType='Ristorante / attività locale';
+      else if(/startup|sturtup/.test(text))answers.businessType='Startup';
+      else if(/azienda|impresa|dipendenti|team/.test(text))answers.businessType='Azienda';
+      else if(/idraul|elettric|fabbro|murator|geometra|avvocat|commercialista|consulente|freelance|professionista/.test(text))answers.businessType='Professionista';
     }
 
     if(!Array.isArray(answers.goals))answers.goals=[];
@@ -108,23 +125,50 @@ function callCoach(){
       ['Clienti',/client|lead|contatt/],
       ['Vendite',/vendit|commercial|ordine/],
       ['Preventivi',/preventiv|offert|quotaz/],
-      ['Email',/email|posta/],
+      ['Email',/email|posta|newsletter/],
       ['Automazioni',/automat|workflow|ripetitiv/],
       ['Documenti',/document|pdf|contratt/],
       ['Excel',/excel|foglio|spreadsheet|dati/],
       ['Progetti',/progett|task|scaden/],
       ['E-commerce',/e-?commerce|shopify|woocommerce/],
-      ['Marketing',/marketing|campagn|social/]
+      ['Marketing',/marketing|campagn|pubblicit|social/]
     ];
     goalMap.forEach(function(item){
-      if(item[1].test(userText.toLowerCase())&&answers.goals.indexOf(item[0])<0)answers.goals.push(item[0]);
+      if(item[1].test(text)&&answers.goals.indexOf(item[0])<0)answers.goals.push(item[0]);
     });
     answers.goals=answers.goals.slice(0,6);
+
+    if(!answers.budget){
+      var bm=text.match(/(?:€|eur|euro)?\\s*(\\d{1,4})/);
+      if(/gratis|zero|nessun budget|0\\s*€|€\\s*0/.test(text))answers.budget='€0';
+      else if(bm){
+        var n=Number(bm[1]);
+        if(n<=30)answers.budget='€1–30';
+        else if(n<=50)answers.budget='€31–50';
+        else if(n<=100)answers.budget='€51–100';
+        else if(n<=250)answers.budget='€101–250';
+        else answers.budget='€251+';
+      }
+    }
+
+    if(!answers.teamSize)answers.teamSize='2–5';
     save();
 
-    renderQuick(answers.businessType?'budget':'businessType');
-  })
-  .finally(function(){
+    var next=nextFallbackField();
+    if(next==='complete'){
+      done=true;
+      add('assistant','Perfetto. Ho già abbastanza informazioni: non ti faccio altre domande inutili. Ora trasformo il tuo problema in una direzione concreta.');
+      $('result').style.display='block';
+      $('status').textContent='Profilo pronto in modalità guidata.';
+      $('input').disabled=true;
+      $('send').disabled=true;
+    }else{
+      add('assistant',fallbackQuestion(next));
+      renderQuick(next);
+      $('status').textContent='Perfetto. Continuiamo con un solo passaggio alla volta.';
+    }
+  });
+.finally(function(){
     $('send').dataset.busy='0';
     $('send').classList.remove('send-busy');
     if(!done){$('send').disabled=false;$('send').textContent='Invia →';}
