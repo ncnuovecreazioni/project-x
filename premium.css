@@ -1133,3 +1133,343 @@ body:after{
   .px-hi-stage{padding:17px !important}
   .px-hi-goal strong{font-size:10px}
 }
+
+
+/* =========================================================
+   PROJECT-X — ACCESSIBILITY & READABILITY
+   Readable by default: larger type, clearer controls,
+   stronger focus, better touch targets and high contrast.
+   ========================================================= */
+
+html{
+  font-size:16px;
+  scroll-padding-top:88px;
+}
+
+body{
+  font-size:16px;
+  line-height:1.58;
+  -webkit-text-size-adjust:100%;
+  text-rendering:optimizeLegibility;
+}
+
+p,li,small,span,label,dt,dd{
+  line-height:1.55;
+}
+
+.hero p,
+.resulthead p,
+.sub,
+.desc,
+.hint,
+.notice,
+.commercial,
+.path-copy,
+.px-eg-copy,
+.px-hi-intro,
+.px-hi-muted,
+.px-hi-note,
+.px-hi-bottom strong,
+.px-story-copy,
+.px-story-step span,
+.micro{
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+.card p,
+.feature p,
+.mode p,
+.audit-story-box span,
+.audit-story-next,
+.metric,
+.item small,
+.planstep small,
+.decision,
+.field label,
+.stat span,
+.moneylabel,
+.footer,
+.foot{
+  font-size:13px !important;
+  line-height:1.55 !important;
+}
+
+.label,
+.eyebrow,
+.tag,
+.px-hi-kicker,
+.px-hi-label,
+.px-hi-bottom span,
+.path-kicker,
+.pro-kicker,
+.coach-progress,
+.status,
+.counter,
+.link,
+.topnav a,
+.links a,
+.pill,
+.chip,
+.path-tab,
+.px-eg-k,
+.px-eg-badge,
+.px-eg-tab,
+.px-eg-step span,
+.px-eg-footer,
+.px-eg-advanced,
+.px-hi-badge,
+.px-hi-stage .px-hi-label,
+.px-hi-index{
+  font-size:11px !important;
+  line-height:1.35 !important;
+}
+
+.px-hi-text{
+  font-size:14px !important;
+  line-height:1.55 !important;
+}
+
+.px-hi-summary,
+.px-story-title{
+  font-size:16px !important;
+  line-height:1.5 !important;
+}
+
+.btn,
+button,
+input,
+textarea,
+select{
+  font-size:14px !important;
+}
+
+.btn,
+button{
+  min-height:48px;
+}
+
+input,
+textarea,
+select,
+.control,
+.search,
+.composer textarea,
+.textinput{
+  min-height:48px;
+}
+
+input,
+textarea,
+select{
+  line-height:1.45;
+}
+
+input[type="checkbox"],
+input[type="radio"]{
+  width:20px;
+  height:20px;
+  min-width:20px;
+  min-height:20px;
+  accent-color:#7c5cff;
+}
+
+.hero textarea,
+.textinput{
+  min-height:150px;
+}
+
+.btn:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible{
+  outline:3px solid #c5bbff !important;
+  outline-offset:4px !important;
+  box-shadow:0 0 0 6px rgba(124,92,255,.18) !important;
+}
+
+a{
+  text-underline-offset:3px;
+}
+
+button:disabled,
+.btn:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled{
+  cursor:not-allowed;
+  opacity:.58;
+}
+
+button,
+.btn,
+.option,
+.chip,
+.path-tab,
+.px-eg-tab{
+  touch-action:manipulation;
+}
+
+.option,
+.path-tab,
+.px-eg-tab{
+  min-height:48px;
+}
+
+.quickactions,
+.hero-actions,
+.actions,
+.bottom,
+.cta{
+  gap:12px;
+}
+
+.quickactions .secondary,
+.quickactions .primary{
+  min-height:52px;
+}
+
+.barRow span{
+  font-size:13px !important;
+}
+
+.need{
+  font-size:13px !important;
+}
+
+.px-hi-stage{
+  min-height:210px !important;
+}
+
+.px-hi-goal span{
+  font-size:10px !important;
+}
+
+.px-hi-goal strong{
+  font-size:13px !important;
+}
+
+.px-eg-step{
+  min-height:64px;
+}
+
+.px-eg-step span{
+  font-size:11px !important;
+}
+
+@media(max-width:900px){
+  .wrap{
+    width:min(1180px,calc(100% - 24px));
+  }
+}
+
+@media(max-width:700px){
+  body{
+    font-size:16px;
+  }
+
+  .hero h1{
+    line-height:.98 !important;
+  }
+
+  .hero p,
+  .resulthead p,
+  .sub,
+  .desc,
+  .hint,
+  .notice,
+  .commercial,
+  .path-copy,
+  .px-eg-copy,
+  .px-hi-intro,
+  .px-hi-note,
+  .micro{
+    font-size:14px !important;
+  }
+
+  .card p,
+  .feature p,
+  .mode p,
+  .metric,
+  .item small,
+  .planstep small,
+  .decision,
+  .field label,
+  .stat span,
+  .moneylabel,
+  .footer,
+  .foot{
+    font-size:13px !important;
+  }
+
+  .btn,
+  button{
+    width:auto;
+    min-height:50px;
+  }
+
+  .actions .btn,
+  .hero-actions .btn,
+  .quickactions .btn,
+  .bottom .btn,
+  .cta .btn{
+    width:100%;
+  }
+
+  .select,
+  .control,
+  .search,
+  input,
+  textarea,
+  select{
+    font-size:16px !important;
+  }
+}
+
+@media(prefers-contrast:more){
+  body{
+    background:#050711 !important;
+  }
+
+  .card,
+  .quickbox,
+  .resulthero,
+  .px-human-impact,
+  .px-eg,
+  .modal{
+    border-color:rgba(255,255,255,.22) !important;
+  }
+
+  .muted,
+  .sub,
+  .hint,
+  .notice,
+  .commercial,
+  .foot,
+  .footer,
+  .item small,
+  .metric span{
+    color:#c2ccda !important;
+  }
+}
+
+@media(forced-colors:active){
+  *,
+  *:before,
+  *:after{
+    box-shadow:none !important;
+    text-shadow:none !important;
+  }
+
+  button,
+  .btn,
+  a,
+  input,
+  textarea,
+  select{
+    forced-color-adjust:auto;
+  }
+}
