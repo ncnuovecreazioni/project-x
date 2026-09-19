@@ -1,0 +1,30 @@
+name: PROJECT-X catalog check
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+  push:
+    paths:
+      - "database.js"
+
+permissions:
+  contents: write
+
+jobs:
+  catalog-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check catalog links
+        run: node scripts/catalog-health.mjs
+
+      - name: Commit health report
+        run: |
+          git config user.name "PROJECT-X Bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalog-health.json
+          git diff --cached --quiet || git commit -m "chore: refresh catalog health"
+          git push
