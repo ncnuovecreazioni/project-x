@@ -1591,5 +1591,71 @@ body{
   .quickbox{border-radius:20px!important}
 }
 </style>
-</body>
+
+<script id="px-final-direct-controls">
+(function(){
+  'use strict';
+  function getUI(){return window.ProjectXUI||null;}
+  function call(name){
+    var u=getUI();
+    if(!u||typeof u[name]!=='function'){setTimeout(function(){call(name)},150);return;}
+    try{u[name].apply(u,Array.prototype.slice.call(arguments,1));}catch(e){console.error('PROJECT-X action '+name,e);}
+  }
+  function demo(){
+    var p=document.getElementById('quickProblem'),b=document.getElementById('quickBusiness'),bu=document.getElementById('quickBudget');
+    if(p)p.value='Perdo tempo tra email, preventivi e follow-up dei clienti e voglio automatizzare il lavoro ripetitivo.';
+    if(b&&!b.value)b.value='Impresa di servizi';
+    if(bu&&!bu.value)bu.value='€31–50';
+    call('startQuick');
+  }
+  function bind(id,fn){
+    var el=document.getElementById(id);
+    if(!el)return;
+    el.onclick=function(e){e.preventDefault();e.stopPropagation();fn();};
+    el.addEventListener('click',function(e){e.preventDefault();},true);
+  }
+  function bindAll(){
+    bind('quickBtn',function(){call('startQuick')});
+    bind('quickBtn2',demo);
+    bind('demoBtn',demo);
+    bind('fullBtn',function(){call('startFull')});
+    bind('fullBtn2',function(){call('startFull')});
+    bind('nextBtn',function(){call('next')});
+    bind('backBtn',function(){call('prev')});
+    bind('copyBtn',function(){call('copyReport')});
+    bind('shareBtn',function(){call('share')});
+    bind('saveLinkBtn',function(){call('saveResultLink')});
+    bind('leadBtn',function(){call('openLead','report')});
+    bind('implementationBtn',function(){call('openLead','implementation')});
+    bind('printBtn',function(){call('printReport')});
+    bind('refineBtn',function(){call('refine')});
+    bind('resetBtn',function(){call('reset')});
+    bind('stickyBtn',function(){var x=document.getElementById('primaryMount');if(x)x.scrollIntoView({behavior:'smooth',block:'start'})});
+    bind('leadCancel',function(){call('closeLead')});
+    bind('leadSend',function(){call('sendLead')});
+    bind('copyTop',function(){call('copyReport')});
+    bind('planTop',function(){var x=document.getElementById('planMount');if(x)x.scrollIntoView({behavior:'smooth',block:'start'})});
+    document.querySelectorAll('.px-example').forEach(function(btn){
+      if(btn.dataset.pxDirect==='1')return;
+      btn.dataset.pxDirect='1';
+      btn.onclick=function(e){
+        e.preventDefault();e.stopPropagation();
+        var p=document.getElementById('quickProblem'),b=document.getElementById('quickBusiness'),bu=document.getElementById('quickBudget');
+        if(p)p.value=btn.getAttribute('data-example')||'';
+        if(b&&!b.value)b.value='Professionista';
+        if(bu&&!bu.value)bu.value='€31–50';
+        call('startQuick');
+      };
+    });
+  }
+  function boot(){
+    bindAll();
+    setTimeout(bindAll,300);
+    setTimeout(bindAll,1000);
+    setTimeout(bindAll,2500);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
+})();
+</script></body>
 </html>
