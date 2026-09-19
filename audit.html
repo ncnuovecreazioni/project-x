@@ -57,7 +57,7 @@
 </div>
 <div class="scorebar"><i id="bar"></i></div>
 <div class="findings" id="findings"></div>
-<div class="actions"><a id="sim" class="btn primary" href="/simulator.html">Calcola il valore del tempo →</a><button id="copy" class="btn secondary">Copia audit</button></div>
+<div class="actions"><a id="sim" class="btn primary" href="/simulator.html">Calcola il valore del tempo →</a><button id="print" class="btn secondary">Stampa / salva PDF</button><button id="copy" class="btn secondary">Copia audit</button></div>
 <div class="hint">Gli indici sono euristici e servono per orientare la discussione. Non equivalgono a una diagnosi tecnica o finanziaria.</div>
 </article>
 </section>
@@ -106,7 +106,9 @@ function analyze(){
  $('findings').innerHTML=findings.map(function(x){return '<div class="finding '+x.c+'"><strong>'+esc(x.t)+'</strong><span>'+esc(x.d)+'</span></div>'}).join('');
  $('lead').textContent='Il punto non è aggiungere strumenti: è capire dove il sistema attuale crea attrito.';
  $('result').style.display='block';
- $('sim').href='/simulator.html?hours='+encodeURIComponent(extractHours(text))+'&source=audit';
+ var saved=null;try{saved=JSON.parse(localStorage.getItem('projectx_answers_v2')||'null')}catch(e){}
+ var rate=saved&&String(saved.hourlyValue||'').replace(/[^0-9]/g,'')||'30';
+ $('sim').href='/simulator.html?hours='+encodeURIComponent(extractHours(text))+'&rate='+encodeURIComponent(rate)+'&source=audit';
  $('result').scrollIntoView({behavior:'smooth',block:'start'});
  track('business_audit_complete',{efficiency,manualScore,duplicates:duplicates.length,automationCandidates:automation});
 }
@@ -115,6 +117,7 @@ function extractHours(text){
 }
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 $('audit').onclick=analyze;
+$('print').onclick=function(){window.print();track('business_audit_print',{})};
 $('copy').onclick=function(){
  var t='PROJECT-X BUSINESS AUDIT\nEfficienza: '+$('eff').textContent+'%\nLavoro manuale: '+$('manualScore').textContent+'/100\nSovrapposizioni: '+$('dup').textContent+'\nCandidati automazione: '+$('auto').textContent;
  if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){track('business_audit_copy',{})});
