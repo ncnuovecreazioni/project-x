@@ -3284,3 +3284,316 @@ body.px-menu-open{
     font-size:15px !important;
   }
 }
+
+
+/* =========================================================
+   PROJECT-X — READABILITY OVERRIDE
+   Important text must never fall back to tiny 7–10px UI.
+   ========================================================= */
+
+/* Base reading scale */
+body{
+  font-size:17px !important;
+  line-height:1.65 !important;
+}
+
+body p,
+body li,
+body dd,
+body dt{
+  font-size:16px !important;
+  line-height:1.65 !important;
+}
+
+/* Small labels remain compact, but readable */
+body small,
+body label,
+body .tag,
+body .pill,
+body .chip,
+body .eyebrow,
+body .label,
+body .counter,
+body .micro{
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+/* Forms */
+body input,
+body textarea,
+body select,
+body button,
+body .btn{
+  font-size:16px !important;
+  line-height:1.45 !important;
+}
+
+body input::placeholder,
+body textarea::placeholder{
+  font-size:15px !important;
+}
+
+/* Home journey and examples */
+.journey-step b{
+  font-size:13px !important;
+}
+
+.journey-step span,
+.px-example-label,
+.px-example,
+.trust span{
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+.quickhead b{
+  font-size:17px !important;
+}
+
+.quickhead span{
+  font-size:13px !important;
+}
+
+/* Generated homepage visual layer */
+.px-mini-label,
+.px-flow-node b,
+.px-flow-node span,
+.px-result-meta span,
+.px-bar,
+.px-bar b,
+.px-proof span{
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+.px-live-problem,
+.px-showcase-note{
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+.px-result-name{
+  font-size:20px !important;
+}
+
+.px-score{
+  font-size:12px !important;
+}
+
+/* Result engine — no tiny utility copy */
+#results .sub,
+#results .decision,
+#results .item small,
+#results .planstep small,
+#results .moneylabel,
+#results .score span,
+#results .need,
+#results .commercial{
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+#results .item strong,
+#results .planstep b{
+  font-size:16px !important;
+  line-height:1.4 !important;
+}
+
+#results .pill{
+  font-size:12px !important;
+}
+
+#results .need{
+  grid-template-columns:155px 1fr 45px !important;
+}
+
+/* All PROJECT-X generated cards */
+[class*="px-"]{
+  --px-readable:1;
+}
+
+.px-story-kicker,
+.px-hi-kicker,
+.px-hi-label,
+.px-hi-badge,
+.px-db-kicker,
+.px-sm-kicker,
+.px-sc-head,
+.px-score-kicker,
+.px-pb-kicker,
+.px-dr-kicker{
+  font-size:12px !important;
+}
+
+.px-story-copy,
+.px-story-step span,
+.px-story-action span,
+.px-story-action strong,
+.px-hi-muted,
+.px-hi-note,
+.px-db-copy,
+.px-db-cta,
+.px-sc-note,
+.px-dr-foot{
+  font-size:13px !important;
+  line-height:1.6 !important;
+}
+
+.px-story-title,
+.px-hi-summary,
+.px-hi-text,
+.px-db-title,
+.px-sm-title,
+.px-sc-title,
+.px-score-title,
+.px-pb-title,
+.px-dr-title{
+  line-height:1.25 !important;
+}
+
+.px-db-item b,
+.px-sm-node small,
+.px-sm-origin span,
+.px-dr-problem span,
+.px-dr-item small{
+  font-size:12px !important;
+}
+
+.px-db-item strong{
+  font-size:20px !important;
+}
+
+.px-db-item span,
+.px-sm-origin strong,
+.px-sm-origin em,
+.px-sm-node span,
+.px-sm-foot,
+.px-sc-box span,
+.px-pb-note,
+.px-dr-problem strong,
+.px-dr-item span,
+.px-dr-final span{
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+/* Tutorial / execution guide */
+.px-eg-k,
+.px-eg-mission-k,
+.px-eg-target span,
+.px-eg-footer,
+.px-eg-step-result{
+  font-size:12px !important;
+  line-height:1.5 !important;
+}
+
+.px-eg-title,
+.px-eg-mission-title{
+  line-height:1.15 !important;
+}
+
+.px-eg-copy,
+.px-eg-mission p,
+.px-eg-step-copy,
+.px-eg-how p,
+.px-eg-flow-copy{
+  font-size:14px !important;
+  line-height:1.65 !important;
+}
+
+.px-eg-step b{
+  font-size:16px !important;
+}
+
+.px-eg-open,
+.px-eg-tab{
+  font-size:14px !important;
+}
+
+/* Product / conversion cards */
+.px-product-step span,
+.px-product-trust span,
+.px-problem-bridge,
+.px-next-action span,
+.px-before-after span{
+  font-size:13px !important;
+  line-height:1.6 !important;
+}
+
+.px-product-step b{
+  font-size:14px !important;
+}
+
+.px-next-action strong{
+  font-size:16px !important;
+}
+
+/* Mobile keeps the reading scale — it does not shrink back */
+@media(max-width:700px){
+  body{
+    font-size:16px !important;
+  }
+
+  body p,
+  body li,
+  body dd,
+  body dt{
+    font-size:15px !important;
+  }
+
+  body small,
+  body label,
+  body .tag,
+  body .pill,
+  body .chip,
+  body .eyebrow,
+  body .label,
+  body .counter,
+  body .micro{
+    font-size:12px !important;
+  }
+
+  body input,
+  body textarea,
+  body select,
+  body button,
+  body .btn{
+    font-size:16px !important;
+  }
+
+  .journey-step b{
+    font-size:13px !important;
+  }
+
+  .journey-step span,
+  .px-example-label,
+  .px-example,
+  .trust span{
+    font-size:12px !important;
+  }
+
+  .px-live-problem,
+  .px-showcase-note,
+  #results .sub,
+  #results .decision,
+  #results .item small,
+  #results .planstep small,
+  #results .moneylabel,
+  #results .score span,
+  #results .commercial{
+    font-size:14px !important;
+  }
+
+  .px-db-item span,
+  .px-sm-node span,
+  .px-sm-foot,
+  .px-sc-box span,
+  .px-dr-item span,
+  .px-dr-final span,
+  .px-eg-copy,
+  .px-eg-mission p,
+  .px-eg-step-copy{
+    font-size:14px !important;
+  }
+}
