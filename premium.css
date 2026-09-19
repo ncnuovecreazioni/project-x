@@ -1622,3 +1622,51 @@ body.px-large-text .px-hi-title{
   position:relative !important;
   z-index:20 !important;
 }
+
+
+/* PROJECT-X FINAL DESKTOP HERO CLEANUP — LAST RULE WINS */
+@media(min-width:601px){
+  body{
+    background:linear-gradient(180deg,#050711 0%,#080b15 54%,#0a0f1c 100%) !important;
+  }
+  body::after,
+  body::before{
+    content:none !important;
+    display:none !important;
+    background:none !important;
+    opacity:0 !important;
+    filter:none !important;
+    animation:none !important;
+  }
+  .hero,
+  .hero::before,
+  .hero::after{
+    background:none !important;
+    background-image:none !important;
+    content:none !important;
+    display:block !important;
+    box-shadow:none !important;
+    filter:none !important;
+  }
+  .hero::before,
+  .hero::after{
+    display:none !important;
+  }
+  .hero .quickbox,
+  .hero .quickbox::before,
+  .hero .quickbox::after{
+    background-image:none !important;
+  }
+  .hero .quickbox::before,
+  .hero .quickbox::after,
+  .hero .px-showcase-card::before,
+  .hero .px-showcase-card::after,
+  .hero .px-story-card::before,
+  .hero .px-story-card::after{
+    content:none !important;
+    display:none !important;
+    background:none !important;
+    filter:none !important;
+    box-shadow:none !important;
+  }
+}
