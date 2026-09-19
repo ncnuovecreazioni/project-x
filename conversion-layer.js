@@ -96,30 +96,9 @@
   }
 
   function addCinematicExperience(){
-    if(document.getElementById('px-cinematic')) return;
-    var quickBtn=document.getElementById('quickBtn');
-    if(!quickBtn) return;
-    var overlay=document.createElement('div');overlay.id='px-cinematic';overlay.className='px-cinematic';overlay.setAttribute('aria-hidden','true');
-    overlay.innerHTML='<div class="px-cinematic-core"><div class="px-cinematic-kicker">PROJECT-X · STO COSTRUENDO LA TUA DIREZIONE</div><div class="px-cinematic-pulse" id="px-cine-pulse"><i></i></div><div class="px-cinematic-title" id="px-cine-title">Partiamo dal tuo problema.</div><p class="px-cinematic-copy" id="px-cine-copy">Non stai scegliendo un’app. Stiamo ricostruendo il tuo modo di lavorare.</p><div class="px-cinematic-rail"><div class="px-cinematic-step" data-step="0"><b>01 · PROBLEMA</b><span>cosa ti fa perdere tempo</span></div><div class="px-cinematic-step" data-step="1"><b>02 · BISOGNI</b><span>cosa deve davvero risolvere</span></div><div class="px-cinematic-step" data-step="2"><b>03 · SISTEMA</b><span>quale configurazione ha senso</span></div><div class="px-cinematic-step" data-step="3"><b>04 · DECISIONE</b><span>da dove partire adesso</span></div></div><div class="px-cinematic-note">Puoi continuare normalmente: questa è la storia della tua analisi.</div></div>';
-    document.body.appendChild(overlay);
-
-    var steps=Array.prototype.slice.call(overlay.querySelectorAll('.px-cinematic-step'));
-    var title=overlay.querySelector('#px-cine-title'),copy=overlay.querySelector('#px-cine-copy'),pulse=overlay.querySelector('#px-cine-pulse');
-    var messages=[
-      ['Partiamo dal tuo problema.','Sto prendendo quello che hai scritto come punto di partenza.',25],
-      ['Ora capiamo cosa ti serve davvero.','Team, budget, tecnologia, obiettivi e attriti diventano vincoli della decisione.',50],
-      ['Sto costruendo il sistema.','Confronto bisogni e strumenti per arrivare a una configurazione coerente.',75],
-      ['La tua direzione è pronta.','Tra un attimo vedrai prima la sintesi, poi la System Map e infine tutti i dettagli.',100]
-    ];
-    var timer=null,open=false;
-    function stage(i){
-      var m=messages[Math.max(0,Math.min(3,i))];title.textContent=m[0];copy.textContent=m[1];pulse.style.setProperty('--p',m[2]+'%');steps.forEach(function(s,n){s.classList.toggle('active',n===i);s.classList.toggle('done',n<i)});}
-    function closeCinematic(){if(!open)return;open=false;if(timer){clearInterval(timer);timer=null}overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');setTimeout(function(){if(overlay.parentNode)overlay.parentNode.removeChild(overlay)},360)}
-    function begin(){if(open)return;open=true;overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');stage(0);var started=Date.now();var step=0;timer=setInterval(function(){if(document.getElementById('results')&&getComputedStyle(document.getElementById('results')).display!=='none'){stage(3);setTimeout(closeCinematic,650);return}if(step<3){step++;stage(step)}if(Date.now()-started>5200)closeCinematic()},900)}
-    function capture(e){var target=e.target&&e.target.closest?e.target.closest('#quickBtn,#fullBtn'):null;if(!target)return;setTimeout(begin,0)}
-    document.addEventListener('click',capture,true);
+    /* Disabled: PROJECT-X uses projectx-controller.js as the single launch layer. */
+    return;
   }
-
   function addLiveHomePreview(){
     if(document.getElementById('px-live-preview')) return;
     var input=document.getElementById('quickProblem');
