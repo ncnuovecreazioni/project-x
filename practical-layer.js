@@ -86,11 +86,12 @@
   function inject(){
     var guide=document.getElementById('px-execution-guide');
     if(!guide || guide.dataset.pxPractical==='1') return;
-    if(!window.ProjectXUI || !window.ProjectXUI.result) return;
+    if(!window.ProjectXUI) return;
 
     var r=null;
     try{
-      r=window.ProjectXUI.result();
+      if(typeof window.ProjectXUI.getResult==='function') r=window.ProjectXUI.getResult();
+      else if(typeof window.ProjectXUI.result==='function') r=window.ProjectXUI.result();
     }catch(e){}
     var p=pick(r);
     if(!p) return;
