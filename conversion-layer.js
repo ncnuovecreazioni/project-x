@@ -139,6 +139,20 @@
     track('decision_card_view',{primary:primaryName,fit:score});
   }
 
+  function addHomeTools(){
+    if(one('#px-home-tools')) return;
+    var hero=one('.hero');
+    if(!hero || one('#results')) return;
+    var target=one('#px-home-trust')||one('.px-wow-proof')||one('.quickbox');
+    if(!target) return;
+    var box=document.createElement('div');
+    box.id='px-home-tools';
+    box.style.cssText='width:min(900px,calc(100% - 30px));margin:16px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:9px;';
+    box.innerHTML='<a href="/audit.html" style="display:block;padding:14px;text-decoration:none;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.02);color:#fff;"><strong style="font-size:10px">🔍 Business Audit</strong><span style="display:block;margin-top:4px;color:#78869d;font-size:9px;line-height:1.4">Controlla gli strumenti che usi già e trova attriti prima di aggiungere software.</span></a><a href="/simulator.html" style="display:block;padding:14px;text-decoration:none;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.02);color:#fff;"><strong style="font-size:10px">💰 Value Simulator</strong><span style="display:block;margin-top:4px;color:#78869d;font-size:9px;line-height:1.4">Metti ore, persone e costi sul tavolo e costruisci un primo business case.</span></a>';
+    target.insertAdjacentElement('afterend',box);
+    var style=document.createElement('style');style.textContent='@media(max-width:600px){#px-home-tools{grid-template-columns:1fr!important;width:calc(100% - 22px)!important}}';document.head.appendChild(style);
+  }
+
   function addHomeMicroTrust(){
     if(one('#px-home-trust')) return;
     var hero=one('.hero');
@@ -177,6 +191,7 @@
     styles();
     addHomeDecisionStrip();
     addHomeMicroTrust();
+    addHomeTools();
     addResultScorecard();
     addResultsBottomCTA();
   }
