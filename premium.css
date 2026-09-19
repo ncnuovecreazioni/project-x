@@ -3686,3 +3686,50 @@ body textarea::placeholder{
 .quickbox .px-form-label + select{
   margin-top:0 !important;
 }
+
+
+/* =========================================================
+   PROJECT-X — PRACTICAL WORKFLOW CARD
+   ========================================================= */
+
+.px-practical{
+  margin:18px 0 0;
+  padding:24px;
+  border:1px solid rgba(54,217,157,.18);
+  border-radius:25px;
+  background:
+    radial-gradient(500px 180px at 100% 0%,rgba(54,217,157,.07),transparent 65%),
+    linear-gradient(145deg,rgba(13,28,32,.95),rgba(8,12,22,.98));
+  box-shadow:0 25px 85px rgba(0,0,0,.24);
+}
+.px-practical-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}
+.px-practical-kicker{font-size:12px !important;line-height:1.4 !important;letter-spacing:.13em;color:#7ce8bd;font-weight:950}
+.px-practical-title{margin-top:7px;font-size:28px !important;line-height:1.15 !important;letter-spacing:-.04em;font-weight:950;color:#f5f7fb}
+.px-practical-copy{margin:8px 0 0;max-width:800px;color:#a9b6c7;font-size:14px !important;line-height:1.65 !important}
+.px-practical-copy strong{color:#fff}
+.px-practical-open{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 14px;border:1px solid rgba(54,217,157,.20);border-radius:12px;background:rgba(54,217,157,.055);color:#dff9ee;text-decoration:none;font-size:13px !important;font-weight:900;white-space:nowrap}
+.px-practical-flow{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;gap:10px;align-items:stretch;margin-top:20px}
+.px-practical-step{padding:17px;border:1px solid rgba(255,255,255,.07);border-radius:16px;background:rgba(255,255,255,.018)}
+.px-practical-step.focus{border-color:rgba(124,92,255,.24);background:rgba(124,92,255,.06)}
+.px-practical-step.done{border-color:rgba(54,217,157,.16);background:rgba(54,217,157,.035)}
+.px-practical-step span{display:block;font-size:11px !important;line-height:1.35 !important;letter-spacing:.09em;color:#78869d;font-weight:950}
+.px-practical-step strong{display:block;margin-top:8px;font-size:15px !important;line-height:1.55 !important;color:#eef3f8}
+.px-practical-arrow{display:grid;place-items:center;color:#8f83ff;font-size:22px;font-weight:950}
+.px-practical-check{display:grid;grid-template-columns:minmax(220px,.55fr) minmax(0,1.45fr);gap:15px;margin-top:13px;padding:17px;border:1px solid rgba(255,255,255,.065);border-radius:17px;background:rgba(255,255,255,.015)}
+.px-practical-check>b,.px-practical-check b{display:block;font-size:13px !important;line-height:1.35 !important;color:#f0f4fa}
+.px-practical-check>div>span{display:block;margin-top:6px;color:#8e9bae;font-size:13px !important;line-height:1.55 !important}
+.px-practical-list{display:grid;gap:8px}
+.px-practical-list label{display:flex;align-items:flex-start;gap:10px;padding:10px 11px;border:1px solid rgba(255,255,255,.055);border-radius:12px;background:rgba(255,255,255,.018);cursor:pointer}
+.px-practical-list label.done{border-color:rgba(54,217,157,.17);background:rgba(54,217,157,.03)}
+.px-practical-list input{width:20px;height:20px;min-width:20px;min-height:20px;margin:0}
+.px-practical-list label span{color:#c4cedd;font-size:13px !important;line-height:1.5 !important}
+
+@media(max-width:760px){
+  .px-practical{padding:20px;border-radius:21px}
+  .px-practical-head{display:block}
+  .px-practical-title{font-size:24px !important}
+  .px-practical-open{width:100%;margin-top:13px}
+  .px-practical-flow{grid-template-columns:1fr}
+  .px-practical-arrow{min-height:24px;transform:rotate(90deg)}
+  .px-practical-check{grid-template-columns:1fr}
+}
