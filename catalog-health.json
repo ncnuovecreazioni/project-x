@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-19T00:00:00.000Z",
+  "source": "PROJECT-X automatic catalog health monitor",
+  "note": "Stato iniziale. Il controllo automatico aggiorna questo file quando rileva cambiamenti nelle fonti.",
+  "totals": {
+    "tools": 0,
+    "healthy": 0,
+    "changed": 0,
+    "failed": 0
+  },
+  "items": []
+}
