@@ -1003,3 +1003,71 @@ body:after{
   .px-hi-bottom{grid-template-columns:1fr}
   .px-hi-stage{min-height:0}
 }
+
+
+/* =========================================================
+   LEGACY RESULT FALLBACK
+   Also beautifies previously cached markup while deployment
+   propagates the new three-stage result story.
+   ========================================================= */
+.px-hi-grid{
+  display:grid !important;
+  grid-template-columns:1fr 42px 1fr !important;
+  gap:12px !important;
+  align-items:stretch !important;
+  margin-top:20px !important;
+}
+.px-hi-box{
+  padding:20px !important;
+  min-height:190px;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  border:1px solid rgba(255,255,255,.065) !important;
+  border-radius:20px !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.026),rgba(255,255,255,.01)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+.px-hi-box.accent{
+  border-color:rgba(124,92,255,.25) !important;
+  background:linear-gradient(145deg,rgba(124,92,255,.09),rgba(91,140,255,.025)) !important;
+}
+.px-hi-box span{
+  font-size:8px !important;
+  letter-spacing:.13em !important;
+  font-weight:950 !important;
+  color:#7a879d !important;
+}
+.px-hi-box strong{
+  margin-top:12px !important;
+  font-size:16px !important;
+  line-height:1.38 !important;
+  color:#f4f7fb !important;
+}
+.px-hi-box small{
+  margin-top:10px !important;
+  padding-top:10px !important;
+  border-top:1px solid rgba(255,255,255,.05) !important;
+  font-size:10px !important;
+  line-height:1.5 !important;
+  color:#8795aa !important;
+}
+.px-hi-arrow{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:22px !important;
+  color:#9d90ff !important;
+}
+.px-hi-result{
+  margin-top:12px !important;
+  padding:14px 16px !important;
+  border-radius:15px !important;
+  font-size:10px !important;
+  line-height:1.5 !important;
+}
+@media(max-width:720px){
+  .px-hi-grid{grid-template-columns:1fr !important}
+  .px-hi-arrow{min-height:22px;transform:rotate(90deg)}
+  .px-hi-box{min-height:0}
+}
