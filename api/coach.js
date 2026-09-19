@@ -86,37 +86,66 @@ function inferBudget(text) {
 }
 
 function deterministicReply(answers, messages) {
-  const allUserMessages = messages.filter(function (m) { return m.role === "user"; });
-  const allUserText = allUserMessages.map(function (m) { return m.content; }).join(" ");
-  const latestUser = allUserMessages.length ? allUserMessages[allUserMessages.length - 1].content : "";
-  const hadBusinessBeforeTurn = !!(answers && answers.businessType);
-  const next = Object.assign({}, answers || {});
-  if (!next.businessType) next.businessType = inferBusiness(allUserText);
-  if (!Array.isArray(next.goals) || !next.goals.length) next.goals = inferGoals(allUserText);
-  if (!next.budget) next.budget = inferBudget(allUserText);
-  if (!next.teamSize) next.teamSize = "2–5";
-  if (!next.painPoint && hadBusinessBeforeTurn && latestUser) next.painPoint = latestUser.slice(0, 800);
+  const safe = Object.assign({}, answers || {});
+  const userMessages = messages.filter(function (m) { return m.role === "user"; });
+  const allUserText = userMessages.map(function (m) { return m.content; }).join(" ");
+  const latestUser = userMessages.length ? userMessages[userMessages.length - 1].content : "";
 
-  if (!next.businessType) {
-    return { message: "Partiamo dal contesto. Che tipo di attività hai?", done: false, answers: next, field: "businessType" };
+  if (!safe.businessType) {
+    const inferredBusiness = inferBusiness(allUserText);
+    if (inferredBusiness) safe.businessType = inferredBusiness;
   }
-  if (!next.painPoint || String(next.painPoint).trim().length < 8) {
-    return { message: "Qual è la cosa che ti fa perdere più tempo oggi? Raccontamela come la diresti a un collega.", done: false, answers: next, field: "painPoint" };
+
+  if (!Array.isArray(safe.goals) || !safe.goals.length) {
+    const inferredGoals = inferGoals(allUserText);
+    if (inferredGoals.length) safe.goals = inferredGoals;
   }
-  if (!next.goals.length) {
-    return { message: "Qual è il risultato che vuoi ottenere prima di tutto? Per esempio: più clienti, meno lavoro manuale, preventivi più veloci, follow-up automatici.", done: false, answers: next, field: "goals" };
+
+  if (!safe.budget) {
+    const inferredBudget = inferBudget(allUserText);
+    if (inferredBudget) safe.budget = inferredBudget;
   }
-  if (!next.budget) {
-    return { message: "Quanto vuoi investire al mese? Anche 0 € va bene: mi serve solo per evitare soluzioni fuori budget.", done: false, answers: next, field: "budget" };
+
+  if (!safe.teamSize && /\b(team|dipendent|collaborator|persone)\b/i.test(allUserText)) {
+    safe.teamSize = "2–5";
   }
+
+  if (!safe.painPoint && latestUser) {
+    safe.painPoint = latestUser.slice(0, 800);
+  }
+
+  const hasBusiness = !!String(safe.businessType || "").trim();
+  const hasPain = String(safe.painPoint || "").trim().length >= 8;
+  const hasGoals = Array.isArray(safe.goals) && safe.goals.length > 0;
+  const hasBudget = !!String(safe.budget || "").trim();
+  const hasTeam = !!String(safe.teamSize || "").trim();
+
+  if (!hasBusiness) {
+    return { message: "Che tipo di attività hai? Puoi scegliere un esempio oppure scriverlo come lo diresti normalmente.", done: false, answers: safe, field: "businessType" };
+  }
+  if (!hasPain) {
+    return { message: "Qual è il lavoro che ti fa perdere più tempo? Scrivimi un esempio concreto, anche senza parole tecniche.", done: false, answers: safe, field: "painPoint" };
+  }
+  if (!hasGoals) {
+    return { message: "Cosa vuoi migliorare per prima cosa: più clienti, più vendite, meno lavoro manuale, meno errori o qualcosa di diverso?", done: false, answers: safe, field: "goals" };
+  }
+  if (!hasBudget) {
+    return { message: "Hai già un budget mensile in mente? Anche 0 € va bene: mi serve solo per evitare proposte fuori misura.", done: false, answers: safe, field: "budget" };
+  }
+
+  /* Team size is useful but should never create a loop. Use a neutral default
+     when the user did not provide it instead of asking the same question again. */
+  if (!hasTeam) {
+    safe.teamSize = "2–5";
+  }
+
   return {
-    message: "Ho abbastanza informazioni. Ora trasformo quello che mi hai raccontato in un profilo PROJECT-X.",
+    message: "Perfetto. Ho già abbastanza informazioni: non ti faccio altre domande inutili. Ora trasformo il tuo problema in una direzione concreta.",
     done: true,
-    answers: next,
+    answers: safe,
     field: "complete"
   };
 }
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, error: "Method Not Allowed" });
@@ -134,7 +163,12 @@ export default async function handler(req, res) {
   const systemPrompt = `Sei PROJECT-X Coach. Devi capire il problema operativo dell'utente e raccogliere il minimo contesto necessario per il Decision Engine.
 NON scegliere software, marchi o prodotti. NON confrontare brand. NON usare commissioni affiliate.
 Fai al massimo una domanda per risposta e mantieni la conversazione breve.
-Raccogli questi campi quando possibile: businessType, painPoint, goals, budget, teamSize.
+Prima di fare una domanda controlla SEMPRE answers e messages.
+NON chiedere un campo se è già valorizzato in answers.
+NON riformulare la stessa domanda se l'utente ha già risposto in modo sufficiente.
+Se businessType + painPoint + goals + budget sono già presenti, imposta done=true e non fare altre domande.
+teamSize è opzionale: se manca, usa "2–5" senza chiedere un nuovo turno.
+Se l'utente ha già fornito informazioni utili in una frase, estraille invece di chiedere di nuovo.
 businessType ammessi: Professionista, Impresa di servizi, E-commerce, Agenzia, Ristorante / attività locale, Startup, Azienda, Altro.
 goals ammessi: Clienti, Vendite, Preventivi, Email, Automazioni, Documenti, Excel, Progetti, E-commerce, Marketing.
 budget ammessi: €0, €1–30, €31–50, €51–100, €101–250, €251+.
@@ -215,12 +249,12 @@ Restituisci esclusivamente il JSON richiesto.`;
       return res.status(200).json(Object.assign({ success: true, aiAvailable: false }, deterministicReply(answers, messages)));
     }
 
-    const safeAnswers = result.answers && typeof result.answers === "object" ? result.answers : {};
+    const safeAnswers = Object.assign({}, answers || {}, result.answers && typeof result.answers === "object" ? result.answers : {});
     safeAnswers.businessType = String(safeAnswers.businessType || "").slice(0, 80);
     safeAnswers.painPoint = String(safeAnswers.painPoint || "").slice(0, 800);
     safeAnswers.budget = String(safeAnswers.budget || "").slice(0, 20);
-    safeAnswers.teamSize = String(safeAnswers.teamSize || "").slice(0, 20);
-    safeAnswers.goals = Array.isArray(safeAnswers.goals) ? safeAnswers.goals.slice(0, 6) : [];
+    safeAnswers.teamSize = String(safeAnswers.teamSize || "").slice(0, 20) || "2–5";
+    safeAnswers.goals = Array.isArray(safeAnswers.goals) ? safeAnswers.goals.slice(0, 6) : (Array.isArray(answers.goals) ? answers.goals.slice(0, 6) : []);
 
     return res.status(200).json({
       success: true,
