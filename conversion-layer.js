@@ -86,8 +86,8 @@
 
   function addCinematicExperience(){
     if(document.getElementById('px-cinematic')) return;
-    var quickBtn=document.getElementById('quickBtn'),fullBtn=document.getElementById('fullBtn');
-    if(!quickBtn && !fullBtn) return;
+    var quickBtn=document.getElementById('quickBtn');
+    if(!quickBtn) return;
     var overlay=document.createElement('div');overlay.id='px-cinematic';overlay.className='px-cinematic';overlay.setAttribute('aria-hidden','true');
     overlay.innerHTML='<div class="px-cinematic-core"><div class="px-cinematic-kicker">PROJECT-X · STO COSTRUENDO LA TUA DIREZIONE</div><div class="px-cinematic-pulse" id="px-cine-pulse"><i></i></div><div class="px-cinematic-title" id="px-cine-title">Partiamo dal tuo problema.</div><p class="px-cinematic-copy" id="px-cine-copy">Non stai scegliendo un’app. Stiamo ricostruendo il tuo modo di lavorare.</p><div class="px-cinematic-rail"><div class="px-cinematic-step" data-step="0"><b>01 · PROBLEMA</b><span>cosa ti fa perdere tempo</span></div><div class="px-cinematic-step" data-step="1"><b>02 · BISOGNI</b><span>cosa deve davvero risolvere</span></div><div class="px-cinematic-step" data-step="2"><b>03 · SISTEMA</b><span>quale configurazione ha senso</span></div><div class="px-cinematic-step" data-step="3"><b>04 · DECISIONE</b><span>da dove partire adesso</span></div></div><div class="px-cinematic-note">Puoi continuare normalmente: questa è la storia della tua analisi.</div></div>';
     document.body.appendChild(overlay);
@@ -307,18 +307,21 @@
     var r=result(),d=domResult(),p=primary(r);
     if(!r && !d) return;
 
+    var a=answers();
+    var autos=r&&(r.automationIdeas||r.automationSuggestions)||[];
+    var auto=autos.length?(typeof autos[0]==='string'?autos[0]:(autos[0].title||autos[0].name||autos[0].description||'il primo workflow')):'il workflow prioritario';
     var box=document.createElement('div');
     box.id='px-results-bottom-cta';
     box.style.cssText='margin-top:18px;padding:18px;border-radius:18px;border:1px solid rgba(124,92,255,.18);background:linear-gradient(135deg,rgba(124,92,255,.07),rgba(91,140,255,.04));text-align:center;';
     var primaryName=p?(p.name||p.id||'PROJECT-X'):(d&&d.primary?d.primary.name:'PROJECT-X');
     box.innerHTML='<div style="font-size:9px;letter-spacing:.14em;color:#9f94ff;font-weight:950;">NEXT STAGE</div>'+
-      '<div style="margin-top:6px;font-size:18px;font-weight:950;letter-spacing:-.03em;">Da decisione a sistema.</div>'+
-      '<div style="margin:5px auto 0;max-width:620px;color:#8996ab;font-size:10px;line-height:1.5;">Hai già la scelta principale. Ora puoi trasformarla in blueprint, workflow e implementazione invece di continuare a cercare strumenti.</div>'+
+      '<div style="margin-top:6px;font-size:18px;font-weight:950;letter-spacing:-.03em;">Ora sai cosa fare. Fai il passo successivo.</div>'+
+      '<div style="margin:5px auto 0;max-width:680px;color:#8996ab;font-size:10px;line-height:1.5;">Per il tuo caso, il passaggio successivo è portare <strong style="color:#fff">'+esc(auto)+'</strong> dal consiglio al workflow reale. PROJECT-X ti lascia già la direzione: ora puoi verificarla, misurarla o trasformarla in blueprint.</div>'+
       '<div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;">'+
       '<a href="/audit.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Business Audit →</a>'+
       '<a href="/simulator.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Value Simulator →</a>'+
-      '<a href="/report-pro.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#fff;font-size:9px;font-weight:900;background:linear-gradient(135deg,#7c5cff,#5b8cff);">Apri Report PRO →</a>'+
-      '<a href="/implementation.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Parla di implementazione →</a>'+
+      '<a href="/pro.html?source=results" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#fff;font-size:9px;font-weight:900;background:linear-gradient(135deg,#7c5cff,#5b8cff);">Trasforma il risultato in Report PRO →</a>'+
+      '<a href="/workspace.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Apri Workspace →</a><a href="/implementation.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Parla di implementazione →</a>'+
       '</div>';
     results.appendChild(box);
     $$('.px-results-bottom-cta a',box).forEach(function(a){a.addEventListener('click',function(){track('next_stage_click',{href:a.getAttribute('href')||''});});});
