@@ -49,6 +49,15 @@
     return r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]))||null;
   }
   function fit(t){return pct(t&&(t.compatibility!=null?t.compatibility:t.score));}
+  function decisionId(){
+    try{
+      var raw=JSON.stringify(answers());
+      var h=2166136261;
+      for(var i=0;i<raw.length;i++){h^=raw.charCodeAt(i);h=Math.imul(h,16777619)}
+      return 'PX-'+('00000000'+(h>>>0).toString(16).toUpperCase()).slice(-8);
+    }catch(e){return 'PX-LOCAL'}
+  }
+
   function track(event,meta){
     try{
       if(window.ProjectXAutopilot&&typeof window.ProjectXAutopilot.track==='function'){
@@ -307,6 +316,7 @@
     var r=result(),d=domResult(),p=primary(r),results=one('#results');
     if(!results || getComputedStyle(results).display==='none' || (!r&&!d)) return;
     var a=answers();
+    var id=decisionId();
     var name=p?(p.name||p.id||'PROJECT-X'):(d&&d.primary?d.primary.name:'PROJECT-X');
     var fitScore=pct(p?(p.compatibility!=null?p.compatibility:p.score):(d?d.fit:0));
     var v=r?(r.valueEstimate||r.value||{}):{};
@@ -318,7 +328,7 @@
     var box=document.createElement('section');
     box.id='px-decision-receipt';
     box.className='px-decision-receipt';
-    box.innerHTML='<div class="px-dr-top"><div><div class="px-dr-kicker">PROJECT-X · DECISION RECEIPT</div><div class="px-dr-title">Questo è il risultato che ti porti fuori da PROJECT-X.</div><p class="px-dr-copy">Da una frase sul tuo problema a una direzione concreta, con un primo passo operativo già identificato.</p></div><div class="px-dr-stamp">READY</div></div>'+
+    box.innerHTML='<div class="px-dr-top"><div><div class="px-dr-kicker">PROJECT-X · DECISION RECEIPT</div><div class="px-dr-title">Questo è il risultato che ti porti fuori da PROJECT-X.</div><p class="px-dr-copy">Da una frase sul tuo problema a una direzione concreta, con un primo passo operativo già identificato.</p></div><div class="px-dr-stamp">READY · '+id+'</div></div>'+
       '<div class="px-dr-problem"><span>HAI DETTO</span><strong>“'+esc(problem.slice(0,240))+(problem.length>240?'…':'')+'”</strong></div>'+
       '<div class="px-dr-grid">'+
         '<div class="px-dr-item"><small>NUCLEO</small><b>'+esc(name)+'</b><span>software principale emerso dall’analisi</span></div>'+
