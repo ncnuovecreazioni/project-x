@@ -46,6 +46,27 @@
     }catch(e){}
   }
 
+  function goalSummary(a){
+    var goals=Array.isArray(a&&a.goals)?a.goals:[];
+    var pain=String(a&&a.painPoint||'').trim();
+    var map={
+      'Clienti':['avere clienti e richieste più ordinati','centralizzare i contatti','meno dispersione tra email, fogli e app'],
+      'Vendite':['seguire meglio le opportunità','rendere visibili le trattative e i richiami','meno occasioni dimenticate'],
+      'Preventivi':['preparare e seguire i preventivi più facilmente','standardizzare il passaggio preventivo → follow-up','meno copia-incolla e meno ritardi'],
+      'Email':['gestire meglio le comunicazioni ripetitive','creare un flusso email semplice e controllabile','meno risposte manuali ripetute'],
+      'Automazioni':['ridurre il lavoro manuale ripetitivo','automatizzare un singolo passaggio ad alto impatto','meno passaggi eseguiti a mano'],
+      'Documenti':['trovare e gestire i documenti più facilmente','standardizzare creazione, archiviazione o invio','meno ricerca e operazioni ripetitive'],
+      'Excel':['ridurre copia-incolla e gestione manuale dei dati','collegare il foglio al processo che lo usa','meno passaggi manuali sui dati'],
+      'Progetti':['avere attività e scadenze più leggibili','centralizzare responsabilità e stati','meno informazioni disperse'],
+      'E-commerce':['rendere più ordinato il lavoro intorno agli ordini','collegare eventi del negozio alle comunicazioni','meno attività post-acquisto manuali'],
+      'Marketing':['rendere più ordinato il flusso di acquisizione','collegare contatti, campagne e follow-up','meno passaggi scollegati']
+    };
+    var chosen=null;
+    for(var i=0;i<goals.length;i++){if(map[goals[i]]){chosen=map[goals[i]];break;}}
+    if(!chosen)chosen=['semplificare il lavoro che oggi crea più attrito','partire dal collo di bottiglia descritto','un processo più chiaro e misurabile'];
+    return {goal:chosen[0],action:chosen[1],outcome:chosen[2],pain:pain};
+  }
+
   function categoryType(tool){
     var c=String(tool&&tool.category||'').toLowerCase();
     var n=String(tool&&tool.name||'').toLowerCase();
@@ -60,6 +81,8 @@
   }
 
   function build(tool){
+    var a=answers();
+    var goal=goalSummary(a);
     var type=categoryType(tool);
     var integrations=Array.isArray(tool&&tool.integrations)?tool.integrations:[];
     var integrationText=integrations.slice(0,4).join(', ');
@@ -136,7 +159,8 @@
     box.id='px-execution-guide';
     box.className='px-eg';
 
-    var html='<div class="px-eg-head"><div><div class="px-eg-k">DAL RISULTATO ALL’AZIONE</div><div class="px-eg-title">Come usare '+esc(p.name||p.id)+' senza complicarti la vita</div><p class="px-eg-copy">Questa guida parte dal problema che hai inserito e ti accompagna dalla configurazione iniziale al primo workflow funzionante.</p></div><div class="px-eg-badge">GUIDA OPERATIVA</div></div>';
+    var a=answers(),goal=goalSummary(a);
+    var html='<div class="px-eg-head"><div><div class="px-eg-k">DAL RISULTATO ALL’AZIONE</div><div class="px-eg-title">Come usare '+esc(p.name||p.id)+' senza complicarti la vita</div><p class="px-eg-copy">Obiettivo: <strong style="color:#eef2f8">'+esc(goal.goal)+'</strong>. La guida trasforma questo obiettivo in passi concreti e misurabili.</p></div><div class="px-eg-badge">GUIDA OPERATIVA</div></div><div class="px-eg-footer" style="margin-top:12px"><div><strong>In pratica:</strong> '+esc(goal.action)+'.</div><div><strong>Risultato da cercare:</strong> '+esc(goal.outcome)+'.</div></div>';
     html+='<div class="px-eg-tabs"><button type="button" class="px-eg-tab active" data-mode="simple">Voglio solo iniziare</button><button type="button" class="px-eg-tab" data-mode="practical">Voglio configurarlo bene</button></div>';
     html+='<div class="px-eg-list"></div>';
     html+='<div class="px-eg-advanced"></div>';
