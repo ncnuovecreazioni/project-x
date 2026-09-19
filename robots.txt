@@ -3,5 +3,6 @@ Allow: /
 Disallow: /dashboard.html
 Disallow: /pro-success.html
 Disallow: /pro-delivery.html
+Disallow: /workspace.html
 
 Sitemap: https://project-x-phi-steel.vercel.app/sitemap.xml
