@@ -86,7 +86,9 @@ $('reset').onclick=function(){['hours','rate','people','recovery','software'].fo
 try{
  var params=new URLSearchParams(location.search);
  var q=Number(params.get('hours'));if(q>0&&q<=168)$('hours').value=q;
+ var qr=Number(params.get('rate'));if(qr>=0&&qr<=1000)$('rate').value=qr;
  var saved=JSON.parse(localStorage.getItem('projectx_simulator_v1')||'null');
+ if(!saved&&!params.get('rate')){try{var ans=JSON.parse(localStorage.getItem('projectx_answers_v2')||'null');if(ans&&ans.hourlyValue){var ar=Number(String(ans.hourlyValue).replace(/[^0-9]/g,''));if(ar>=0&&ar<=1000)$('rate').value=ar;}}catch(e){}}
  if(saved&&!params.get('hours')){if(saved.h!=null)$('hours').value=saved.h;if(saved.rate!=null)$('rate').value=saved.rate;if(saved.people!=null)$('people').value=saved.people;if(saved.recovery!=null)$('recovery').value=saved.recovery;if(saved.software!=null)$('software').value=saved.software;}
 }catch(e){}
 update();
