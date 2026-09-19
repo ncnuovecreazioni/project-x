@@ -2353,3 +2353,383 @@ button{
     transform:none !important;
   }
 }
+
+
+/* =========================================================
+   PROJECT-X — MICROCOPY MADE HUMAN
+   All generated decision widgets use readable UI text.
+   ========================================================= */
+
+.px-decision-strip,
+.px-decision-brief,
+.px-system-map,
+.px-system-compare,
+.px-result-scorecard,
+.px-problem-bridge,
+.px-decision-receipt,
+.px-next-action,
+.px-before-after{
+  font-size:15px;
+}
+
+.px-db-kicker,
+.px-sm-kicker,
+.px-sc-head,
+.px-score-kicker,
+.px-pb-kicker,
+.px-dr-kicker{
+  font-size:12px !important;
+  line-height:1.4 !important;
+  letter-spacing:.12em !important;
+}
+
+.px-db-title,
+.px-sm-title,
+.px-sc-title,
+.px-score-title,
+.px-pb-title{
+  font-size:25px !important;
+  line-height:1.15 !important;
+}
+
+.px-db-copy,
+.px-sm-copy,
+.px-sc-copy,
+.px-score-copy,
+.px-pb-note,
+.px-dr-copy{
+  font-size:14px !important;
+  line-height:1.65 !important;
+}
+
+.px-db-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:12px !important;
+  margin-top:18px !important;
+}
+
+.px-db-item{
+  padding:18px !important;
+  border-radius:16px !important;
+}
+
+.px-db-item b{
+  font-size:12px !important;
+  line-height:1.35 !important;
+  letter-spacing:.08em !important;
+  color:#aeb9ca !important;
+}
+
+.px-db-item strong{
+  margin-top:8px !important;
+  font-size:19px !important;
+  line-height:1.3 !important;
+  color:#ffffff !important;
+}
+
+.px-db-item span{
+  margin-top:7px !important;
+  font-size:14px !important;
+  line-height:1.55 !important;
+  color:#9aa7ba !important;
+}
+
+.px-db-cta{
+  margin-top:14px !important;
+  padding:14px 16px !important;
+  font-size:13px !important;
+  line-height:1.6 !important;
+}
+
+.px-sm-origin{
+  padding:15px 16px !important;
+  margin-top:16px !important;
+}
+
+.px-sm-origin span{
+  font-size:11px !important;
+}
+
+.px-sm-origin strong{
+  margin-top:7px !important;
+  font-size:14px !important;
+  line-height:1.55 !important;
+}
+
+.px-sm-origin em{
+  margin-top:7px !important;
+  font-size:11px !important;
+}
+
+.px-sm-flow{
+  gap:9px !important;
+  margin-top:18px !important;
+}
+
+.px-sm-node{
+  min-height:118px !important;
+  padding:16px !important;
+}
+
+.px-sm-node small{
+  font-size:10px !important;
+}
+
+.px-sm-node b{
+  margin-top:7px !important;
+  font-size:16px !important;
+  line-height:1.3 !important;
+}
+
+.px-sm-node span{
+  margin-top:6px !important;
+  font-size:13px !important;
+  line-height:1.5 !important;
+}
+
+.px-sm-foot{
+  margin-top:14px !important;
+  padding:13px 15px !important;
+  font-size:13px !important;
+  line-height:1.6 !important;
+}
+
+.px-sm-badge{
+  font-size:11px !important;
+}
+
+.px-sc-grid{
+  gap:12px !important;
+  margin-top:16px !important;
+}
+
+.px-sc-box{
+  padding:16px !important;
+}
+
+.px-sc-box b{
+  font-size:11px !important;
+  letter-spacing:.07em !important;
+}
+
+.px-sc-box strong{
+  margin-top:8px !important;
+  font-size:16px !important;
+  line-height:1.35 !important;
+}
+
+.px-sc-box span{
+  margin-top:6px !important;
+  font-size:13px !important;
+  line-height:1.55 !important;
+}
+
+.px-sc-note{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.px-dt-copy strong{
+  font-size:14px !important;
+}
+
+.px-dt-copy span{
+  font-size:12px !important;
+  line-height:1.5 !important;
+}
+
+.px-dt-btn{
+  font-size:12px !important;
+  min-height:46px !important;
+}
+
+.px-score-grid{
+  gap:10px !important;
+}
+
+.px-score-item{
+  padding:15px !important;
+}
+
+.px-score-item b{
+  font-size:21px !important;
+}
+
+.px-score-item span{
+  font-size:12px !important;
+  line-height:1.5 !important;
+}
+
+.px-score-badge{
+  font-size:11px !important;
+}
+
+.px-value-band strong{
+  font-size:17px !important;
+}
+
+.px-value-band span{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.px-next-action{
+  padding:16px !important;
+}
+
+.px-next-action strong{
+  font-size:14px !important;
+}
+
+.px-next-action span{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.px-next-action a{
+  font-size:12px !important;
+  min-height:46px !important;
+}
+
+.px-ba-box{
+  padding:15px !important;
+}
+
+.px-ba-box b{
+  font-size:13px !important;
+}
+
+.px-ba-box span{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.px-pb-quote{
+  margin-top:13px !important;
+  padding:14px 15px !important;
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+.px-decision-receipt{
+  padding:26px !important;
+}
+
+.px-dr-title{
+  font-size:27px !important;
+  line-height:1.12 !important;
+}
+
+.px-dr-problem{
+  padding:15px !important;
+}
+
+.px-dr-problem span{
+  font-size:10px !important;
+}
+
+.px-dr-problem strong{
+  margin-top:7px !important;
+  font-size:14px !important;
+  line-height:1.55 !important;
+}
+
+.px-dr-grid{
+  gap:10px !important;
+}
+
+.px-dr-item{
+  padding:15px !important;
+}
+
+.px-dr-item small{
+  font-size:10px !important;
+}
+
+.px-dr-item b{
+  margin-top:7px !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+}
+
+.px-dr-item span{
+  margin-top:6px !important;
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.px-dr-final{
+  padding:15px !important;
+}
+
+.px-dr-final b{
+  font-size:12px !important;
+}
+
+.px-dr-final span{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.px-dr-value{
+  font-size:22px !important;
+}
+
+.px-dr-actions a{
+  font-size:12px !important;
+  min-height:46px !important;
+  padding:11px 14px !important;
+}
+
+.px-dr-foot{
+  font-size:10px !important;
+  line-height:1.5 !important;
+}
+
+.px-cinematic-kicker{
+  font-size:11px !important;
+}
+
+.px-cinematic-copy{
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+.px-cinematic-step b{
+  font-size:10px !important;
+}
+
+.px-cinematic-step span{
+  font-size:10px !important;
+}
+
+@media(max-width:760px){
+  .px-db-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  .px-db-item{
+    padding:17px !important;
+  }
+
+  .px-db-item strong{
+    font-size:18px !important;
+  }
+
+  .px-sm-flow,
+  .px-sc-grid{
+    margin-top:15px !important;
+  }
+
+  .px-sm-node{
+    min-height:0 !important;
+  }
+
+  .px-decision-receipt{
+    padding:21px !important;
+  }
+
+  .px-dr-title{
+    font-size:23px !important;
+  }
+}
