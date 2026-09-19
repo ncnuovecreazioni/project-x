@@ -2733,3 +2733,222 @@ button{
     font-size:23px !important;
   }
 }
+
+
+/* =========================================================
+   PROJECT-X — PRODUCT LEVEL-UP
+   Make the product feel decisive, premium and easy to scan.
+   ========================================================= */
+
+/* 1) Hero: make the promise instantly scannable */
+.hero .quickbox{
+  border-color:rgba(124,92,255,.34) !important;
+}
+
+.hero .quickbox:focus-within{
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.30),
+    0 0 0 1px rgba(124,92,255,.10),
+    0 0 70px rgba(124,92,255,.10) !important;
+}
+
+.quickactions .primary{
+  font-size:16px !important;
+  font-weight:900 !important;
+  letter-spacing:-.02em;
+}
+
+.quickactions .secondary{
+  font-size:15px !important;
+}
+
+/* 2) Result: first thing seen is the decision, not the decoration */
+#results .resulthead{
+  position:relative;
+  z-index:2;
+}
+
+#results .resulthero{
+  z-index:1;
+}
+
+#results .resultgrid{
+  position:relative;
+  z-index:1;
+}
+
+/* 3) Decision brief becomes the visual command center */
+.px-decision-brief{
+  margin:0 0 18px !important;
+  padding:26px !important;
+  border:1px solid rgba(124,92,255,.25) !important;
+  border-radius:27px !important;
+  background:
+    radial-gradient(500px 180px at 100% 0%,rgba(124,92,255,.12),transparent 62%),
+    linear-gradient(145deg,rgba(17,24,42,.98),rgba(7,11,21,.99)) !important;
+  box-shadow:
+    0 28px 95px rgba(0,0,0,.26),
+    inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+.px-db-kicker{
+  color:#b7adff !important;
+}
+
+.px-db-title{
+  font-size:30px !important;
+  line-height:1.08 !important;
+  letter-spacing:-.045em !important;
+}
+
+.px-db-copy{
+  max-width:830px !important;
+  font-size:15px !important;
+  color:#aab6c8 !important;
+}
+
+.px-db-item{
+  min-height:150px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  border-color:rgba(255,255,255,.08) !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.012)) !important;
+}
+
+.px-db-item:nth-child(3){
+  border-color:rgba(54,217,157,.17) !important;
+  background:linear-gradient(145deg,rgba(54,217,157,.055),rgba(255,255,255,.012)) !important;
+}
+
+.px-db-item:nth-child(3) strong{
+  color:#7ce8bd !important;
+  font-size:22px !important;
+}
+
+.px-db-cta{
+  color:#aeb9ca !important;
+}
+
+/* 4) First action: impossible to miss */
+.px-next-action{
+  border-color:rgba(54,217,157,.20) !important;
+  background:
+    linear-gradient(135deg,rgba(54,217,157,.055),rgba(124,92,255,.045)) !important;
+}
+
+.px-next-action strong{
+  font-size:16px !important;
+}
+
+.px-next-action span{
+  font-size:13px !important;
+  color:#9aa7ba !important;
+}
+
+.px-next-action a{
+  font-size:13px !important;
+  font-weight:950 !important;
+}
+
+/* 5) Make the important action visually different from ordinary data */
+.planstep:first-child{
+  border-color:rgba(124,92,255,.24) !important;
+  background:linear-gradient(135deg,rgba(124,92,255,.065),rgba(255,255,255,.015)) !important;
+}
+
+.planstep:nth-child(3){
+  border-color:rgba(54,217,157,.18) !important;
+  background:linear-gradient(135deg,rgba(54,217,157,.04),rgba(255,255,255,.012)) !important;
+}
+
+.planstep b{
+  font-size:15px !important;
+}
+
+.planstep small{
+  font-size:13px !important;
+}
+
+/* 6) PRO offer: premium, useful, not pushy */
+#primaryMount > div[style*="Report PRO"]{
+  margin-top:18px !important;
+  padding:18px 20px !important;
+  border:1px solid rgba(255,209,102,.24) !important;
+  border-radius:18px !important;
+  background:
+    radial-gradient(260px 120px at 100% 0%,rgba(255,209,102,.08),transparent 65%),
+    linear-gradient(145deg,rgba(41,32,16,.34),rgba(255,255,255,.015)) !important;
+  font-size:13px !important;
+  line-height:1.55 !important;
+}
+
+#primaryMount > div[style*="Report PRO"] strong{
+  font-size:16px !important;
+}
+
+#primaryMount > div[style*="Report PRO"] a{
+  min-height:48px !important;
+  padding:10px 15px !important;
+  font-size:13px !important;
+}
+
+/* 7) Better scan rhythm on long result pages */
+#results .panel{
+  scroll-margin-top:96px;
+}
+
+#results .panel h3{
+  position:relative;
+  padding-left:15px;
+}
+
+#results .panel h3:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.18em;
+  width:4px;
+  height:1.05em;
+  border-radius:999px;
+  background:linear-gradient(to bottom,#7c5cff,#5b8cff);
+}
+
+/* 8) Mobile: fewer visual jumps, clearer hierarchy */
+@media(max-width:760px){
+  .px-decision-brief{
+    padding:21px !important;
+    border-radius:23px !important;
+  }
+
+  .px-db-title{
+    font-size:26px !important;
+  }
+
+  .px-db-copy{
+    font-size:14px !important;
+  }
+
+  .px-db-item{
+    min-height:0 !important;
+  }
+
+  .px-next-action strong{
+    font-size:15px !important;
+  }
+
+  .px-next-action span{
+    font-size:13px !important;
+  }
+
+  #primaryMount > div[style*="Report PRO"]{
+    padding:17px !important;
+  }
+}
+
+/* 9) Reduce visual noise when system prefers less motion */
+@media(prefers-reduced-motion:reduce){
+  .quickbox:focus-within{
+    box-shadow:0 24px 80px rgba(0,0,0,.22) !important;
+  }
+}
