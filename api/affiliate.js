@@ -73,8 +73,9 @@ export default async function handler(req, res) {
       : target.fallback;
     const monetized = !!configuredUrl;
 
+    const analyticsConsent = String((req.query && req.query.analyticsConsent) || '').trim() === '1';
     const webhook = String(process.env.EVENT_WEBHOOK_URL || '').trim();
-    if (webhook) {
+    if (webhook && analyticsConsent) {
       try {
         await fetch(webhook, {
           method: 'POST',
