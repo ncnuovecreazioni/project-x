@@ -142,7 +142,8 @@
   function addHomeTools(){
     if(one('#px-home-tools')) return;
     var hero=one('.hero');
-    if(!hero || one('#results')) return;
+    var results=one('#results');
+    if(!hero || (results && getComputedStyle(results).display!=='none')) return;
     var target=one('#px-home-trust')||one('.px-wow-proof')||one('.quickbox');
     if(!target) return;
     var box=document.createElement('div');
