@@ -146,6 +146,46 @@ function deterministicReply(answers, messages) {
     field: "complete"
   };
 }
+
+function mergeAnswers(base, incoming) {
+  const merged = Object.assign({}, base || {});
+  const source = incoming && typeof incoming === "object" ? incoming : {};
+
+  Object.keys(source).forEach(function (key) {
+    const value = source[key];
+    if (key === "goals") {
+      if (Array.isArray(value) && value.length) merged.goals = value.slice(0, 6);
+      return;
+    }
+    if (value !== null && value !== undefined && String(value).trim() !== "") {
+      merged[key] = String(value).trim();
+    }
+  });
+
+  if (!Array.isArray(merged.goals)) merged.goals = [];
+  if (!merged.teamSize) merged.teamSize = "2–5";
+  return merged;
+}
+
+function nextMissingField(answers) {
+  const a = answers || {};
+  if (!String(a.businessType || "").trim()) return "businessType";
+  if (String(a.painPoint || "").trim().length < 8) return "painPoint";
+  if (!Array.isArray(a.goals) || !a.goals.length) return "goals";
+  if (!String(a.budget || "").trim()) return "budget";
+  return "complete";
+}
+
+function questionForField(field) {
+  const messages = {
+    businessType: "Che tipo di attività hai? Puoi dirlo con parole semplici.",
+    painPoint: "Qual è il lavoro che ti fa perdere più tempo oggi? Raccontami un esempio concreto.",
+    goals: "Qual è il primo risultato che vuoi ottenere? Per esempio: più clienti, più vendite, meno lavoro manuale o meno errori.",
+    budget: "Quanto vuoi investire al mese? Anche 0 € va bene."
+  };
+  return messages[field] || "Ho già abbastanza informazioni. Procedo con il profilo.";
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, error: "Method Not Allowed" });
@@ -168,6 +208,9 @@ NON chiedere un campo se è già valorizzato in answers.
 NON riformulare la stessa domanda se l'utente ha già risposto in modo sufficiente.
 Se businessType + painPoint + goals + budget sono già presenti, imposta done=true e non fare altre domande.
 teamSize è opzionale: se manca, usa "2–5" senza chiedere un nuovo turno.
+Nel JSON field deve indicare solo il prossimo campo realmente mancante.
+Se field è già valorizzato in answers, NON fare quella domanda e imposta il prossimo campo mancante.
+La priorità dei campi è: businessType → painPoint → goals → budget → done.
 Se l'utente ha già fornito informazioni utili in una frase, estraille invece di chiedere di nuovo.
 businessType ammessi: Professionista, Impresa di servizi, E-commerce, Agenzia, Ristorante / attività locale, Startup, Azienda, Altro.
 goals ammessi: Clienti, Vendite, Preventivi, Email, Automazioni, Documenti, Excel, Progetti, E-commerce, Marketing.
@@ -249,19 +292,29 @@ Restituisci esclusivamente il JSON richiesto.`;
       return res.status(200).json(Object.assign({ success: true, aiAvailable: false }, deterministicReply(answers, messages)));
     }
 
-    const safeAnswers = Object.assign({}, answers || {}, result.answers && typeof result.answers === "object" ? result.answers : {});
+    const safeAnswers = mergeAnswers(answers, result.answers);
+
     safeAnswers.businessType = String(safeAnswers.businessType || "").slice(0, 80);
     safeAnswers.painPoint = String(safeAnswers.painPoint || "").slice(0, 800);
     safeAnswers.budget = String(safeAnswers.budget || "").slice(0, 20);
-    safeAnswers.teamSize = String(safeAnswers.teamSize || "").slice(0, 20) || "2–5";
-    safeAnswers.goals = Array.isArray(safeAnswers.goals) ? safeAnswers.goals.slice(0, 6) : (Array.isArray(answers.goals) ? answers.goals.slice(0, 6) : []);
+    safeAnswers.teamSize = String(safeAnswers.teamSize || "2–5").slice(0, 20);
+    safeAnswers.goals = Array.isArray(safeAnswers.goals)
+      ? safeAnswers.goals.slice(0, 6)
+      : [];
+
+    const missing = nextMissingField(safeAnswers);
+    const completed = missing === "complete";
 
     return res.status(200).json({
       success: true,
       aiAvailable: true,
-      message: String(result.message || "Continuiamo con un'altra domanda.").slice(0, 1000),
-      done: !!result.done,
-      field: String(result.field || "").slice(0, 40),
+      message: completed
+        ? "Perfetto. Ho già abbastanza informazioni: procediamo senza altre domande inutili."
+        : (String(result.message || "").trim() && String(result.field || "") === missing
+            ? String(result.message).slice(0, 1000)
+            : questionForField(missing)),
+      done: completed,
+      field: missing,
       answers: safeAnswers
     });
   } catch (error) {
