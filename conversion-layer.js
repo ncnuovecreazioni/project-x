@@ -93,7 +93,9 @@
     box.innerHTML='<div class="px-live-preview-label">IL TUO CASO · ANTEPRIMA</div><div id="px-live-preview-text" class="px-live-preview-text">Scrivi il problema qui sopra e questa frase diventerà il punto di partenza della tua analisi.</div>';
     var ref=one('.px-example-row',quick)||one('.quickactions',quick);if(ref)ref.insertAdjacentElement('beforebegin',box);else quick.appendChild(box);
     function sync(){var v=(input.value||'').trim();document.getElementById('px-live-preview-text').textContent=v?'“'+v+'”':'Scrivi il problema qui sopra e questa frase diventerà il punto di partenza della tua analisi.';}
-    input.addEventListener('input',sync);sync();
+    input.addEventListener('input',sync);
+    $('.px-example',quick).forEach(function(btn){btn.addEventListener('click',function(){setTimeout(sync,0);});});
+    sync();
   }
 
   function addHumanResult(){
