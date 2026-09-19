@@ -176,18 +176,68 @@
     });
   }
 
+  function setupMobileNav(){
+    var nav=$('#pxMobileNav');
+    var btn=$('#pxMobileNavBtn');
+    var close=$('#pxMobileNavClose');
+
+    if(!nav || !btn || nav.dataset.pxWired==='1') return;
+    nav.dataset.pxWired='1';
+
+    function setOpen(open,focusButton){
+      nav.hidden=!open;
+      btn.setAttribute('aria-expanded',open?'true':'false');
+      document.body.classList.toggle('px-menu-open',open);
+      if(open){
+        announce('Menu aperto. Scegli una sezione.');
+      }else if(focusButton!==false){
+        btn.focus();
+      }
+    }
+
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(nav.hidden,true);
+    });
+
+    if(close){
+      close.addEventListener('click',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(false,true);
+      });
+    }
+
+    nav.addEventListener('click',function(e){
+      var a=e.target.closest ? e.target.closest('a') : null;
+      if(a) setOpen(false,false);
+    });
+
+    document.addEventListener('click',function(e){
+      if(nav.hidden) return;
+      if(nav.contains(e.target) || btn.contains(e.target)) return;
+      setOpen(false,false);
+    });
+
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape' && !nav.hidden){
+        setOpen(false,true);
+      }
+    });
+  }
+
   function keyboard(){
     document.addEventListener('keydown',function(e){
-      if(e.key!=='Escape') return;
-
-      var nav=$('#pxMobileNav');
-      var btn=$('#pxMobileNavBtn');
-
-      if(nav && !nav.hidden){
-        nav.hidden=true;
-        if(btn) btn.setAttribute('aria-expanded','false');
-        document.body.classList.remove('px-menu-open');
-        if(btn) btn.focus();
+      if(e.key==='Escape'){
+        var nav=$('#pxMobileNav');
+        var btn=$('#pxMobileNavBtn');
+        if(nav && !nav.hidden){
+          nav.hidden=true;
+          btn.setAttribute('aria-expanded','false');
+          document.body.classList.remove('px-menu-open');
+          if(btn) btn.focus();
+        }
       }
     });
   }
@@ -196,6 +246,7 @@
     injectStyles();
     setupMain();
     setupStatus();
+    setupMobileNav();
     improveHomeFields();
     improveQuestion();
     improveResult();
