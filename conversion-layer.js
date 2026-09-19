@@ -180,6 +180,8 @@
       '<div style="margin-top:6px;font-size:18px;font-weight:950;letter-spacing:-.03em;">Da decisione a sistema.</div>'+
       '<div style="margin:5px auto 0;max-width:620px;color:#8996ab;font-size:10px;line-height:1.5;">Hai già la scelta principale. Ora puoi trasformarla in blueprint, workflow e implementazione invece di continuare a cercare strumenti.</div>'+
       '<div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;">'+
+      '<a href="/audit.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Business Audit →</a>'+
+      '<a href="/simulator.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Value Simulator →</a>'+
       '<a href="/report-pro.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#fff;font-size:9px;font-weight:900;background:linear-gradient(135deg,#7c5cff,#5b8cff);">Apri Report PRO →</a>'+
       '<a href="/implementation.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;text-decoration:none;color:#dfe5f1;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);">Parla di implementazione →</a>'+
       '</div>';
