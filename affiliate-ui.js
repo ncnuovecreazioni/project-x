@@ -245,7 +245,7 @@
   function loadConversionLayer(){
     if(document.querySelector('script[data-projectx-conversion-layer="1"]')) return;
     var script=document.createElement('script');
-    script.src='/conversion-layer.js';
+    script.src='/conversion-layer.js?v=20260919-wowfix1';
     script.async=true;
     script.dataset.projectxConversionLayer='1';
     document.body.appendChild(script);
