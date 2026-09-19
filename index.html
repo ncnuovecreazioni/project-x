@@ -200,8 +200,57 @@
 @media(min-width:601px){
   .quickbox{box-shadow:0 22px 70px rgba(0,0,0,.32) !important;}
 }
+
+/* PROJECT-X HOME — DESKTOP CLEAN HERO: NO CIRCULAR GLOW */
+body{
+  background:
+    linear-gradient(180deg,#050711 0%,#080b15 52%,#0a0f1c 100%) !important;
+}
+.hero{
+  background:none !important;
+}
+.hero *, .hero *::before, .hero *::after{
+  background-image:none !important;
+}
+.hero .quickbox,
+.hero .px-showcase-card,
+.hero .px-live-preview,
+.hero .journey-step,
+.hero .px-result,
+.hero .px-proof,
+.hero .quickhead,
+.hero .quickgrid,
+.hero .quickactions{
+  background-color:rgba(10,15,28,.96) !important;
+}
+.hero .quickbox{
+  border-color:rgba(124,92,255,.28) !important;
+  box-shadow:0 24px 70px rgba(0,0,0,.34) !important;
+}
+.hero .px-showcase-card{
+  border-color:rgba(255,255,255,.08) !important;
+  box-shadow:0 20px 60px rgba(0,0,0,.26) !important;
+}
+.hero .px-showcase-card:before,
+.hero .px-story-card:after{
+  display:none !important;
+  content:none !important;
+}
+.hero .grad{
+  background:linear-gradient(100deg,#fff,#ad9dff 47%,#79aaff) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+}
+@media(min-width:601px){
+  #px-human-guidance,
+  #px-font-toggle{
+    position:fixed !important;
+    z-index:80 !important;
+  }
+}
 </style>
-<link rel="stylesheet" href="/premium.css?v=20260919-desktop-hardfix">
+<link rel="stylesheet" href="/premium.css?v=20260919-no-circles">
 </head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div></div></header>
