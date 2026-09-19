@@ -142,7 +142,7 @@
       <span class="px-wow-pill"><i class="px-wow-dot"></i> Motore attivo</span>
       <span class="px-wow-pill">⚡ Analisi in pochi secondi</span>
       <span class="px-wow-pill">◈ Stack personalizzato</span>
-      <span class="px-wow-pill">↗ Percorso monetizzabile</span>
+      <span class="px-wow-pill">✓ Decisione separata dal brand</span>
     `;
     hero.insertBefore(status, hero.querySelector('.quickbox') || null);
 
@@ -182,7 +182,7 @@
       proof.innerHTML=`
         <div class="px-wow-proof-card"><strong>🎯 Fit prima del brand</strong><span>Il ranking parte dalle esigenze, non dalla fama dello strumento.</span></div>
         <div class="px-wow-proof-card"><strong>🧠 AI + motore</strong><span>L'AI interpreta; il motore deterministico decide in modo coerente.</span></div>
-        <div class="px-wow-proof-card"><strong>💸 Monetizzazione</strong><span>Affiliate, PRO e implementazione entrano nello stesso percorso.</span></div>
+        <div class="px-wow-proof-card"><strong>🛡️ Trasparenza</strong><span>Eventuali collegamenti commerciali sono dichiarati dove compaiono; la compatibilità viene calcolata separatamente.</span></div>
       `;
       quickbox.insertAdjacentElement('afterend',proof);
     }
