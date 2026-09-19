@@ -611,7 +611,7 @@ document.querySelectorAll('.px-example').forEach(function(btn){
 function startDemo(){ $('quickProblem').value='Perdo ore tra email, preventivi e follow-up dei clienti e vorrei automatizzare il lavoro ripetitivo.'; $('quickBusiness').value='Impresa di servizi'; $('quickBudget').value='€31–50'; document.querySelectorAll('.px-example').forEach(function(x){x.classList.remove('is-active')}); var first=document.querySelector('.px-example[data-example="Perdo ore tra email e follow-up dei clienti"]'); if(first)first.classList.add('is-active'); startQuick(); }
 $('quickBtn').onclick=startQuick;$('quickBtn2').onclick=startDemo;$('fullBtn').onclick=startFull;$('demoBtn').onclick=startDemo;$('fullBtn2').onclick=startFull;$('nextBtn').onclick=next;$('backBtn').onclick=prev;$('copyBtn').onclick=copyReport;$('shareBtn').onclick=share;$('saveLinkBtn').onclick=saveResultLink;$('leadBtn').onclick=function(){openLead('report')};$('implementationBtn').onclick=function(){openLead('implementation')};$('leadCancel').onclick=closeLead;$('leadSend').onclick=sendLead;$('printBtn').onclick=printReport;$('refineBtn').onclick=refine;$('resetBtn').onclick=reset;$('stickyBtn').onclick=function(){$('primaryMount').scrollIntoView({behavior:'smooth'})};$('leadBack').addEventListener('click',function(e){if(e.target===$('leadBack'))closeLead()});
 setView('home');var sharedResult=loadHash();if(!sharedResult)load();var casePreset=presetFromCase();if(!casePreset){$('quickProblem').value=answers.painPoint||'';$('quickBusiness').value=answers.businessType||'';$('quickBudget').value=answers.budget||'';}if(sharedResult){setTimeout(function(){analyze()},120)}else if(casePreset){setTimeout(function(){startQuick()},260)}
-window.ProjectXUI={startQuick:startQuick,startFull:startFull,analyze:analyze,reset:reset,next:next,prev:prev,renderResults:renderResults};
+window.ProjectXUI={startQuick:startQuick,startFull:startFull,analyze:analyze,reset:reset,next:next,prev:prev,renderResults:renderResults,getResult:function(){return result;}};
 if(!E){document.body.innerHTML='<div style="padding:50px;color:white;font-family:system-ui">PROJECT-X non riesce a caricare il Decision Engine. Controlla engine.js e database.js.</div>'}
 })();
 </script>
@@ -629,28 +629,6 @@ if(!E){document.body.innerHTML='<div style="padding:50px;color:white;font-family
 
 <script src="/human-layer.js?v=20260919-mobile-compact"></script>
 <script src="/execution-guide.js?v=20260919-tutorial-wow"></script>
-<script>
-(function(){
-  function launchProjectX(){
-    try{
-      if(window.__PX_AUTO_STARTED)return;
-      var results=document.getElementById('results');
-      var demo=document.getElementById('demoBtn');
-      if(!demo||!results)return;
-      if(getComputedStyle(results).display!=='none')return;
-      if(typeof demo.onclick!=='function')return;
-      window.__PX_AUTO_STARTED=true;
-      demo.click();
-    }catch(e){}
-  }
-  function schedule(){
-    setTimeout(launchProjectX,350);
-    setTimeout(launchProjectX,1400);
-  }
-  if(document.readyState==='complete')schedule();
-  else window.addEventListener('load',schedule,{once:true});
-})();
-</script>
 <script src="/projectx-controller.js?v=20260919-reliable-flow"></script>
 <script src="/usability-layer.js?v=20260919-usability3"></script>
 </body>
