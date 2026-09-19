@@ -73,12 +73,23 @@ function callCoach(){
   $('send').textContent='Capisco…';
   $('status').innerHTML='<span class="typing">Elaboro <i></i><i></i><i></i></span>';
 
+  var controller = new AbortController();
+  var requestTimeout = setTimeout(function(){
+    controller.abort();
+  }, 14000);
+
   fetch('/api/coach',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({answers:answers,messages:messages})
+    body:JSON.stringify({answers:answers,messages:messages}),
+    signal:controller.signal
   })
-  .then(function(r){return r.json()})
+  .then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  })
+  .then(function(d){
+    clearTimeout(requestTimeout);
   .then(function(d){
     if(!d||!d.success)throw new Error('Coach non disponibile');
     aiAvailable=!!d.aiAvailable;
