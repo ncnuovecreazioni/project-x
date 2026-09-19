@@ -106,6 +106,23 @@
     var input=$('#painInput');
     if(input) input.setAttribute('aria-label','Descrivi il problema che vuoi risolvere');
 
+    var actions=document.querySelector('#questionnaire .actions');
+    if(actions && !document.getElementById('pxExitQuestionnaire')){
+      var exit=document.createElement('button');
+      exit.type='button';
+      exit.id='pxExitQuestionnaire';
+      exit.className='btn secondary';
+      exit.textContent='Esci';
+      exit.setAttribute('aria-label','Esci dal questionario e torna alla home');
+      actions.insertBefore(exit,actions.firstChild);
+      exit.addEventListener('click',function(){
+        if(window.ProjectXUI && typeof window.ProjectXUI.reset==='function'){
+          window.ProjectXUI.reset();
+          announce('Sei tornato alla home.');
+        }
+      });
+    }
+
     var search=$('#toolSearch');
     if(search) search.setAttribute('aria-label','Cerca uno strumento che utilizzi già');
   }
