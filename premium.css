@@ -2952,3 +2952,184 @@ button{
     box-shadow:0 24px 80px rgba(0,0,0,.22) !important;
   }
 }
+
+
+/* =========================================================
+   PROJECT-X — FINAL PRODUCT POLISH
+   Clear navigation + consistent PRO typography.
+   ========================================================= */
+
+.px-nav-cta{
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:9px 13px;
+  border:1px solid rgba(124,92,255,.28);
+  border-radius:12px;
+  background:linear-gradient(135deg,rgba(124,92,255,.16),rgba(91,140,255,.08));
+  color:#f3f0ff !important;
+  text-decoration:none !important;
+  font-size:13px !important;
+  font-weight:900 !important;
+  box-shadow:0 10px 30px rgba(124,92,255,.08);
+}
+
+.px-nav-cta:hover{
+  transform:translateY(-2px);
+  border-color:rgba(124,92,255,.45);
+  background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(91,140,255,.12));
+}
+
+#sticky{
+  padding:12px 15px !important;
+  border:1px solid rgba(124,92,255,.24) !important;
+  border-radius:17px !important;
+  background:rgba(9,13,25,.90) !important;
+  box-shadow:0 20px 60px rgba(0,0,0,.35) !important;
+}
+
+#sticky .btn{
+  min-height:50px !important;
+  font-size:14px !important;
+}
+
+/* PRO pages: they must be readable at normal desktop zoom */
+.px-pro-preview-title{
+  font-size:26px !important;
+  line-height:1.18 !important;
+}
+
+.px-pro-kicker{
+  font-size:12px !important;
+  line-height:1.4 !important;
+}
+
+.px-pro-line{
+  padding:14px !important;
+}
+
+.px-pro-line b{
+  font-size:14px !important;
+  line-height:1.4 !important;
+}
+
+.px-pro-line em{
+  font-size:12px !important;
+  line-height:1.5 !important;
+}
+
+.px-pro-price{
+  font-size:58px !important;
+}
+
+.px-pro-price-sub{
+  font-size:13px !important;
+  line-height:1.55 !important;
+}
+
+.px-pro-trust span{
+  font-size:10px !important;
+}
+
+.pro-page,
+#proCheckoutBtn{
+  font-size:15px !important;
+}
+
+.features .feature b{
+  font-size:15px !important;
+  line-height:1.4 !important;
+}
+
+.features .feature span{
+  font-size:13px !important;
+  line-height:1.6 !important;
+  color:#9eabbe !important;
+}
+
+.once{
+  font-size:12px !important;
+}
+
+.note{
+  font-size:13px !important;
+  line-height:1.6 !important;
+}
+
+.step b{
+  font-size:14px !important;
+  line-height:1.4 !important;
+}
+
+.step p{
+  font-size:13px !important;
+  line-height:1.6 !important;
+  color:#9eabbe !important;
+}
+
+#proConsent + span{
+  font-size:12px !important;
+  line-height:1.6 !important;
+}
+
+.px-pro-mini-cta,
+#proCheckoutBtn{
+  font-size:14px !important;
+  min-height:50px !important;
+}
+
+/* report-pro.html generated content */
+#content .card h2{
+  font-size:24px !important;
+  line-height:1.22 !important;
+}
+
+#content .card .sub{
+  font-size:14px !important;
+  line-height:1.65 !important;
+}
+
+#content .metric{
+  font-size:14px !important;
+  line-height:1.55 !important;
+  padding:13px 0 !important;
+}
+
+#content .metric b{
+  font-size:19px !important;
+}
+
+#content .lock{
+  font-size:13px !important;
+  line-height:1.65 !important;
+}
+
+#content .value{
+  font-size:44px !important;
+}
+
+@media(max-width:800px){
+  .px-nav-cta{
+    width:100%;
+    min-height:50px;
+  }
+
+  .px-pro-preview-title{
+    font-size:22px !important;
+  }
+
+  .px-pro-price{
+    font-size:52px !important;
+  }
+
+  #content .card h2{
+    font-size:22px !important;
+  }
+}
+
+@media(max-width:600px){
+  .topnav{
+    display:none;
+  }
+}
