@@ -3133,3 +3133,154 @@ button{
     display:none;
   }
 }
+
+
+/* =========================================================
+   PROJECT-X — MOBILE NAV + FINAL UX FINISH
+   ========================================================= */
+
+.px-mobile-nav-btn{
+  display:none;
+  min-height:44px !important;
+  padding:9px 13px !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,.04) !important;
+  color:#f5f7fb !important;
+  font-size:13px !important;
+  font-weight:900 !important;
+}
+
+.px-mobile-nav{
+  position:fixed;
+  inset:72px 12px auto 12px;
+  z-index:10001;
+  padding:14px;
+  border:1px solid rgba(124,92,255,.24);
+  border-radius:20px;
+  background:rgba(7,11,20,.97);
+  box-shadow:0 30px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.03);
+  backdrop-filter:blur(20px);
+}
+
+.px-mobile-nav[hidden]{
+  display:none !important;
+}
+
+.px-mobile-nav-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:5px 4px 12px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.px-mobile-nav-head strong{
+  font-size:13px;
+  letter-spacing:.16em;
+}
+
+.px-mobile-nav-head button{
+  width:40px;
+  min-height:40px !important;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+  color:#fff;
+  font-size:22px !important;
+}
+
+.px-mobile-nav>a{
+  display:flex;
+  align-items:center;
+  min-height:48px;
+  margin-top:6px;
+  padding:11px 12px;
+  border-radius:12px;
+  color:#dfe5f0 !important;
+  text-decoration:none !important;
+  font-size:14px !important;
+  font-weight:800 !important;
+}
+
+.px-mobile-nav>a:hover{
+  background:rgba(124,92,255,.08);
+}
+
+body.px-menu-open{
+  overflow:hidden;
+}
+
+@media(max-width:760px){
+  .px-mobile-nav-btn{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .px-nav-cta{
+    display:none !important;
+  }
+
+  .quickactions .primary{
+    box-shadow:0 20px 65px rgba(124,92,255,.30) !important;
+  }
+}
+
+/* Make the top promise and first action even easier to scan */
+#results .resulthero .label{
+  display:inline-flex;
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(124,92,255,.08);
+  border:1px solid rgba(124,92,255,.16);
+}
+
+#results .resulthero .fit{
+  font-size:15px !important;
+  padding:10px 13px !important;
+}
+
+#results .resulthero .hero-actions .btn{
+  min-height:54px !important;
+  font-size:15px !important;
+}
+
+/* Keep important CTAs visible and comfortably tappable */
+#results .bottom .btn,
+#results .hero-actions .btn,
+#primaryMount a,
+#primaryMount button{
+  min-height:50px !important;
+}
+
+/* Stronger separation between information and action */
+#results .resultgrid{
+  margin-top:20px !important;
+}
+
+#results .resultgrid .panel{
+  background:linear-gradient(145deg,rgba(17,25,44,.88),rgba(8,12,22,.92)) !important;
+}
+
+/* Elegant section transitions */
+#benefits{
+  border-top:1px solid rgba(255,255,255,.035);
+}
+
+#benefits .title{
+  margin-bottom:42px !important;
+}
+
+/* Mobile navigation accessibility */
+@media(max-width:600px){
+  .px-mobile-nav{
+    inset:70px 10px auto 10px;
+  }
+
+  .px-mobile-nav>a{
+    min-height:50px;
+    font-size:15px !important;
+  }
+}
