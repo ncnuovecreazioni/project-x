@@ -22,19 +22,19 @@
 </section>
 <section class="grid">
 <article class="card">
-<h2>Regola i parametri</h2>
+<h2>Metti i tuoi numeri</h2>
 <p class="sub">Parti da valori realistici. Puoi poi sostituirli con i numeri del tuo caso.</p>
 <div class="fields">
-<div class="field"><label>ORE RIPETITIVE / SETTIMANA</label><input id="hours" class="control" type="number" min="0" max="168" step="0.5" value="7"></div>
-<div class="field"><label>VALORE ORARIO (€)</label><input id="rate" class="control" type="number" min="0" max="1000" step="1" value="30"></div>
-<div class="field"><label>PERSONE COINVOLTE</label><input id="people" class="control" type="number" min="1" max="1000" step="1" value="1"></div>
-<div class="field"><label>RECUPERO REALISTICO (%)</label><input id="recovery" class="control" type="number" min="0" max="100" step="5" value="50"></div>
-<div class="field"><label>COSTO SOFTWARE / MESE (€)</label><input id="software" class="control" type="number" min="0" max="100000" step="1" value="99"></div>
+<div class="field"><label>ORE CHE IL PROCESSO TI MANGIA / SETTIMANA</label><input id="hours" class="control" type="number" min="0" max="168" step="0.5" value="7"></div>
+<div class="field"><label>VALORE DI UN’ORA DI LAVORO (€)</label><input id="rate" class="control" type="number" min="0" max="1000" step="1" value="30"></div>
+<div class="field"><label>PERSONE CHE TOCCANO IL PROCESSO</label><input id="people" class="control" type="number" min="1" max="1000" step="1" value="1"></div>
+<div class="field"><label>QUANTO TEMPO PENSI DI RECUPERARE (%)</label><input id="recovery" class="control" type="number" min="0" max="100" step="5" value="50"></div>
+<div class="field"><label>COSTO DEGLI STRUMENTI / MESE (€)</label><input id="software" class="control" type="number" min="0" max="100000" step="1" value="99"></div>
 </div>
 <div class="cta"><button id="reset" class="btn secondary">Ripristina valori</button><a id="audit" class="btn secondary" href="/audit.html">Fai prima il Business Audit →</a></div>
 </article>
 <article class="card">
-<h2>Il potenziale teorico</h2>
+<h2>Quanto potrebbe valere il tempo recuperato</h2>
 <p class="sub">Valore del tempo coinvolto nel processo e ipotesi di recupero.</p>
 <div class="value" id="monthly">€0</div>
 <div class="sub">valore teorico recuperabile / mese</div>
@@ -45,7 +45,7 @@
 <div class="bars">
 <div class="barRow"><span>Valore del tempo</span><div class="track"><i id="b1"></i></div><b id="v1">€0</b></div>
 <div class="barRow"><span>Spesa software</span><div class="track"><i id="b2"></i></div><b id="v2">€0</b></div>
-<div class="barRow"><span>Differenziale teorico</span><div class="track"><i id="b3"></i></div><b id="v3">€0</b></div>
+<div class="barRow"><span>Valore teorico dopo il costo software</span><div class="track"><i id="b3"></i></div><b id="v3">€0</b></div>
 </div>
 <div class="note"><strong style="color:#fff">Come leggerlo:</strong> il simulatore non sa se otterrai davvero quel recupero. Usa il numero per decidere cosa misurare nel processo reale e per costruire un business case più informato.</div>
 <div class="cta"><a id="pro" class="btn primary" href="/report-pro.html">Trasforma i numeri in un Blueprint →</a><a class="btn secondary" href="/">Torna a PROJECT-X</a></div>
