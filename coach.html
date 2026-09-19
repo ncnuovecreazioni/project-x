@@ -90,7 +90,6 @@ function callCoach(){
   })
   .then(function(d){
     clearTimeout(requestTimeout);
-  .then(function(d){
     if(!d||!d.success)throw new Error('Coach non disponibile');
     aiAvailable=!!d.aiAvailable;
     var incoming=d.answers&&typeof d.answers==='object'?d.answers:{};
