@@ -204,8 +204,7 @@
   }
 
   function plainLanguage(){
-    if(document.getElementById('px-plain-language')) return;
-
+    var existing=document.getElementById('px-plain-language');
     var p=page();
     var mode='home';
     if(p==='index.html'){
@@ -275,6 +274,11 @@
     var key=mode;
     if(mode==='home' && p!=='index.html') key=p==='audit.html'?'audit':p==='simulator.html'?'simulator':p==='workspace.html'?'workspace':p==='pro.html'?'pro':p==='report-pro.html'?'report':p==='implementation.html'?'implementation':p==='compare.html'?'compare':'generic';
     var d=data[key]||data.generic;
+    var modeKey=(p==='index.html'?mode:key);
+    if(existing){
+      if(existing.getAttribute('data-mode-key')===modeKey) return;
+      existing.remove();
+    }
     var host=null;
     if(p==='index.html' && mode==='results') host=document.querySelector('.resulthead');
     else if(p==='index.html' && mode==='questionnaire') host=document.querySelector('#questionnaire .qwrap');
@@ -283,6 +287,7 @@
 
     var card=document.createElement('section');
     card.id='px-plain-language';
+    card.setAttribute('data-mode-key',modeKey);
     card.setAttribute('aria-label','Spiegazione in parole semplici');
     card.innerHTML='<div class="pxpl-kicker">'+d.kicker+'</div><div class="pxpl-title">'+d.title+'</div><div class="pxpl-steps">'+d.steps.map(function(x){return '<div class="pxpl-step"><b>'+x[0]+'</b><div><strong>'+x[1]+'</strong><span>'+x[2]+'</span></div></div>'}).join('')+'</div>';
 
@@ -315,6 +320,10 @@
     document.body.appendChild(wrap);
 
     plainLanguage();
+    var viewObserver=new MutationObserver(function(){ plainLanguage(); });
+    var qv=document.getElementById('questionnaire'),rv=document.getElementById('results');
+    if(qv)viewObserver.observe(qv,{attributes:true,attributeFilter:['style','class']});
+    if(rv)viewObserver.observe(rv,{attributes:true,attributeFilter:['style','class']});
 
     var ctx=context();
     function renderContext(){
