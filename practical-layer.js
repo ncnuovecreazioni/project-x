@@ -107,8 +107,13 @@
     var saved={};
     try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
     var url=String(p.url||p.pricingUrl||'');
-    var link=/^https?:\/\//i.test(url)
-      ? '<a class="px-practical-open" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Apri '+esc(p.name||p.id)+' ↗</a>'
+    var affiliateIds={systeme:1,pipedrive:1,getresponse:1,activecampaign:1,hubspot:1,shopify:1,make:1,brevo:1,monday:1,semrush:1,kit:1};
+    var toolId=String(p.id||'').toLowerCase().trim();
+    var linkUrl=affiliateIds[toolId]
+      ? '/api/affiliate?tool='+encodeURIComponent(toolId)+'&source=practical-guide'
+      : url;
+    var link=/^https?:\/\//i.test(linkUrl) || /^\/api\/affiliate\?tool=/i.test(linkUrl)
+      ? '<a class="px-practical-open" href="'+esc(linkUrl)+'" target="_blank" rel="noopener noreferrer">Apri '+esc(p.name||p.id)+' ↗</a>'
       : '';
 
     var box=document.createElement('section');
