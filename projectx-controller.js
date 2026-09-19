@@ -1,6 +1,7 @@
 /* PROJECT-X — CENTRAL INTERACTION CONTROLLER
-   Single, reliable interaction layer for the public home CTAs.
-   Visual effects stay in the UI layers; this file only controls flow.
+   Reliable click layer for the public home CTAs.
+   Uses event delegation so buttons keep working even when other UI layers
+   add/re-render content after page load.
 */
 (function(){
   'use strict';
@@ -10,14 +11,6 @@
 
   function id(x){ return document.getElementById(x); }
 
-  function ready(fn){
-    if(document.readyState==='loading'){
-      document.addEventListener('DOMContentLoaded',fn,{once:true});
-    }else{
-      fn();
-    }
-  }
-
   function getUI(){
     return window.ProjectXUI &&
       typeof window.ProjectXUI.startQuick==='function' &&
@@ -26,45 +19,41 @@
       : null;
   }
 
-  function demo(){
-    var problem=id('quickProblem');
-    var business=id('quickBusiness');
+  function demoValues(problem){
+    var p=id('quickProblem');
+    var b=id('quickBusiness');
     var budget=id('quickBudget');
 
-    if(problem) problem.value='Perdo ore tra email, preventivi e follow-up dei clienti e vorrei automatizzare il lavoro ripetitivo.';
-    if(business) business.value='Impresa di servizi';
-    if(budget) budget.value='€31–50';
+    if(p) p.value=problem || 'Perdo ore tra email, preventivi e follow-up dei clienti e vorrei automatizzare il lavoro ripetitivo.';
+    if(b && !b.value) b.value='Impresa di servizi';
+    if(budget && !budget.value) budget.value='€31–50';
 
     document.querySelectorAll('.px-example').forEach(function(x){
-      x.classList.remove('is-active');
+      x.classList.toggle('is-active', (x.getAttribute('data-example')||'') === (p?p.value:''));
     });
-
-    var first=document.querySelector('.px-example[data-example="Perdo ore tra email e follow-up dei clienti"]');
-    if(first) first.classList.add('is-active');
   }
 
-  function quick(isDemo){
+  function startQuick(withDemo, problem){
     var ui=getUI();
-    if(!ui) return false;
+    if(!ui) return setTimeout(function(){ startQuick(withDemo,problem); },120);
 
     try{
-      if(isDemo) demo();
+      if(withDemo) demoValues(problem);
       ui.startQuick();
-      return true;
     }catch(e){
-      return false;
+      setTimeout(function(){
+        try{
+          var retry=getUI();
+          if(retry) retry.startQuick();
+        }catch(_){}
+      },180);
     }
   }
 
-  function full(){
+  function startFull(){
     var ui=getUI();
-    if(!ui) return false;
-    try{
-      ui.startFull();
-      return true;
-    }catch(e){
-      return false;
-    }
+    if(!ui) return setTimeout(startFull,120);
+    try{ ui.startFull(); }catch(e){ setTimeout(startFull,180); }
   }
 
   function caseDemo(type){
@@ -74,88 +63,68 @@
       excel:'Uso Excel per gestire dati e attività e vorrei automatizzare i passaggi ripetitivi',
       clienti:'Gestisco richieste e clienti in posti diversi e rischio di dimenticare i follow-up'
     };
-    var problem=id('quickProblem');
-    var business=id('quickBusiness');
-    var budget=id('quickBudget');
-    if(problem) problem.value=map[type]||map.preventivi;
-    if(business && !business.value) business.value='Impresa di servizi';
-    if(budget && !budget.value) budget.value='€31–50';
-    if(problem) problem.scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(function(){ quick(false); },180);
+    var problem=map[type]||map.preventivi;
+    demoValues(problem);
+    setTimeout(function(){ startQuick(false); },80);
   }
 
   function styles(){
     if(id('px-controller-style')) return;
-
     var s=document.createElement('style');
     s.id='px-controller-style';
     s.textContent=[
-      '#quickBtn,#quickBtn2,#fullBtn,#fullBtn2,#demoBtn{pointer-events:auto!important;position:relative!important;z-index:100!important}',
+      '#quickBtn,#quickBtn2,#fullBtn,#fullBtn2,#demoBtn{pointer-events:auto!important;position:relative!important;z-index:100!important;cursor:pointer!important}',
+      '.px-example{pointer-events:auto!important;position:relative;z-index:100!important;cursor:pointer!important}',
+      '.px-home-example-grid a{pointer-events:auto!important;position:relative;z-index:100!important;cursor:pointer!important}',
       '.px-mobile-nav-btn{position:relative;z-index:10002!important}',
       '.px-mobile-nav{z-index:10001!important}'
     ].join('');
     document.head.appendChild(s);
   }
 
-  function bind(){
-    styles();
+  function handleClick(e){
+    var target=e.target && e.target.closest ? e.target.closest(
+      '#quickBtn,#quickBtn2,#fullBtn,#fullBtn2,#demoBtn,.px-example,.px-home-example-grid a'
+    ) : null;
+    if(!target) return;
 
-    var quickBtn=id('quickBtn');
-    var quickBtn2=id('quickBtn2');
-    var fullBtn=id('fullBtn');
-    var fullBtn2=id('fullBtn2');
-    var demoBtn=id('demoBtn');
+    e.preventDefault();
+    e.stopImmediatePropagation();
 
-    document.querySelectorAll('.px-home-example-grid a').forEach(function(a){
-      if(a.dataset.pxCaseWired==='1') return;
-      a.dataset.pxCaseWired='1';
-      a.onclick=function(e){
-        e.preventDefault();
-        var href=a.getAttribute('href')||'';
-        var type=(href.split('case=')[1]||'').split('&')[0];
-        caseDemo(type);
-      };
-    });
-
-    if(quickBtn){
-      quickBtn.onclick=function(e){
-        if(e) e.preventDefault();
-        quick(false);
-      };
+    if(target.matches('.px-home-example-grid a')){
+      var href=target.getAttribute('href')||'';
+      var m=href.match(/[?&]case=([^&]+)/);
+      caseDemo(m?decodeURIComponent(m[1]):'preventivi');
+      return;
     }
 
-    if(quickBtn2){
-      quickBtn2.onclick=function(e){
-        if(e) e.preventDefault();
-        quick(true);
-      };
+    if(target.classList.contains('px-example')){
+      demoValues(target.getAttribute('data-example')||'');
+      setTimeout(function(){ startQuick(false); },80);
+      return;
     }
 
-    if(demoBtn){
-      demoBtn.onclick=function(e){
-        if(e) e.preventDefault();
-        quick(true);
-      };
+    if(target.id==='fullBtn' || target.id==='fullBtn2'){
+      startFull();
+      return;
     }
 
-    if(fullBtn){
-      fullBtn.onclick=function(e){
-        if(e) e.preventDefault();
-        full();
-      };
+    if(target.id==='demoBtn' || target.id==='quickBtn2'){
+      startQuick(true);
+      return;
     }
 
-    if(fullBtn2){
-      fullBtn2.onclick=function(e){
-        if(e) e.preventDefault();
-        full();
-      };
-    }
+    startQuick(false);
   }
 
-  ready(function(){
-    bind();
-    setTimeout(bind,350);
-    setTimeout(bind,1000);
-  });
+  function init(){
+    styles();
+    document.addEventListener('click',handleClick,true);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',init,{once:true});
+  }else{
+    init();
+  }
 })();
