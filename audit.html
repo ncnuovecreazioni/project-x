@@ -67,6 +67,7 @@
 (function(){
 'use strict';
 function $(id){return document.getElementById(id)}
+function $(selector,root){return Array.prototype.slice.call((root||document).querySelectorAll(selector))}
 function track(event,meta){try{if(window.ProjectXAutopilot&&window.ProjectXAutopilot.track)window.ProjectXAutopilot.track(event,meta||{})}catch(e){}}
 function key(s){return String(s||'').toLowerCase()}
 $$('.chip').forEach(function(b){b.onclick=function(){$('stack').value=b.dataset.fill+'\n'+$('stack').value}});
