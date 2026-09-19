@@ -259,6 +259,11 @@ body{
   background-image:none !important;
   background-color:rgba(255,255,255,.045) !important;
 }
+
+/* PROJECT-X QUICK START UX */
+#quickBtn{position:relative;z-index:50 !important;pointer-events:auto !important;cursor:pointer !important}
+.quickactions{position:relative;z-index:40}
+.quickbox textarea,.quickbox select,.quickbox button{position:relative;z-index:30}
 </style>
 <link rel="stylesheet" href="/premium.css?v=20260919-desktop-final">
 </head>
@@ -348,7 +353,38 @@ function getTools(){try{if(E&&typeof E.getDatabase==='function'){var d=E.getData
 function event(name,meta){try{fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:name,sessionId:sessionId,meta:meta||{}})}).catch(function(){})}catch(e){}}
 function setView(view){$('home').style.display=view==='home'?'block':'none';$('benefits').style.display=view==='home'?'block':'none';$('questionnaire').style.display=view==='questionnaire'?'block':'none';$('loading').style.display=view==='loading'?'block':'none';$('results').style.display=view==='results'?'block':'none';if(view==='results')$('sticky').className='sticky';else $('sticky').className='sticky hidden'}
 function startFull(){resetAnswers();mode='full';step=0;$('modeLabel').textContent='ANALISI COMPLETA';setView('questionnaire');renderQuestion();event('analysis_start',{mode:'full'});window.scrollTo({top:0,behavior:'smooth'})}
-function startQuick(){var problem=($('quickProblem').value||'').trim();var business=$('quickBusiness').value||'';var budget=$('quickBudget').value||'';if(!problem){$('quickProblem').focus();alert('Scrivi in una frase cosa ti fa perdere tempo.');return}if(!business){alert('Seleziona la tua attività.');return}if(!budget){alert('Seleziona il budget.');return}resetAnswers();mode='quick';answers.painPoint=problem;answers.businessType=business;answers.budget=budget;answers.teamSize='2–5';answers.techLevel='Medio';answers.automationLevel='Smart';answers.hours='4–7';answers.hourlyValue='€30';answers.goals=[];step=0;save();event('analysis_start',{mode:'quick'});analyze();}
+function startQuick(){try{
+var problem=($('quickProblem').value||'').trim();
+var business=$('quickBusiness').value||'';
+var budget=$('quickBudget').value||'';
+if(!problem){$('quickProblem').focus();alert('Scrivi in una frase cosa ti fa perdere tempo.');return}
+if(!business){alert('Seleziona la tua attività.');return}
+if(!budget){alert('Seleziona il budget.');return}
+resetAnswers();
+mode='quick';
+answers.painPoint=problem;
+answers.businessType=business;
+answers.budget=budget;
+answers.teamSize='2–5';
+answers.techLevel='Medio';
+answers.automationLevel='Smart';
+answers.hours='4–7';
+answers.hourlyValue='€30';
+answers.goals=[];
+step=0;
+save();
+event('analysis_start',{mode:'quick'});
+if(!E||typeof E.analyzeAnswers!=='function')throw new Error('Decision Engine non disponibile');
+setView('loading');
+$('loadingText').textContent='Sto costruendo subito la tua direzione…';
+result=E.analyzeAnswers(answers,null);
+if(!result)throw new Error('Analisi non disponibile');
+result.aiAvailable=false;
+setView('results');
+renderResults(result);
+event('analysis_complete',{mode:'quick',primary:result.primaryTool&&result.primaryTool.name||'',compatibility:result.primaryTool&&result.primaryTool.compatibility||0});
+window.scrollTo({top:0,behavior:'smooth'});
+}catch(err){setView('home');alert(err&&err.message?err.message:'PROJECT-X non è riuscito ad avviare l’analisi. Riprova.');}}
 function renderQuestion(){var q=questions[step],val=answers[q.key]||[];var pct=Math.round((step+1)/questions.length*100);$('progressLabel').textContent='Passo '+(step+1)+' di '+questions.length;$('progressPct').textContent=pct+'%';$('progressBar').style.width=pct+'%';$('qTitle').textContent=q.title;$('qDesc').textContent=q.desc;$('questionWhy').textContent=q.why;$('qContent').innerHTML='';
 if(q.text){$('qContent').innerHTML='<textarea id="painInput" class="textinput" maxlength="800" placeholder="Esempio: ricevo richieste, preparo preventivi, copio dati e spesso dimentico i follow-up…"></textarea>';$('painInput').value=answers[q.key]||''}
 else if(q.tools){var head=document.createElement('div');head.className='tools-head';head.innerHTML='<input id="toolSearch" class="search" placeholder="Cerca uno strumento…"><span id="toolCounter" class="counter"></span>';$('qContent').appendChild(head);var box=document.createElement('div');box.className='tools';$('qContent').appendChild(box);var draw=function(){var term=String($('toolSearch').value||'').toLowerCase();var list=getTools().filter(function(t){return String(t.name||t.id||'').toLowerCase().indexOf(term)>=0});$('toolCounter').textContent=list.length+' disponibili';box.innerHTML='';list.forEach(function(t){var id=t.id||t.name,b=document.createElement('button');b.type='button';b.className='option'+((answers[q.key]||[]).indexOf(id)>=0?' selected':'');b.innerHTML='<strong>'+esc(t.name||id)+'</strong><small>'+esc(t.category||'Software')+'</small>';b.onclick=function(){var arr=answers[q.key]||[];answers[q.key]=arr.indexOf(id)>=0?arr.filter(function(x){return x!==id}):arr.concat([id]);save();renderQuestion()};box.appendChild(b)})};$('toolSearch').addEventListener('input',draw);draw()}
@@ -598,6 +634,6 @@ if(!E){document.body.innerHTML='<div style="padding:50px;color:white;font-family
 </footer>
 
 <script src="/human-layer.js?v=20260919-ux3"></script>
-<script src="/execution-guide.js?v=20260919-tutorial-wow"></script>
+<script src="/execution-guide.js?v=20260919-tutorial-wow-2"></script>
 </body>
 </html>
