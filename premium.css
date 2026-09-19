@@ -1670,3 +1670,686 @@ body.px-large-text .px-hi-title{
     box-shadow:none !important;
   }
 }
+
+
+/* =========================================================
+   PROJECT-X — FINAL READABILITY + PRODUCT POLISH
+   Larger type, stronger hierarchy, calmer density.
+   ========================================================= */
+
+[hidden]{
+  display:none !important;
+}
+
+#questionnaire[hidden],
+#loading[hidden],
+#results[hidden]{
+  display:none !important;
+}
+
+body{
+  font-size:16px !important;
+  line-height:1.65 !important;
+  letter-spacing:0;
+}
+
+.top .tag{
+  font-size:12px !important;
+  padding:9px 12px !important;
+}
+
+.hero{
+  padding-bottom:92px !important;
+}
+
+.hero h1{
+  font-size:clamp(54px,8vw,92px) !important;
+  line-height:.94 !important;
+  letter-spacing:-.065em !important;
+}
+
+.hero p{
+  max-width:790px !important;
+  font-size:20px !important;
+  line-height:1.65 !important;
+  color:#b1bccd !important;
+}
+
+.quickbox{
+  padding:24px !important;
+  border-radius:26px !important;
+}
+
+.quickhead{
+  margin-bottom:16px !important;
+}
+
+.quickhead b{
+  font-size:16px !important;
+  line-height:1.35 !important;
+}
+
+.quickhead span{
+  font-size:12px !important;
+  line-height:1.4 !important;
+}
+
+.hero textarea{
+  min-height:138px !important;
+  padding:17px 18px !important;
+  font-size:17px !important;
+  line-height:1.6 !important;
+}
+
+.hero textarea::placeholder{
+  font-size:16px !important;
+}
+
+.select{
+  min-height:52px !important;
+  padding:13px 15px !important;
+  font-size:16px !important;
+}
+
+.btn,
+button{
+  font-size:15px !important;
+  font-weight:850 !important;
+  min-height:52px !important;
+}
+
+.quickactions .primary,
+.quickactions .secondary{
+  min-height:56px !important;
+}
+
+.micro{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.journey{
+  gap:10px !important;
+  margin-bottom:20px !important;
+}
+
+.journey-step{
+  padding:13px 14px !important;
+}
+
+.journey-step b{
+  font-size:12px !important;
+  line-height:1.35 !important;
+}
+
+.journey-step span{
+  font-size:11px !important;
+  line-height:1.45 !important;
+  color:#8b98ad !important;
+}
+
+.trust span{
+  font-size:11px !important;
+  padding:9px 12px !important;
+}
+
+.section{
+  padding:88px 0 !important;
+}
+
+.title{
+  max-width:900px !important;
+  margin-bottom:38px !important;
+}
+
+.title h2{
+  font-size:clamp(34px,4.5vw,50px) !important;
+  line-height:1.03 !important;
+}
+
+.title p{
+  font-size:17px !important;
+  line-height:1.65 !important;
+  color:#aab5c7 !important;
+}
+
+.cards{
+  gap:18px !important;
+}
+
+.feature{
+  padding:32px !important;
+}
+
+.feature .icon{
+  width:50px !important;
+  height:50px !important;
+  font-size:25px !important;
+}
+
+.feature h3{
+  font-size:21px !important;
+  line-height:1.25 !important;
+  margin-top:18px !important;
+}
+
+.feature p{
+  font-size:15px !important;
+  line-height:1.65 !important;
+  color:#a9b4c5 !important;
+}
+
+.numbers .card{
+  padding:22px !important;
+}
+
+.numbers b{
+  font-size:29px !important;
+}
+
+.numbers span{
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+.mode{
+  padding:28px !important;
+}
+
+.mode h3{
+  font-size:21px !important;
+}
+
+.mode p{
+  font-size:15px !important;
+  line-height:1.65 !important;
+}
+
+.qwrap{
+  max-width:900px !important;
+}
+
+.progressline{
+  font-size:13px !important;
+}
+
+.qmeta{
+  font-size:12px !important;
+}
+
+.qcard{
+  padding:42px !important;
+}
+
+.qcard h2{
+  font-size:clamp(30px,4vw,40px) !important;
+  line-height:1.08 !important;
+}
+
+.desc{
+  font-size:16px !important;
+  line-height:1.65 !important;
+}
+
+.option{
+  padding:18px 19px !important;
+  border-radius:16px !important;
+}
+
+.option strong{
+  font-size:15px !important;
+  line-height:1.4 !important;
+}
+
+.option small{
+  font-size:13px !important;
+  line-height:1.55 !important;
+  color:#9eabbe !important;
+}
+
+.search,
+.textinput{
+  font-size:16px !important;
+  line-height:1.6 !important;
+}
+
+.counter{
+  font-size:12px !important;
+}
+
+#loading{
+  padding:170px 0 !important;
+}
+
+.loadtitle{
+  font-size:34px !important;
+}
+
+.loadtext{
+  font-size:16px !important;
+  line-height:1.6 !important;
+}
+
+.chip{
+  font-size:12px !important;
+  padding:8px 11px !important;
+}
+
+#results{
+  padding-top:76px !important;
+}
+
+.resulthead{
+  max-width:940px !important;
+  margin-bottom:38px !important;
+}
+
+.resulthead h1{
+  font-size:clamp(48px,6.7vw,78px) !important;
+}
+
+.resulthead p{
+  font-size:19px !important;
+  line-height:1.65 !important;
+  color:#b1bccd !important;
+}
+
+.resulthero{
+  padding:44px !important;
+}
+
+.label{
+  font-size:12px !important;
+}
+
+.resulthero h2{
+  font-size:clamp(42px,5vw,64px) !important;
+}
+
+.resulthero p{
+  font-size:16px !important;
+  line-height:1.65 !important;
+}
+
+.fit{
+  font-size:14px !important;
+}
+
+.resultgrid{
+  gap:18px !important;
+}
+
+.panel{
+  padding:29px !important;
+}
+
+.panel h3{
+  font-size:22px !important;
+  line-height:1.25 !important;
+}
+
+.sub{
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+.money{
+  font-size:clamp(46px,5vw,62px) !important;
+}
+
+.moneylabel{
+  font-size:12px !important;
+}
+
+.moneymini{
+  padding:15px !important;
+}
+
+.moneymini b{
+  font-size:21px !important;
+}
+
+.moneymini span{
+  font-size:12px !important;
+}
+
+.score{
+  padding:16px !important;
+}
+
+.score b{
+  font-size:24px !important;
+}
+
+.score span{
+  font-size:12px !important;
+}
+
+.item{
+  padding:16px !important;
+}
+
+.item strong{
+  font-size:14px !important;
+  line-height:1.4 !important;
+}
+
+.item small{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.pill{
+  font-size:11px !important;
+  padding:7px 9px !important;
+}
+
+.need{
+  grid-template-columns:150px 1fr 42px !important;
+  font-size:14px !important;
+}
+
+.planstep{
+  padding:16px !important;
+}
+
+.planstep b{
+  font-size:14px !important;
+  line-height:1.4 !important;
+}
+
+.planstep small{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.planstep em{
+  font-size:11px !important;
+}
+
+.decision{
+  font-size:13px !important;
+  line-height:1.6 !important;
+}
+
+.bottom{
+  margin-top:30px !important;
+}
+
+.footer{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+/* Generated WOW layer: readable, not decorative tiny text */
+.px-wow-kicker{
+  font-size:11px !important;
+  line-height:1.35 !important;
+}
+
+.px-wow-big{
+  font-size:22px !important;
+  line-height:1.15 !important;
+}
+
+.px-wow-copy{
+  font-size:13px !important;
+  line-height:1.55 !important;
+  color:#97a4b8 !important;
+}
+
+.px-wow-flow span{
+  font-size:11px !important;
+  line-height:1.4 !important;
+  padding:10px 11px !important;
+}
+
+.px-wow-status .px-wow-pill{
+  font-size:11px !important;
+  padding:9px 11px !important;
+}
+
+.px-wow-proof-card{
+  padding:14px 15px !important;
+}
+
+.px-wow-proof-card strong{
+  font-size:13px !important;
+  line-height:1.35 !important;
+}
+
+.px-wow-proof-card span{
+  font-size:12px !important;
+  line-height:1.5 !important;
+  color:#8f9caf !important;
+}
+
+.px-wow-cta{
+  font-size:14px !important;
+  min-height:50px !important;
+}
+
+/* Human examples / result storytelling */
+.px-story-kicker{
+  font-size:11px !important;
+}
+
+.px-story-title{
+  font-size:22px !important;
+  line-height:1.18 !important;
+}
+
+.px-story-copy{
+  font-size:13px !important;
+  line-height:1.6 !important;
+}
+
+.px-story-quote{
+  font-size:13px !important;
+  line-height:1.55 !important;
+}
+
+.px-story-step span{
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+.px-story-action span{
+  font-size:11px !important;
+}
+
+.px-story-action strong{
+  font-size:13px !important;
+}
+
+.px-example-label{
+  font-size:11px !important;
+}
+
+.px-example{
+  font-size:12px !important;
+  padding:9px 11px !important;
+}
+
+/* Result explanation */
+.px-hi-kicker{
+  font-size:11px !important;
+}
+
+.px-hi-title{
+  font-size:clamp(30px,3.2vw,40px) !important;
+  line-height:1.06 !important;
+}
+
+.px-hi-intro{
+  font-size:15px !important;
+  line-height:1.65 !important;
+}
+
+.px-hi-badge{
+  font-size:11px !important;
+}
+
+.px-hi-label{
+  font-size:10px !important;
+}
+
+.px-hi-text{
+  font-size:15px !important;
+  line-height:1.6 !important;
+}
+
+.px-hi-muted{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+.px-hi-goal span{
+  font-size:11px !important;
+}
+
+.px-hi-goal strong{
+  font-size:14px !important;
+  line-height:1.5 !important;
+}
+
+.px-hi-note{
+  font-size:12px !important;
+  line-height:1.6 !important;
+}
+
+/* Launch screen */
+.px-launch-kicker{
+  font-size:11px !important;
+}
+
+.px-launch-copy{
+  font-size:14px !important;
+  line-height:1.6 !important;
+}
+
+.px-launch-step b{
+  font-size:10px !important;
+}
+
+.px-launch-step span{
+  font-size:10px !important;
+  line-height:1.4 !important;
+}
+
+/* Give empty space a purpose without making the interface busy */
+.quickbox,
+.card,
+.qcard,
+.resulthero,
+.panel,
+.px-human-impact{
+  box-shadow:
+    0 24px 80px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.card,
+.panel,
+.feature,
+.mode,
+.qcard{
+  border-color:rgba(255,255,255,.085) !important;
+}
+
+@media(max-width:700px){
+  .hero{
+    padding-top:76px !important;
+    padding-bottom:70px !important;
+  }
+
+  .hero h1{
+    font-size:clamp(44px,13.5vw,66px) !important;
+  }
+
+  .hero p{
+    font-size:17px !important;
+    line-height:1.62 !important;
+  }
+
+  .quickbox{
+    padding:20px !important;
+  }
+
+  .quickhead{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .hero textarea{
+    min-height:155px !important;
+    font-size:17px !important;
+  }
+
+  .section{
+    padding:68px 0 !important;
+  }
+
+  .title p{
+    font-size:16px !important;
+  }
+
+  .feature p,
+  .mode p{
+    font-size:15px !important;
+  }
+
+  .qcard{
+    padding:27px !important;
+  }
+
+  .qcard h2{
+    font-size:30px !important;
+  }
+
+  .desc{
+    font-size:15px !important;
+  }
+
+  .option strong{
+    font-size:15px !important;
+  }
+
+  .option small{
+    font-size:13px !important;
+  }
+
+  .resulthero{
+    padding:27px !important;
+  }
+
+  .resulthead p{
+    font-size:17px !important;
+  }
+
+  .panel{
+    padding:22px !important;
+  }
+
+  .need{
+    grid-template-columns:105px 1fr 38px !important;
+  }
+
+  .px-wow-big{
+    font-size:21px !important;
+  }
+
+  .px-wow-copy{
+    font-size:13px !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .feature,
+  .mode,
+  .card,
+  .panel,
+  .px-hi-stage{
+    transform:none !important;
+  }
+}
