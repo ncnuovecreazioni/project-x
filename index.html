@@ -333,12 +333,87 @@ function renderInsight(r,p){
     '</div>';
 }
 function renderResults(r){var p=primary(r);renderInsight(r,p);$('resultModeText').textContent=mode==='quick'?'Prima direzione generata rapidamente. Puoi affinarla con l’analisi completa.':'Configurazione costruita intorno alle risposte che hai fornito.';if(r.aiAvailable===false){$('resultModeText').textContent+=' L’analisi è stata completata con il motore locale gratuito di PROJECT-X: nessun abbonamento Le tue esigenze necessario.';}if(!p){$('primaryMount').innerHTML='<div class="card panel"><strong>Nessun risultato disponibile.</strong></div>';return}renderPrimary(p);renderValue(r.valueEstimate||r.value||{});renderArchitecture(r);renderPlan(r,p);renderStack(r.stack||[]);renderAutomations(r.automationIdeas||r.automationSuggestions||[]);renderRanking(r.rankedTools||[]);renderMissing(r.missingNeeds||[]);renderNeeds(r.profile||{});renderWhy(r,p);$('aiBadge').style.display=r.aiAvailable?'inline-flex':'none';if(mode==='quick'){$('refineBtn').textContent='Rendi il risultato più preciso →'}else{$('refineBtn').textContent='Rifai l’analisi completa →'}}
+function humanImpact(p){
+var cat=String(p&&p.category||'').toLowerCase(),goals=Array.isArray(answers.goals)?answers.goals:[],pain=String(answers.painPoint||'').trim();
+var g=goals[0]||'lavorare in modo più semplice';
+var data={
+crm:{
+summary:'mettere ordine nella gestione dei clienti e non perdere più il filo delle opportunità',
+today:'clienti, richieste e follow-up possono restare dispersi tra email, fogli e memoria',
+system:'centralizzi i contatti, assegni uno stato a ogni opportunità e rendi visibili i prossimi richiami',
+change:'saprai chi contattare, cosa fare dopo e dove si trova ogni informazione'
+},
+marketing:{
+summary:'rendere più ordinato il passaggio da contatto a comunicazione',
+today:'email, campagne e follow-up possono richiedere troppi passaggi manuali',
+system:'crei un flusso ripetibile che parte da un evento e porta il contatto al messaggio giusto',
+change:'meno copia-incolla e una sequenza più facile da controllare'
+},
+ecommerce:{
+summary:'far funzionare meglio il lavoro che succede intorno agli ordini',
+today:'ordini, clienti e comunicazioni post-acquisto possono richiedere interventi manuali',
+system:'colleghi il negozio alle attività successive e automatizzi un primo passaggio',
+change:'meno operazioni ripetitive dopo l’ordine e più continuità nel processo'
+},
+automation:{
+summary:'eliminare un passaggio manuale che oggi ripeti continuamente',
+today:'la stessa informazione può essere riscritta, spostata o controllata più volte',
+system:'definisci un trigger, una o più azioni e un controllo del risultato',
+change:'un passaggio che oggi fai a mano può diventare ripetibile e verificabile'
+},
+projects:{
+summary:'rendere chiari attività, responsabilità e scadenze',
+today:'le informazioni possono essere sparse e non è sempre evidente chi deve fare cosa',
+system:'organizzi il lavoro in stati, assegnatari e scadenze leggibili',
+change:'meno ricerca e meno rischio di dimenticare il prossimo passaggio'
+},
+documents:{
+summary:'ridurre ricerca, copia-incolla e gestione manuale dei documenti',
+today:'documenti e informazioni possono essere distribuiti tra cartelle, email e file',
+system:'centralizzi il materiale e standardizzi il passaggio più ripetitivo',
+change:'meno tempo perso a cercare o preparare lo stesso tipo di documento'
+},
+general:{
+summary:'trasformare il problema che hai descritto in un processo più semplice',
+today:'una parte del lavoro oggi richiede troppi passaggi o troppo controllo manuale',
+system:'parti da un nucleo, sistemi il processo e automatizzi solo il collo di bottiglia',
+change:'più chiarezza su cosa fare, cosa lasciare al sistema e cosa misurare'
+}
+};
+var type='general';
+if(/crm|sales|customer/.test(cat))type='crm';
+else if(/email|marketing|lead/.test(cat))type='marketing';
+else if(/e-?commerce|shop/.test(cat))type='ecommerce';
+else if(/automation|integration|workflow/.test(cat))type='automation';
+else if(/project|task|work management/.test(cat))type='projects';
+else if(/document|pdf|esign/.test(cat))type='documents';
+var d=data[type];
+return {summary:d.summary,today:d.today,system:d.system,change:d.change,goal:g,pain:pain};
+}
 function renderPrimary(p){
 var s=Math.max(0,Math.min(100,fit(p))),u=commercialUrl(p);
 var isCommercial=String(u||'').indexOf('/api/affiliate?tool=')===0;
 var cta=u?'<a id="primaryLink" class="btn primary" href="'+esc(u)+'" target="_blank" rel="noopener">Vai a '+esc(toolName(p))+' →</a>':'<button id="copyTop" class="btn primary">Copia il mio piano →</button>';
 var disclosure=isCommercial?'<div class="commercial" style="margin-top:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018);color:#7f8da3;font-size:8px;line-height:1.45"><strong style="color:#dfe5ef">Collegamento commerciale.</strong> PROJECT-X può ricevere una commissione se ti registri o acquisti tramite questo collegamento. Questo non modifica la compatibilità calcolata dal motore.</div>':'';
-$('primaryMount').innerHTML='<div class="resulthero"><div class="label">01 · SCELTA PRINCIPALE</div><div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ '+s+'% compatibilità</span><div class="hero-actions">'+cta+'<button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div><div class="commercial"><strong>Come ci siamo arrivati:</strong> PROJECT-X combina bisogno, ruolo, budget, tecnologia, team e strumenti già presenti.</div>'+disclosure+'</div>';
+var impact=humanImpact(p);
+$('primaryMount').innerHTML=
+'<div class="resulthero">'+
+  '<div class="label">01 · SCELTA PRINCIPALE</div>'+
+  '<div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ '+s+'% compatibilità</span><div class="hero-actions">'+cta+'<button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div>'+
+  '<div class="commercial"><strong>Come ci siamo arrivati:</strong> PROJECT-X combina bisogno, ruolo, budget, tecnologia, team e strumenti già presenti.</div>'+
+  disclosure+
+'</div>'+
+'<div class="px-human-impact">'+
+  '<div class="px-hi-head"><div><div class="px-hi-kicker">02 · IN PAROLE SEMPLICI</div><div class="px-hi-title">Cosa cambia davvero per te</div></div><div class="px-hi-badge">Niente gergo tecnico</div></div>'+
+  '<p class="px-hi-summary">'+esc(impact.summary)+'.</p>'+
+  '<div class="px-hi-grid">'+
+    '<div class="px-hi-box"><span>OGGI</span><strong>'+esc(impact.pain||impact.today)+'</strong><small>'+esc(impact.today)+'</small></div>'+
+    '<div class="px-hi-arrow">→</div>'+
+    '<div class="px-hi-box accent"><span>CON '+esc(toolName(p)).toUpperCase()+'</span><strong>'+esc(impact.system)+'</strong><small>'+esc(impact.change)+'.</small></div>'+
+  '</div>'+
+  '<div class="px-hi-result"><b>Per il tuo obiettivo (“'+esc(impact.goal)+'”):</b> il primo risultato da cercare è <strong>'+esc(impact.change)+'.</strong></div>'+
+  '<div class="px-hi-note">Non devi configurare tutto subito. Prima fai funzionare questo passaggio con un caso reale; poi aggiungi il resto solo se serve.</div>'+
+'</div>';
 if($('primaryLink'))$('primaryLink').addEventListener('click',function(){event('affiliate_click',{tool:toolName(p),url:u,hasAffiliate:isCommercial})});
 if($('copyTop'))$('copyTop').onclick=copyReport;
 if($('planTop'))$('planTop').onclick=function(){$('planMount').scrollIntoView({behavior:'smooth'})};
