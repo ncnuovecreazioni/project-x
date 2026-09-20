@@ -36,6 +36,32 @@ export default async function handler(req, res) {
     const product = data.metadata && data.metadata.product
       ? String(data.metadata.product)
       : "";
+    const configuredPaymentLinkId = String(process.env.STRIPE_PAYMENT_LINK_ID || "").trim();
+    const paymentLinkId = String(data.payment_link || "").trim();
+    const amountMatchesPro =
+      Number(data.amount_total || 0) === 2900 &&
+      String(data.currency || "").toLowerCase() === "eur";
+
+    const validProduct =
+      product === "project-x-report-pro" ||
+      (configuredPaymentLinkId && paymentLinkId === configuredPaymentLinkId) ||
+      (!product && paymentLinkId && amountMatchesPro);
+
+    const profile = paid && validProduct
+      ? {
+          businessType: String((data.metadata && data.metadata.business_type) || ""),
+          teamSize: String((data.metadata && data.metadata.team_size) || ""),
+          budget: String((data.metadata && data.metadata.budget) || ""),
+          goals: String((data.metadata && data.metadata.goals) || ""),
+          painPoint: String((data.metadata && data.metadata.pain_point) || ""),
+          automation: String((data.metadata && data.metadata.automation) || ""),
+          tech: String((data.metadata && data.metadata.tech) || ""),
+          existingTools: String((data.metadata && data.metadata.existing_tools) || "")
+            .split("|")
+            .map(x => x.trim())
+            .filter(Boolean)
+        }
+      : null;
 
     return res.status(200).json({
       success: true,
@@ -44,9 +70,11 @@ export default async function handler(req, res) {
       status: String(data.status || ""),
       paymentStatus: String(data.payment_status || ""),
       product,
-      validProduct: product === "project-x-report-pro",
+      paymentLinkId,
+      validProduct: Boolean(validProduct),
       clientReferenceId: String(data.client_reference_id || ""),
-      mode: String(data.mode || "")
+      mode: String(data.mode || ""),
+      profile
     });
   } catch (error) {
     console.error("PROJECT-X Stripe session exception", error);
