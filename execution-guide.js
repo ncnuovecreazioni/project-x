@@ -245,6 +245,13 @@ function styles(){
     s.id='px-execution-guide-style';
     s.textContent=".px-eg{margin:18px 0 0;border:1px solid rgba(124,92,255,.24);border-radius:28px;background:linear-gradient(145deg,rgba(15,22,39,.98),rgba(6,10,19,.99));box-shadow:0 30px 100px rgba(0,0,0,.30);overflow:hidden}.px-eg-hero{padding:28px;background:linear-gradient(135deg,rgba(124,92,255,.11),rgba(91,140,255,.035) 58%,rgba(54,217,157,.035))}.px-eg-k{font-size:11px;letter-spacing:.16em;color:#b9afff;font-weight:950}.px-eg-title{margin:8px 0 7px;font-size:29px;line-height:1.05;font-weight:950;letter-spacing:-.045em}.px-eg-copy{margin:0;color:#bec8d7;font-size:15px;line-height:1.65;max-width:900px}.px-eg-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.px-eg-chip{padding:9px 11px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(255,255,255,.025);color:#b8c2d2;font-size:12px;font-weight:850}.px-eg-chip strong{color:#fff}.px-eg-body{padding:22px 25px 28px}.px-eg-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);gap:18px}.px-eg-mission{padding:19px;border:1px solid rgba(124,92,255,.18);border-radius:20px;background:rgba(124,92,255,.045)}.px-eg-mission-k{font-size:10px;letter-spacing:.14em;color:#a99cff;font-weight:950}.px-eg-mission-title{margin-top:7px;font-size:22px;font-weight:950}.px-eg-mission p{margin:7px 0 0;color:#9eabbe;font-size:14px;line-height:1.6}.px-eg-targets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.px-eg-target{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:rgba(255,255,255,.018)}.px-eg-target span{display:block;color:#7e8ba1;font-size:10px;font-weight:900;letter-spacing:.08em}.px-eg-target strong{display:block;margin-top:5px;color:#eaf0f8;font-size:13px;line-height:1.35}.px-tutorial-mock{padding:15px;border:1px solid rgba(255,255,255,.07);border-radius:20px;background:#060a12;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.px-tm-top{display:flex;align-items:center;gap:8px;padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,.06)}.px-tm-dot{width:8px;height:8px;border-radius:50%;background:#36d99d;box-shadow:0 0 0 5px rgba(54,217,157,.07)}.px-tm-brand{font-size:12px;font-weight:900;color:#e9eef6}.px-tm-status{margin-left:auto;font-size:9px;color:#7ce8bd;font-weight:900}.px-tm-body{display:grid;grid-template-columns:42px 1fr;gap:12px;padding-top:13px}.px-tm-side{display:grid;gap:6px;align-content:start}.px-tm-side i{height:10px;border-radius:5px;background:rgba(255,255,255,.055)}.px-tm-side i:nth-child(2){width:80%}.px-tm-side i:nth-child(3){width:90%}.px-tm-side i:nth-child(4){width:70%}.px-tm-title{font-size:13px;color:#dfe6f4;font-weight:900}.px-tm-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}.px-tm-card{min-height:74px;padding:10px;border:1px solid rgba(255,255,255,.065);border-radius:10px;background:rgba(255,255,255,.02)}.px-tm-card.active{border-color:rgba(124,92,255,.28);background:rgba(124,92,255,.07)}.px-tm-card.success{border-color:rgba(54,217,157,.17);background:rgba(54,217,157,.035)}.px-tm-card small{display:block;font-size:8px;color:#6e7d95}.px-tm-card b{display:block;margin-top:5px;font-size:10px}.px-tm-card span{display:block;margin-top:4px;color:#738198;font-size:8px;line-height:1.35}.px-tm-bar{height:6px;margin-top:11px;border-radius:999px;background:rgba(255,255,255,.055);overflow:hidden}.px-tm-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#7c5cff,#36d99d);width:20%;transition:width .25s ease}.px-tm-caption{margin-top:9px;color:#6f7d93;font-size:10px;line-height:1.45}.px-eg-tabs{display:flex;gap:8px;margin-top:19px}.px-eg-tab{min-height:50px;padding:11px 14px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(255,255,255,.025);color:#acb7c8;font-size:13px;font-weight:900;cursor:pointer}.px-eg-tab.active{border-color:rgba(124,92,255,.38);background:rgba(124,92,255,.105);color:#f0edff}.px-eg-progress{margin-top:14px;padding:13px 15px;border:1px solid rgba(255,255,255,.065);border-radius:15px;background:rgba(255,255,255,.016)}.px-eg-progress-top{display:flex;justify-content:space-between;gap:10px;color:#cbd4e2;font-size:12px;font-weight:900}.px-eg-progress-top span{color:#7e8ba0}.px-eg-track{height:8px;margin-top:9px;border-radius:999px;background:rgba(255,255,255,.055);overflow:hidden}.px-eg-track span{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#7c5cff,#36d99d);transition:width .25s ease}.px-eg-steps{display:grid;gap:10px;margin-top:12px}.px-eg-step{display:grid;grid-template-columns:36px minmax(0,1fr) 26px;gap:11px;align-items:start;padding:15px;border:1px solid rgba(255,255,255,.065);border-radius:16px;background:rgba(255,255,255,.018);transition:.18s ease}.px-eg-step:hover{transform:translateY(-1px);border-color:rgba(124,92,255,.22)}.px-eg-step.done{border-color:rgba(54,217,157,.18);background:rgba(54,217,157,.03)}.px-eg-num{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:rgba(124,92,255,.11);color:#c8c1ff;font-size:11px;font-weight:950}.px-eg-step.done .px-eg-num{background:rgba(54,217,157,.10);color:#7ce8bd}.px-eg-step b{display:block;color:#eef3f8;font-size:15px;line-height:1.3}.px-eg-step-copy{margin-top:5px;color:#b0bccd;font-size:13px;line-height:1.62}.px-eg-step-result{margin-top:9px;padding:10px 11px;border-left:2px solid rgba(124,92,255,.38);border-radius:0 10px 10px 0;background:rgba(124,92,255,.04);color:#8b99ae;font-size:11px;line-height:1.52}.px-eg-check{width:23px;height:23px;margin:2px 0 0;accent-color:#7c5cff;cursor:pointer}.px-eg-flow{margin-top:13px;padding:16px;border:1px solid rgba(54,217,157,.13);border-radius:18px;background:rgba(54,217,157,.025)}.px-eg-flow-title{font-size:18px;color:#eef3f9;font-weight:950}.px-eg-flow-copy{margin-top:5px;color:#8997ab;font-size:12px;line-height:1.5}.px-eg-flow-rail{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:13px}.px-eg-flow-node{padding:10px 8px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(255,255,255,.018);text-align:center}.px-eg-flow-node span{display:block;color:#7d8b9e;font-size:8px;letter-spacing:.08em;font-weight:900}.px-eg-flow-node b{display:block;margin-top:5px;font-size:10px;line-height:1.25}.px-eg-how{margin-top:13px;padding:14px;border:1px solid rgba(255,255,255,.065);border-radius:15px;background:rgba(255,255,255,.016)}.px-eg-how b{color:#e9eef5;font-size:13px}.px-eg-how p{margin:6px 0 0;color:#8e9bae;font-size:12px;line-height:1.55}.px-eg-open{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:11px 14px;border:1px solid rgba(124,92,255,.29);border-radius:13px;background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff;text-decoration:none;font-size:13px;font-weight:950;box-shadow:0 14px 42px rgba(124,92,255,.18)}.px-eg-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:13px;padding:13px;border:1px solid rgba(255,255,255,.065);border-radius:14px;background:rgba(255,255,255,.014);color:#8190a5;font-size:11px;line-height:1.55}.px-eg-footer strong{color:#7ce8bd}@media(max-width:900px){.px-eg-layout{grid-template-columns:1fr}.px-eg-targets{grid-template-columns:1fr}.px-tm-grid{grid-template-columns:1fr 1fr}.px-tm-card.success{grid-column:1/-1}.px-eg-flow-rail{grid-template-columns:1fr}.px-eg-flow-node{display:flex;align-items:center;justify-content:space-between;text-align:left;gap:10px}}@media(max-width:650px){.px-eg-hero{padding:22px 17px}.px-eg-body{padding:17px 14px 20px}.px-eg-title{font-size:24px}.px-eg-copy{font-size:14px}.px-eg-step{grid-template-columns:32px minmax(0,1fr) 24px;padding:13px;gap:9px}.px-eg-step b{font-size:14px}.px-eg-step-copy{font-size:12.5px}.px-eg-step-result{font-size:10.5px}.px-eg-tabs{display:grid;grid-template-columns:1fr}.px-eg-tab{width:100%}}";
     document.head.appendChild(s);
+
+    if(!document.getElementById('px-execution-coach-style')){
+      var c=document.createElement('style');
+      c.id='px-execution-coach-style';
+      c.textContent=".px-eg-coach{margin-top:14px;padding:16px;border:1px solid rgba(91,140,255,.16);border-radius:18px;background:linear-gradient(135deg,rgba(91,140,255,.045),rgba(124,92,255,.055));display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.px-eg-coach-k{font-size:9px;letter-spacing:.14em;color:#99aaff;font-weight:950}.px-eg-coach-title{margin-top:5px;color:#f2f5fb;font-size:15px;font-weight:950}.px-eg-coach-text{margin-top:4px;color:#8d9bb0;font-size:11px;line-height:1.5}.px-eg-coach-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.px-eg-coach-btn{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#dce5f2;border-radius:11px;padding:10px 12px;font-size:10px;font-weight:900;cursor:pointer}.px-eg-coach-btn.primary{background:linear-gradient(135deg,#7c5cff,#5b8cff);border-color:transparent;color:#fff}.px-eg-step.current{border-color:rgba(124,92,255,.48);box-shadow:0 0 0 3px rgba(124,92,255,.07)}@media(max-width:700px){.px-eg-coach{grid-template-columns:1fr}.px-eg-coach-actions{justify-content:flex-start}.px-eg-coach-btn{flex:1}}";
+      document.head.appendChild(c);
+    }
   }
 
 function render(){
@@ -304,6 +311,10 @@ function render(){
           '</div>'+
         '</div>'+
         '<div class="px-eg-tabs"><button type="button" class="px-eg-tab active" data-mode="simple">🟢 Guidami passo passo</button><button type="button" class="px-eg-tab" data-mode="practical">⚙ Voglio capire anche il perché</button></div>'+
+        '<div class="px-eg-coach">'+
+          '<div><div class="px-eg-coach-k">✦ COACH GUIDATO</div><div class="px-eg-coach-title">Non sai da dove partire?</div><div id="px-eg-coach-text" class="px-eg-coach-text">Ti porto direttamente al primo passaggio ancora da completare.</div></div>'+
+          '<div class="px-eg-coach-actions"><button type="button" id="px-eg-coach-start" class="px-eg-coach-btn primary">Fammi partire →</button><button type="button" id="px-eg-coach-check" class="px-eg-coach-btn">Cosa devo controllare?</button><button type="button" id="px-eg-copy-flow" class="px-eg-coach-btn">Copia workflow</button></div>'+
+        '</div>'+
         '<div class="px-eg-progress"><div class="px-eg-progress-top"><span>IL TUO AVANZAMENTO</span><b id="px-eg-progress-text">0 / '+steps.length+' completati</b></div><div class="px-eg-track"><span id="px-eg-progress-bar"></span></div></div>'+
         '<div class="px-eg-steps"></div>'+
         '<div class="px-eg-footer"><div><strong>Regola:</strong> non configurare tutto insieme. Prima fai funzionare questo workflow.</div><div>'+(data.integrationText?'<strong>Collegamenti utili:</strong> '+esc(data.integrationText):'<strong>Dopo:</strong> aggiungi integrazioni solo quando il flusso è stabile.')+'</div></div>'+
@@ -315,13 +326,32 @@ function render(){
     var list=box.querySelector('.px-eg-steps');
     var progressText=box.querySelector('#px-eg-progress-text');
     var progressBar=box.querySelector('#px-eg-progress-bar');
+    var coachText=box.querySelector('#px-eg-coach-text');
     var mode='simple';
+
+    function firstPendingIndex(arr,state){
+      for(var i=0;i<arr.length;i++){if(!state[String(i)])return i;}
+      return arr.length?arr.length-1:0;
+    }
+
+    function updateCoach(){
+      var arr=data[mode]||data.simple||[];
+      var idx=firstPendingIndex(arr,state);
+      var done=0;
+      for(var i=0;i<arr.length;i++){if(state[String(i)])done++;}
+      if(!coachText||!arr.length)return;
+      if(done===arr.length){
+        coachText.textContent='Hai completato il workflow. Ora puoi replicarlo su un secondo caso reale.';
+      }else{
+        coachText.textContent='Ti consiglio di partire da “'+arr[idx][1]+'”. Quando è verificato, spunta la casella e passa al successivo.';
+      }
+    }
 
     function draw(){
       var arr=data[mode]||data.simple||[];
       list.innerHTML=arr.map(function(x,i){
         var checked=!!state[String(i)];
-        return '<div class="px-eg-step '+(checked?'done':'')+'">'+
+        return '<div class="px-eg-step '+(checked?'done':'')+(i===firstPendingIndex(arr,state)?' current':'')+'">'+
           '<div class="px-eg-num">'+esc(x[0])+'</div>'+
           '<div><b>'+esc(x[1])+'</b><div class="px-eg-step-copy">'+esc(x[2])+'</div><div class="px-eg-step-result"><strong>Quando va bene:</strong> '+esc(x[3]||'Il passaggio funziona come previsto.')+'</div></div>'+
           '<input class="px-eg-check" type="checkbox" data-step="'+i+'" '+(checked?'checked':'')+' aria-label="Completa '+esc(x[1])+'">'+
@@ -337,6 +367,7 @@ function render(){
       progressBar.style.width=(arr.length?Math.round(done/arr.length*100):0)+'%';
       var visual=box.querySelector('.px-tm-bar span');
       if(visual)visual.style.width=Math.max(20,Math.round((done+1)/arr.length*100))+'%';
+      updateCoach();
     }
 
     function setMode(next){
@@ -346,6 +377,40 @@ function render(){
     }
 
     box.querySelectorAll('.px-eg-tab').forEach(function(b){b.onclick=function(){setMode(b.getAttribute('data-mode'));}});
+
+    var coachStart=box.querySelector('#px-eg-coach-start');
+    var coachCheck=box.querySelector('#px-eg-coach-check');
+    var copyFlow=box.querySelector('#px-eg-copy-flow');
+
+    function focusFirstPending(){
+      var arr=data[mode]||data.simple||[];
+      var idx=firstPendingIndex(arr,state);
+      var row=box.querySelectorAll('.px-eg-step')[idx];
+      if(row){
+        row.scrollIntoView({behavior:'smooth',block:'center'});
+        row.classList.add('current');
+        setTimeout(function(){row.classList.remove('current');},2200);
+      }
+      updateCoach();
+    }
+
+    if(coachStart) coachStart.onclick=focusFirstPending;
+
+    if(coachCheck) coachCheck.onclick=function(){
+      var arr=data[mode]||data.simple||[],idx=firstPendingIndex(arr,state);
+      if(coachText&&arr.length) coachText.textContent='Controlla: '+arr[idx][3]+ ' Quando questo è verificato, completa il passaggio.';
+    };
+
+    if(copyFlow) copyFlow.onclick=function(){
+      var arr=data[mode]||data.simple||[];
+      var text='PROJECT-X — Workflow '+(p.name||p.id)+'\n\n'+arr.map(function(x,i){return (i+1)+'. '+x[1]+'\n'+x[2]+'\n'+'Controllo: '+x[3];}).join('\n\n');
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){
+          if(coachText)coachText.textContent='Workflow copiato. Puoi usarlo come checklist mentre configuri lo strumento.';
+        }).catch(function(){});
+      }
+    };
+
     list.addEventListener('change',function(e){
       var cb=e.target.closest('.px-eg-check');if(!cb)return;
       state[String(Number(cb.getAttribute('data-step')||0))]=!!cb.checked;
