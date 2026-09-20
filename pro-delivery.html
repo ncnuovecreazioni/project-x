@@ -66,6 +66,8 @@ function normalizeServerProfile(p){
     painPoint:String(p.painPoint||''),
     automation:String(p.automation||''),
     tech:String(p.tech||''),
+    hours:String(p.hours||''),
+    hourlyValue:String(p.hourlyValue||''),
     existingTools:Array.isArray(p.existingTools)?p.existingTools:[]
   };
 }
