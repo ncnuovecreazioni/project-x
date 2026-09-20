@@ -23,7 +23,14 @@
   }
 
   function result(){
-    try{return window.result||null}catch(e){return null}
+    try{
+      if(window.ProjectXUI && typeof window.ProjectXUI.getResult==='function'){
+        return window.ProjectXUI.getResult();
+      }
+      return window.result||null;
+    }catch(e){
+      return null;
+    }
   }
 
   function primary(r){
