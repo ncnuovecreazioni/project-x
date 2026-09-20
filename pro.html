@@ -76,12 +76,28 @@
       })
     })
     .then(function(r){return r.json().then(function(d){return {ok:r.ok,data:d}})})
+    .catch(function(){return {ok:false,data:{}}})
+    .then(function(intake){
+      var handoff=intake.data&&intake.data.handoffId?intake.data.handoffId:'';
+      return fetch('/api/pro-checkout',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          source:'pro-page',
+          answers:answers||{},
+          handoffId:handoff,
+          consent:true
+        })
+      });
+    })
+    .then(function(r){
+      return r.json().then(function(d){return {ok:r.ok,data:d}});
+    })
     .then(function(result){
-      if(!result.ok || !result.data || !result.data.success) throw new Error((result.data&&result.data.error)||'Impossibile preparare il checkout.');
-      var handoff=result.data.handoffId?encodeURIComponent(result.data.handoffId):'';
-      var url='/api/pro-checkout?source=pro-page';
-      if(handoff)url+='&handoffId='+handoff;
-      window.location.href=url;
+      if(!result.ok || !result.data || !result.data.success || !result.data.checkoutUrl){
+        throw new Error((result.data&&result.data.error)||'Impossibile preparare il checkout.');
+      }
+      window.location.href=result.data.checkoutUrl;
     })
     .catch(function(){
       window.location.href='/api/pro-checkout?source=pro-page';
