@@ -49,6 +49,8 @@ export default async function handler(req, res) {
     painPoint: clean(answers.painPoint, 1200),
     automation: clean(answers.automation, 500),
     tech: clean(answers.tech, 500),
+    hours: clean(answers.hours, 80),
+    hourlyValue: clean(answers.hourlyValue, 80),
     existingTools: Array.isArray(answers.existingTools)
       ? answers.existingTools.map(x => clean(x, 100)).slice(0, 30)
       : [],
