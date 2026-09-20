@@ -1,3 +1,32 @@
+function clean(value, max = 500) {
+  return String(value == null ? "" : value).trim().slice(0, max);
+}
+
+function safeObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+}
+
+function addProfileMetadata(params, answers) {
+  const a = safeObject(answers);
+  const fields = {
+    profile_version: "1",
+    business_type: clean(a.businessType, 180),
+    team_size: clean(a.teamSize, 80),
+    budget: clean(a.budget, 80),
+    goals: clean(a.goals, 500),
+    pain_point: clean(a.painPoint, 500),
+    automation: clean(a.automation, 400),
+    tech: clean(a.tech, 400),
+    existing_tools: Array.isArray(a.existingTools)
+      ? a.existingTools.map(x => clean(x, 60)).slice(0, 12).join(" | ").slice(0, 500)
+      : ""
+  };
+
+  Object.entries(fields).forEach(([key, value]) => {
+    if (value) params.set("metadata[" + key + "]", value);
+  });
+}
+
 async function trackCheckoutStart(source, handoffId, mode) {
   const webhook = String(process.env.EVENT_WEBHOOK_URL || "").trim();
   if (!webhook || !/^https?:\/\//i.test(webhook)) return;
@@ -57,13 +86,25 @@ async function resolvePriceId(secret) {
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ success: false, error: "Method Not Allowed" });
   }
 
-  const source = String((req.query && req.query.source) || "project-x").slice(0, 120);
-  const handoffId = String((req.query && req.query.handoffId) || "").trim().slice(0, 80);
+  const body = safeObject(req.body);
+  const source = clean(
+    req.method === "POST" ? body.source || "project-x" : (req.query && req.query.source) || "project-x",
+    120
+  );
+  const handoffId = clean(
+    req.method === "POST" ? body.handoffId || "" : (req.query && req.query.handoffId) || "",
+    80
+  );
+  const answers = req.method === "POST" ? safeObject(body.answers) : {};
+  if (req.method === "POST" && body.consent !== true) {
+    return res.status(400).json({ success: false, error: "Consenso richiesto." });
+  }
+
   const secret = String(process.env.STRIPE_SECRET_KEY || "").trim();
 
   if (secret && /^sk_(test|live)_/i.test(secret)) {
@@ -84,6 +125,7 @@ export default async function handler(req, res) {
         params.set("cancel_url", origin + "/pro.html?checkout=cancelled");
         params.set("metadata[product]", "project-x-report-pro");
         params.set("metadata[source]", source);
+        addProfileMetadata(params, answers);
 
         if (handoffId && /^pxh-[a-z0-9-]+$/i.test(handoffId)) {
           params.set("client_reference_id", handoffId);
@@ -96,6 +138,14 @@ export default async function handler(req, res) {
         });
 
         if (created.response.ok && created.data && created.data.url) {
+          if (req.method === "POST") {
+            return res.status(200).json({
+              success: true,
+              checkoutUrl: created.data.url,
+              mode: "stripe-session",
+              handoffId: handoffId || ""
+            });
+          }
           return res.redirect(303, created.data.url);
         }
 
@@ -110,6 +160,13 @@ export default async function handler(req, res) {
   await trackCheckoutStart(source, handoffId, "payment-link");
   const checkoutUrl = String(process.env.PRO_CHECKOUT_URL || "").trim();
   if (!checkoutUrl || !/^https?:\/\//i.test(checkoutUrl)) {
+    if (req.method === "POST") {
+      return res.status(503).json({
+        success: false,
+        configured: false,
+        error: "Checkout non configurato."
+      });
+    }
     return res.redirect(302, "/pro.html?checkout=missing");
   }
 
@@ -120,6 +177,15 @@ export default async function handler(req, res) {
   if (handoffId && /^pxh-[a-z0-9-]+$/i.test(handoffId)) {
     url.searchParams.set("client_reference_id", handoffId);
     url.searchParams.set("px_handoff", handoffId);
+  }
+
+  if (req.method === "POST") {
+    return res.status(200).json({
+      success: true,
+      checkoutUrl: url.toString(),
+      mode: "payment-link",
+      handoffId: handoffId || ""
+    });
   }
 
   return res.redirect(302, url.toString());
