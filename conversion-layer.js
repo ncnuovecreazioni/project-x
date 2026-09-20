@@ -126,6 +126,47 @@
     var head=one('.resulthead',results);if(head)head.insertAdjacentElement('afterend',box);else results.insertBefore(box,results.firstChild);
   }
 
+  function cleanResultOpening(){
+    var results=one('#results');
+    if(!results || getComputedStyle(results).display==='none') return;
+
+    /*
+      L'apertura deve rispondere a una sola domanda:
+      "Qual è la decisione e cosa faccio adesso?"
+      Le vecchie card di contesto ripetevano lo stesso messaggio con
+      formulazioni diverse. Le teniamo disponibili nel codice storico,
+      ma non le mostriamo più nella prima vista.
+    */
+    [
+      '#px-human-result',
+      '#px-decision-brief',
+      '#px-system-compare',
+      '#px-problem-bridge',
+      '#px-decision-receipt',
+      '#px-system-score'
+    ].forEach(function(sel){
+      var el=one(sel);
+      if(el) el.classList.add('px-result-legacy-hidden');
+    });
+
+    var style=document.getElementById('px-result-clarity-style');
+    if(!style){
+      style=document.createElement('style');
+      style.id='px-result-clarity-style';
+      style.textContent='.px-result-legacy-hidden{display:none!important}';
+      document.head.appendChild(style);
+    }
+
+    var hero=one('.resulthero',results);
+    if(hero && !hero.getAttribute('data-px-clean')){
+      hero.setAttribute('data-px-clean','1');
+      var subtitle=hero.querySelector('p');
+      if(subtitle){
+        subtitle.textContent='Questa è la configurazione emersa dal tuo caso. Sotto trovi la mappa del sistema e, subito dopo, i dettagli da usare per decidere.';
+      }
+    }
+  }
+
   function addDetailsToggle(){
     if(document.getElementById('px-details-toggle')) return;
     var results=one('#results');
@@ -194,7 +235,7 @@
     var profile=r&&r.profile?r.profile:{};var focus=Object.entries(profile).sort(function(x,y){return y[1]-x[1]}).slice(0,1).map(function(x){return labels[x[0]]||x[0]})[0]||'bisogno prioritario';
     var autos=r&&(r.automationIdeas||r.automationSuggestions)||[];var auto=autos.length?(typeof autos[0]==='string'?autos[0]:(autos[0].title||autos[0].name||autos[0].description||'Primo workflow')):'primo workflow da definire';
     var box=document.createElement('section');box.id='px-system-map';box.className='px-system-map px-sm-reveal';
-    box.innerHTML='<div class="px-sm-head"><div><div class="px-sm-kicker">PROJECT-X · SYSTEM MAP</div><div class="px-sm-title">Dal problema al sistema.</div><p class="px-sm-copy">Questa è la configurazione in una sola vista. Leggila da sinistra verso destra.</p></div><div class="px-sm-badge">CONFIGURAZIONE CREATA</div></div><div class="px-sm-origin"><span>HAI SCRITTO</span><strong>“'+esc(problem.slice(0,220))+(problem.length>220?'…':'')+'”</strong><em>→ questo testo è il punto 01 della mappa</em></div><div class="px-sm-flow"><div class="px-sm-node map-node"><small>01 · PARTENZA</small><b>Problema</b><span>'+esc(problem||'Il problema che hai descritto')+'</span></div><div class="px-sm-arrow map-arrow">→</div><div class="px-sm-node primary map-node"><small>02 · NUCLEO</small><b>'+esc(name)+'</b><span>Lo strumento centrale della configurazione.</span></div><div class="px-sm-arrow map-arrow">→</div><div class="px-sm-node map-node"><small>03 · PRIORITÀ</small><b>'+esc(focus)+'</b><span>Il bisogno che guida la scelta.</span></div><div class="px-sm-arrow map-arrow">→</div><div class="px-sm-node map-node"><small>04 · PRIMA AZIONE</small><b>Automatizza</b><span>'+esc(auto)+'</span></div></div><div class="px-sm-foot"><strong>Come usarla:</strong> non devi implementare tutto oggi. Parti dal nucleo, chiudi il problema prioritario e misura il primo workflow.</div>';
+    box.innerHTML='<div class="px-sm-head"><div><div class="px-sm-kicker">PROJECT-X · SYSTEM MAP</div><div class="px-sm-title">La tua configurazione in 4 blocchi.</div><p class="px-sm-copy">Una sola vista per capire cosa hai scelto, perché e quale azione viene prima.</p></div><div class="px-sm-badge">CONFIGURAZIONE CREATA</div></div><div class="px-sm-flow"><div class="px-sm-node map-node"><small>01 · PARTENZA</small><b>Problema</b><span>'+esc(problem||'Il problema che hai descritto')+'</span></div><div class="px-sm-arrow map-arrow">→</div><div class="px-sm-node primary map-node"><small>02 · NUCLEO</small><b>'+esc(name)+'</b><span>Lo strumento centrale della configurazione.</span></div><div class="px-sm-arrow map-arrow">→</div><div class="px-sm-node map-node"><small>03 · PRIORITÀ</small><b>'+esc(focus)+'</b><span>Il bisogno che guida la scelta.</span></div><div class="px-sm-arrow map-arrow">→</div><div class="px-sm-node map-node"><small>04 · PRIMA AZIONE</small><b>Automatizza</b><span>'+esc(auto)+'</span></div></div><div class="px-sm-foot"><strong>Regola:</strong> parti dal nucleo, completa una sola automazione e misura il risultato prima di aggiungere complessità.</div>';
     var human=document.getElementById('px-human-result');var hero=one('.resulthero',results);if(human)human.insertAdjacentElement('afterend',box);else if(hero)hero.insertAdjacentElement('beforebegin',box);else results.insertBefore(box,results.firstChild);
     track('system_map_view',{primary:name});
     (function(){
@@ -394,6 +435,7 @@
     addDecisionReceipt();
     addResultFeedback();
     addResultsBottomCTA();
+    cleanResultOpening();
   }
 
   var observer=new MutationObserver(function(){run();});
