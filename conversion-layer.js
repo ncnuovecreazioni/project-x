@@ -420,20 +420,8 @@
 
   function run(){
     styles();
-    addHomeDecisionStrip();
-    addHomeMicroTrust();
-    addHomeTools();
-    addCinematicExperience();
-    addLiveHomePreview();
-    addHumanResult();
-    addDecisionBrief();
-    addSystemCompare();
-    addProblemBridge();
     addDetailsToggle();
     addSystemMap();
-    addResultScorecard();
-    addDecisionReceipt();
-    addResultFeedback();
     addResultsBottomCTA();
     cleanResultOpening();
   }
