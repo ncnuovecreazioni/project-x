@@ -1,6 +1,7 @@
-/* PROJECT-X — USABILITY + ACTION LAYER
-   Stable enhancement: improves accessibility and adds one practical action block.
-   Decision-engine and ranking logic are untouched.
+/* PROJECT-X — USABILITY + DECISION EXPERIENCE LAYER
+   Level-up UI inspired by proven software-discovery patterns:
+   transparent methodology, decision cockpit, practical next step.
+   Engine/ranking logic is untouched.
 */
 (function(){
   'use strict';
@@ -12,7 +13,7 @@
 
   function escapeHtml(s){
     return String(s==null?'':s).replace(/[&<>"']/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
     });
   }
 
@@ -25,23 +26,47 @@
       '.px-a11y-status{position:fixed;left:14px;bottom:14px;z-index:10999;max-width:min(520px,calc(100% - 28px));padding:10px 13px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(7,11,20,.94);color:#dfe6f2;font:600 13px/1.45 system-ui;box-shadow:0 20px 60px rgba(0,0,0,.35);opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s}.px-a11y-status.show{opacity:1;transform:none}' +
       '.px-field-help{display:block;margin-top:7px;color:#9ca9bb;font:500 13px/1.5 system-ui}.px-invalid{border-color:#ff7285!important;box-shadow:0 0 0 4px rgba(255,114,133,.10)!important}' +
       '#main-content:focus{outline:none}' +
-      '.px-now-card{position:relative;overflow:hidden;margin:14px 0 0;padding:22px;border:1px solid rgba(54,217,157,.18);border-radius:22px;background:linear-gradient(145deg,rgba(12,24,30,.97),rgba(9,13,24,.98));box-shadow:0 24px 70px rgba(0,0,0,.24)}' +
-      '.px-now-card:before{content:"";position:absolute;right:-70px;top:-90px;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(54,217,157,.12),transparent 68%);pointer-events:none}' +
-      '.px-now-kicker{font-size:9px;font-weight:950;letter-spacing:.15em;color:#7ce8bd;text-transform:uppercase}' +
-      '.px-now-title{margin-top:7px;font-size:25px;font-weight:950;letter-spacing:-.045em;line-height:1.05}' +
-      '.px-now-copy{margin:7px 0 0;color:#97a6bb;font-size:11px;line-height:1.55;max-width:760px}' +
-      '.px-now-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}' +
-      '.px-now-step{padding:13px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.018)}' +
-      '.px-now-step b{display:flex;align-items:center;gap:7px;font-size:10px;color:#eef3fb}' +
-      '.px-now-num{width:22px;height:22px;display:grid;place-items:center;border-radius:7px;background:rgba(124,92,255,.11);color:#c7beff;font-size:8px}' +
-      '.px-now-step span{display:block;margin-top:7px;color:#7e8da5;font-size:9px;line-height:1.45}' +
-      '.px-now-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}' +
-      '.px-now-btn{appearance:none;border:0;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:11px 15px;border-radius:12px;font-size:10px;font-weight:950;cursor:pointer}' +
-      '.px-now-btn.primary{background:linear-gradient(135deg,#36d99d,#1ebf87);color:#07130f;box-shadow:0 12px 32px rgba(54,217,157,.16)}' +
-      '.px-now-btn.secondary{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);color:#e4e9f2}' +
-      '.px-now-btn:hover{transform:translateY(-2px)}' +
-      '@media(max-width:760px){.px-now-grid{grid-template-columns:1fr}.px-now-card{padding:18px}.px-now-title{font-size:22px}}' +
-      '@media(prefers-reduced-motion:reduce){.px-skip-link,.px-a11y-status,.px-now-btn{transition:none}}';
+
+      '.px-method{width:min(1030px,calc(100% - 30px));margin:18px auto 0;padding:20px;border:1px solid rgba(255,255,255,.075);border-radius:20px;background:linear-gradient(145deg,rgba(14,20,36,.92),rgba(8,12,22,.97));box-shadow:0 24px 70px rgba(0,0,0,.20)}' +
+      '.px-method-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}' +
+      '.px-method-k{font-size:8px;letter-spacing:.16em;font-weight:950;color:#a99cff;text-transform:uppercase}' +
+      '.px-method-title{margin-top:6px;font-size:22px;font-weight:950;letter-spacing:-.04em}' +
+      '.px-method-copy{margin:6px 0 0;color:#8e9bb0;font-size:10px;line-height:1.55;max-width:760px}' +
+      '.px-method-badge{padding:7px 9px;border:1px solid rgba(255,255,255,.075);border-radius:999px;color:#92a0b5;background:rgba(255,255,255,.018);font-size:8px;font-weight:900}' +
+      '.px-method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}' +
+      '.px-method-step{padding:12px;border:1px solid rgba(255,255,255,.065);border-radius:13px;background:rgba(255,255,255,.018)}' +
+      '.px-method-num{display:grid;place-items:center;width:22px;height:22px;border-radius:7px;background:rgba(124,92,255,.10);color:#c6bdff;font-size:8px;font-weight:950}' +
+      '.px-method-step b{display:block;margin-top:8px;font-size:10px}' +
+      '.px-method-step span{display:block;margin-top:4px;color:#75839a;font-size:8px;line-height:1.45}' +
+      '.px-method-foot{margin-top:12px;padding:10px 11px;border:1px solid rgba(54,217,157,.12);border-radius:11px;background:rgba(54,217,157,.025);color:#7f8ea4;font-size:8px;line-height:1.45}' +
+      '.px-method-foot strong{color:#bfeede}' +
+
+      '.px-decision-cockpit{margin:0 0 15px;padding:22px;border:1px solid rgba(124,92,255,.20);border-radius:23px;background:linear-gradient(145deg,rgba(17,24,42,.97),rgba(7,11,20,.99));box-shadow:0 26px 80px rgba(0,0,0,.26);overflow:hidden;position:relative}' +
+      '.px-decision-cockpit:after{content:"";position:absolute;width:280px;height:280px;right:-120px;top:-150px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.13),transparent 68%);pointer-events:none}' +
+      '.px-dc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap}' +
+      '.px-dc-k{font-size:8px;letter-spacing:.16em;font-weight:950;color:#a99cff;text-transform:uppercase}' +
+      '.px-dc-title{margin-top:7px;font-size:28px;font-weight:950;letter-spacing:-.05em;line-height:1.03}' +
+      '.px-dc-sub{margin-top:7px;color:#8e9bb0;font-size:10px;line-height:1.5;max-width:720px}' +
+      '.px-dc-fit{padding:9px 11px;border-radius:12px;border:1px solid rgba(54,217,157,.16);background:rgba(54,217,157,.06);color:#7ce8bd;font-size:10px;font-weight:950;white-space:nowrap}' +
+      '.px-dc-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:9px;margin-top:15px}' +
+      '.px-dc-panel{padding:15px;border:1px solid rgba(255,255,255,.065);border-radius:15px;background:rgba(255,255,255,.018)}' +
+      '.px-dc-label{font-size:8px;letter-spacing:.12em;font-weight:950;color:#7e8ca3;text-transform:uppercase}' +
+      '.px-dc-panel h4{margin:7px 0 5px;font-size:14px}' +
+      '.px-dc-panel p{margin:0;color:#9aa8bc;font-size:9px;line-height:1.5}' +
+      '.px-dc-signals{display:grid;gap:6px;margin-top:9px}' +
+      '.px-dc-signal{display:flex;justify-content:space-between;gap:8px;padding:8px 9px;border:1px solid rgba(255,255,255,.055);border-radius:10px;background:rgba(255,255,255,.016);font-size:8px}' +
+      '.px-dc-signal span{color:#76849a}.px-dc-signal strong{color:#dde4ef;text-align:right}' +
+      '.px-dc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}' +
+      '.px-dc-btn{min-height:41px;display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:11px;text-decoration:none;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#e2e9f4;font-size:9px;font-weight:950;cursor:pointer}' +
+      '.px-dc-btn.primary{background:linear-gradient(135deg,#7c5cff,#5b8cff);border-color:transparent;color:#fff;box-shadow:0 13px 34px rgba(124,92,255,.18)}' +
+      '.px-dc-btn.green{background:linear-gradient(135deg,#36d99d,#1ebf87);border-color:transparent;color:#06140f;box-shadow:0 13px 34px rgba(54,217,157,.13)}' +
+      '.px-dc-btn:hover{transform:translateY(-2px)}' +
+      '.px-dc-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}' +
+      '.px-dc-mini{padding:10px;border:1px solid rgba(255,255,255,.055);border-radius:11px;background:rgba(255,255,255,.014)}' +
+      '.px-dc-mini span{display:block;color:#6f7d94;font-size:7px;letter-spacing:.08em}.px-dc-mini b{display:block;margin-top:4px;color:#e6ecf5;font-size:10px}' +
+      '@media(max-width:820px){.px-method-grid{grid-template-columns:1fr 1fr}.px-dc-grid{grid-template-columns:1fr}}' +
+      '@media(max-width:600px){.px-method{width:calc(100% - 22px);padding:17px}.px-method-grid,.px-dc-foot{grid-template-columns:1fr}.px-dc-title{font-size:23px}.px-decision-cockpit{padding:18px}}' +
+      '@media(prefers-reduced-motion:reduce){.px-skip-link,.px-a11y-status,.px-dc-btn{transition:none}}';
     document.head.appendChild(s);
   }
 
@@ -149,63 +174,126 @@
     if(search) search.setAttribute('aria-label','Cerca uno strumento che utilizzi già');
   }
 
-  function buildNowCard(){
-    if($('#px-now-card')) return;
+  function setupMethodology(){
+    if(!$('#home') || $('#px-method')) return;
+    var anchor=$('#benefits');
+    if(!anchor) return;
+
+    var card=document.createElement('section');
+    card.id='px-method';
+    card.className='px-method';
+    card.setAttribute('aria-label','Come decide PROJECT-X');
+    card.innerHTML=
+      '<div class="px-method-head">'+
+        '<div><div class="px-method-k">METODO PROJECT-X</div><div class="px-method-title">Non scegliamo dal nome del software.</div><p class="px-method-copy">La direzione nasce dall’incrocio tra problema, bisogni, vincoli e strumenti già presenti. Poi il risultato viene trasformato in un piano operativo.</p></div>'+
+        '<div class="px-method-badge">Decisione → sistema → azione</div>'+
+      '</div>'+
+      '<div class="px-method-grid">'+
+        '<div class="px-method-step"><div class="px-method-num">01</div><b>Problema reale</b><span>Partiamo da ciò che ti fa perdere tempo, non da una lista di app.</span></div>'+
+        '<div class="px-method-step"><div class="px-method-num">02</div><b>Vincoli</b><span>Consideriamo budget, team, tecnologia e ciò che usi già.</span></div>'+
+        '<div class="px-method-step"><div class="px-method-num">03</div><b>Compatibilità</b><span>Il motore calcola una coerenza rispetto al tuo profilo.</span></div>'+
+        '<div class="px-method-step"><div class="px-method-num">04</div><b>Primo passo</b><span>La scelta viene collegata a un workflow e a una guida pratica.</span></div>'+
+      '</div>'+
+      '<div class="px-method-foot"><strong>Trasparenza:</strong> gli eventuali collegamenti commerciali sono separati dal calcolo della compatibilità.</div>';
+
+    anchor.parentNode.insertBefore(card,anchor);
+  }
+
+  function getResult(){
+    try{
+      if(window.ProjectXUI&&typeof window.ProjectXUI.getResult==='function') return window.ProjectXUI.getResult();
+    }catch(e){}
+    return null;
+  }
+
+  function primary(r){
+    return r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]))||null;
+  }
+
+  function fit(t){
+    return Math.round(Number(t&&(t.compatibility!=null?t.compatibility:t.score))||0);
+  }
+
+  function getAnswers(){
+    try{return JSON.parse(localStorage.getItem('projectx_answers_v2')||'{}')}catch(e){return {}}
+  }
+
+  function firstAutomation(){
+    var mount=$('#automationMount');
+    if(!mount) return 'Collega il passaggio ripetitivo che fai più spesso.';
+    var node=mount.querySelector('.item strong');
+    return node ? node.textContent.replace(/^\s*\d+\.\s*/,'').trim() : 'Collega il passaggio ripetitivo che fai più spesso.';
+  }
+
+  function buildDecisionCockpit(){
+    if($('#px-decision-cockpit')) return;
 
     var section=$('#results');
-    if(!section) return;
+    if(!section || getComputedStyle(section).display==='none') return;
 
-    var result=window.ProjectXUI && typeof window.ProjectXUI.getResult==='function'
-      ? window.ProjectXUI.getResult()
-      : null;
+    var r=getResult(),p=primary(r);
+    if(!p) return;
 
-    var primary=result && (result.primaryTool || result.primary || (result.rankedTools&&result.rankedTools[0]));
-    var tool=primary && (primary.name || primary.id) ? (primary.name || primary.id) : 'la soluzione appena individuata';
-    var problem='';
-    try{
-      var saved=JSON.parse(localStorage.getItem('projectx_answers_v2')||'null');
-      problem=saved && saved.painPoint ? String(saved.painPoint) : '';
-    }catch(e){}
+    var a=getAnswers();
+    var name=String(p.name||p.id||'Soluzione');
+    var score=fit(p);
+    var stack=(r&&r.stack)||[];
+    var missing=(r&&r.missingNeeds)||[];
+    var profile=r&&r.profile||{};
+    var entries=Object.entries(profile).sort(function(x,y){return Number(y[1]||0)-Number(x[1]||0)});
+    var topNeed=entries.length ? entries[0][0] : 'bisogno operativo';
+    var value=r&&r.valueEstimate||{};
+    var monthly=Number(value.monthlyValue||0);
+    var role=(r&&r.dominantRole&&r.dominantRole.label)||(r&&r.primaryRole&&r.primaryRole.label)||a.businessType||'la tua attività';
 
-    var firstAutomation=$('#automationMount');
-    var automationText='';
-    if(firstAutomation){
-      var node=firstAutomation.querySelector('.item strong');
-      if(node) automationText=node.textContent.replace(/^\s*\d+\.\s*/,'').trim();
-    }
-
-    var card=document.createElement('div');
-    card.id='px-now-card';
-    card.className='px-now-card';
+    var card=document.createElement('section');
+    card.id='px-decision-cockpit';
+    card.className='px-decision-cockpit';
     card.innerHTML=
-      '<div class="px-now-kicker">PROJECT-X · AZIONE IMMEDIATA</div>'+
-      '<div class="px-now-title">⚡ Non fermarti al risultato. Fai il primo passo adesso.</div>'+
-      '<p class="px-now-copy">'+
-        (problem
-          ? 'Hai descritto: <strong style="color:#f1f5fb">'+escapeHtml(problem.slice(0,220))+'</strong>. '
-          : 'Hai appena trovato una configurazione coerente. ')+
-        'Il primo obiettivo è costruire un solo flusso funzionante con <strong style="color:#f1f5fb">'+escapeHtml(tool)+'</strong>.'+
-      '</p>'+
-      '<div class="px-now-grid">'+
-        '<div class="px-now-step"><b><span class="px-now-num">01</span> Parti dal nucleo</b><span>Apri '+escapeHtml(tool)+' e configura solo ciò che serve al primo processo.</span></div>'+
-        '<div class="px-now-step"><b><span class="px-now-num">02</span> Automatizza</b><span>'+(automationText?escapeHtml(automationText):'Collega il passaggio ripetitivo che fai più spesso.')+'</span></div>'+
-        '<div class="px-now-step"><b><span class="px-now-num">03</span> Misura</b><span>Conta ore e passaggi prima e dopo. Il risultato deve essere verificabile.</span></div>'+
+      '<div class="px-dc-top">'+
+        '<div><div class="px-dc-k">PROJECT-X · DECISION COCKPIT</div><div class="px-dc-title">'+escapeHtml(name)+'</div><div class="px-dc-sub">La scelta principale tradotta in una decisione leggibile: cosa risolve, perché è coerente con il tuo profilo e qual è il prossimo movimento.</div></div>'+
+        '<div class="px-dc-fit">✓ '+score+'% compatibilità</div>'+
       '</div>'+
-      '<div class="px-now-actions">'+
-        '<button type="button" class="px-now-btn primary" id="px-now-start">⚡ Inizia dal primo workflow</button>'+
-        '<a class="px-now-btn secondary" id="px-now-guide" href="/tutorial.html?tool='+encodeURIComponent(String(primary&&primary.id||''))+'">📘 Apri la guida pratica</a>'+
+      '<div class="px-dc-grid">'+
+        '<article class="px-dc-panel">'+
+          '<div class="px-dc-label">PERCHÉ È QUI</div>'+
+          '<h4>Coerente con '+escapeHtml(role)+'</h4>'+
+          '<p>Il motore ha incrociato problema, bisogni, vincoli e strumenti già presenti. Non serve cambiare tutto: serve far funzionare bene il primo pezzo.</p>'+
+          '<div class="px-dc-signals">'+
+            '<div class="px-dc-signal"><span>Bisogno principale</span><strong>'+escapeHtml(topNeed)+'</strong></div>'+
+            '<div class="px-dc-signal"><span>Stack iniziale</span><strong>'+stack.length+' strument'+(stack.length===1?'o':'i')+'</strong></div>'+
+            '<div class="px-dc-signal"><span>Gap rilevati</span><strong>'+missing.length+'</strong></div>'+
+          '</div>'+
+        '</article>'+
+        '<article class="px-dc-panel">'+
+          '<div class="px-dc-label">COSA FARE ADESSO</div>'+
+          '<h4>Un solo workflow.</h4>'+
+          '<p>'+escapeHtml(firstAutomation())+'</p>'+
+          '<div class="px-dc-actions">'+
+            '<button id="px-cockpit-workflow" class="px-dc-btn green">⚡ Inizia dal workflow</button>'+
+            '<a id="px-cockpit-guide" class="px-dc-btn primary" href="/tutorial.html?tool='+encodeURIComponent(String(p.id||''))+'">📘 Guida pratica</a>'+
+            '<a class="px-dc-btn" href="/compare.html?'+(p.id?'a='+encodeURIComponent(String(p.id)):'')+'">Confronta alternative</a>'+
+            '<a class="px-dc-btn" href="/workspace.html">Apri Workspace</a>'+
+          '</div>'+
+        '</article>'+
+      '</div>'+
+      '<div class="px-dc-foot">'+
+        '<div class="px-dc-mini"><span>VALORE TEORICO / MESE</span><b>'+(monthly?'€'+Math.round(monthly).toLocaleString('it-IT'):'Da misurare')+'</b></div>'+
+        '<div class="px-dc-mini"><span>PROSSIMA MOSSA</span><b>Automatizza un collo di bottiglia</b></div>'+
+        '<div class="px-dc-mini"><span>REGOLA</span><b>Prima misura. Poi aggiungi complessità.</b></div>'+
       '</div>';
 
     var anchor=section.querySelector('.resultgrid');
     if(anchor) section.insertBefore(card,anchor);
     else section.appendChild(card);
 
-    var start=$('#px-now-start');
-    if(start){
-      start.addEventListener('click',function(){
-        var target=$('#automationMount') || $('#planMount');
+    var action=$('#px-cockpit-workflow');
+    if(action){
+      action.addEventListener('click',function(){
+        var target=$('#automationMount')||$('#planMount');
         if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
-        announce('Ecco il punto da cui iniziare.');
+        announce('Hai un punto preciso da cui partire.');
+        try{fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'first_workflow_click',sessionId:Date.now().toString(),meta:{tool:name}})}).catch(function(){})}catch(e){}
       });
     }
   }
@@ -219,7 +307,7 @@
     var h=section.querySelector('.resulthead h1');
     if(h) h.id='px-results-title';
 
-    if(!$('#px-now-card')) buildNowCard();
+    buildDecisionCockpit();
   }
 
   function focusView(view){
@@ -233,7 +321,7 @@
         var h=$('#px-results-title');
         if(h) h.focus({preventScroll:true});
         improveResult();
-        announce('Risultato pronto. Parti dalla decisione principale o dal primo workflow.');
+        announce('Risultato pronto. Parti dalla decisione e poi dal primo workflow.');
       }else if(view==='loading'){
         announce('PROJECT-X sta costruendo il tuo risultato.');
       }
@@ -333,6 +421,7 @@
     setupMain();
     setupStatus();
     setupMobileNav();
+    setupMethodology();
     improveHomeFields();
     improveQuestion();
     improveResult();
