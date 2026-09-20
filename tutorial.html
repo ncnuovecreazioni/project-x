@@ -97,12 +97,14 @@
 
 <script src="/database.js"></script>
 <script src="/tool-tutorials.js?v=20260920-tutorials1"></script>
+<script src="/tutorial-library.js?v=20260920-detailed1"></script>
 <script>
 (function(){
 'use strict';
 
 var db=Array.isArray(window.SOFTWARE_DATABASE)?window.SOFTWARE_DATABASE:[];
 var T=window.PROJECTX_TOOL_TUTORIALS;
+var D=window.PROJECTX_DETAILED_TUTORIALS;
 var eligible={systeme:1,pipedrive:1,getresponse:1,activecampaign:1,hubspot:1,shopify:1,make:1,brevo:1,monday:1,semrush:1,kit:1};
 
 var DETAILS={
@@ -311,6 +313,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function findTool(id){return db.find(function(x){return x.id===id})}
 function getTutorial(tool){try{return T&&T.get?T.get(tool):null}catch(e){return null}}
 function getDetails(tool,tut){
+  try{if(D&&typeof D.get==='function') return D.get(tool)}catch(e){}
   if(DETAILS[tool.id]) return DETAILS[tool.id];
   var cat=String(tool.category||'').toLowerCase();
   var key=Object.keys(CATEGORY).find(function(k){return cat.indexOf(k.toLowerCase())>=0});
@@ -346,7 +349,7 @@ var state=loadState(tool.id),selected=0;
 
 document.getElementById('toolName').textContent=tool.name;
 document.getElementById('heroToolBtn').href=toolLink(tool);
-document.getElementById('title').textContent=tool.name+' · esempio pratico';
+document.getElementById('title').textContent=tool.name+' · guida passo-passo';
 document.getElementById('intro').textContent=(tut&&tut.mission? tut.mission+'. ':'')+d.why;
 document.getElementById('exampleTitle').textContent=d.scenarioTitle;
 document.getElementById('exampleCopy').textContent=d.scenario;
