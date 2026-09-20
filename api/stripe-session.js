@@ -56,6 +56,8 @@ export default async function handler(req, res) {
           painPoint: String((data.metadata && data.metadata.pain_point) || ""),
           automation: String((data.metadata && data.metadata.automation) || ""),
           tech: String((data.metadata && data.metadata.tech) || ""),
+          hours: String((data.metadata && data.metadata.hours) || ""),
+          hourlyValue: String((data.metadata && data.metadata.hourly_value) || ""),
           existingTools: String((data.metadata && data.metadata.existing_tools) || "")
             .split("|")
             .map(x => x.trim())
