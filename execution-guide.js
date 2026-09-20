@@ -140,6 +140,7 @@
     box.className='px-eg';
 
     var open=(data.url&&data.url!=='#')?'<a class="px-eg-open" href="'+esc(data.url)+'" target="_blank" rel="noopener noreferrer">Apri '+esc(data.name||'lo strumento')+' ↗</a>':'';
+    var detail='<a class="px-eg-open" href="/tutorial.html?tool='+encodeURIComponent(id)+'">📘 Guida completa + esempio</a>';
     var lib='<a class="px-eg-library" href="/tutorials.html?tool='+encodeURIComponent(id)+'">Tutti i tutorial →</a>';
 
     box.innerHTML=
@@ -158,7 +159,7 @@
               '<p>La regola è semplice: un caso reale, una procedura, un test. Quando questo pezzo funziona, PROJECT-X ti accompagna al successivo.</p>'+
             '</div>'+
             '<div class="px-eg-flow"><div class="px-eg-flow-title">Il percorso</div><div class="px-eg-flow-copy">Il tutorial trasforma il software in una procedura concreta.</div><div class="px-eg-flow-rail">'+(data.flow||[]).map(function(x,i){return '<div class="px-eg-flow-node"><span>FASE '+(i+1)+'</span><b>'+esc(x)+'</b></div>';}).join('')+'</div></div>'+
-            '<div class="px-eg-tools">'+open+lib+'</div>'+
+            '<div class="px-eg-tools">'+detail+open+lib+'</div>'+
           '</div>'+
           '<div id="px-eg-visual">'+visual(p,data,selected)+'</div>'+
         '</div>'+
