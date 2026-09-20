@@ -9,17 +9,35 @@ export default async function handler(req, res) {
   const stripePrice = String(process.env.STRIPE_PRICE_ID || "").trim();
 
   const paymentLinkConfigured = /^https?:\/\//i.test(checkoutUrl);
-  const stripeSessionConfigured =
-    /^sk_(test|live)_/i.test(stripeSecret) && Boolean(paymentLinkConfigured || stripePrice);
+  const stripeConfigured =
+    /^sk_(test|live)_/i.test(stripeSecret) &&
+    Boolean(stripePrice || paymentLinkConfigured);
+
+  const stripeMode = /^sk_live_/i.test(stripeSecret)
+    ? "live"
+    : /^sk_test_/i.test(stripeSecret)
+      ? "test"
+      : "not-configured";
+
+  const testPaymentLink = paymentLinkConfigured && /stripe\.com\/test_/i.test(checkoutUrl);
+  const livePaymentLink = paymentLinkConfigured && !testPaymentLink;
+  const secureProfileHandoff = stripeConfigured;
+  const realSalesReady =
+    stripeMode === "live"
+      ? Boolean(stripePrice || livePaymentLink)
+      : false;
 
   res.setHeader("Cache-Control", "no-store");
   return res.status(200).json({
     success: true,
-    configured: paymentLinkConfigured || stripeSessionConfigured,
+    configured: paymentLinkConfigured || stripeConfigured,
     paymentLinkConfigured,
-    testMode: paymentLinkConfigured && /stripe\.com\/test_/i.test(checkoutUrl),
-    stripeSessionConfigured,
-    automaticProfileHandoff: stripeSessionConfigured,
+    testMode: testPaymentLink || stripeMode === "test",
+    stripeMode,
+    stripeSessionConfigured: stripeConfigured,
+    automaticProfileHandoff: secureProfileHandoff,
+    secureProfileHandoff,
+    realSalesReady,
     deliveryVerificationConfigured: /^sk_(test|live)_/i.test(stripeSecret),
     product: "project-x-report-pro",
     price: 29,
