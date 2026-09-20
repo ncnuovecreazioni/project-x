@@ -257,7 +257,7 @@
     automation:{
       title:'Elimina un passaggio manuale con un primo workflow',
       steps:[
-        ['Apri '+((null)),'Vai nella sezione workflow/automazione del software.','Azione: individua Create / New workflow / Automation.','✓ Hai aperto il builder.'],
+        ['Apri AREA_TUTORIALE','Vai nella sezione workflow/automazione del software.','Azione: individua Create / New workflow / Automation.','✓ Hai aperto il builder.'],
         ['Scegli il trigger','Decidi quale evento deve far partire il flusso.','Azione: usa un evento che puoi generare facilmente in test.','✓ Il trigger produce un record.'],
         ['Configura l’azione','Aggiungi la prima azione: crea, aggiorna, invia o notifica.','Azione: collega solo i dati indispensabili.','✓ L’azione mostra i campi ricevuti.'],
         ['Esegui il test','Lancia il workflow con un caso di prova.','Azione: controlla output e cronologia.','✓ Una sola esecuzione produce un risultato.'],
@@ -279,7 +279,7 @@
     ecommerce:{
       title:'Porta un ordine dal checkout al post-acquisto',
       steps:[
-        ['Apri '+((null)),'Vai nella sezione prodotti/ordini/impostazioni.','Azione: controlla che il prodotto di test sia pronto.','✓ Il caso può partire.'],
+        ['Apri AREA_TUTORIALE','Vai nella sezione prodotti/ordini/impostazioni.','Azione: controlla che il prodotto di test sia pronto.','✓ Il caso può partire.'],
         ['Crea o controlla il prodotto','Verifica prezzo, disponibilità e dati necessari.','Azione: correggi solo ciò che serve al test.','✓ Il prodotto passa il controllo.'],
         ['Esegui un ordine di prova','Usa la modalità di pagamento test disponibile.','Azione: completa il checkout.','✓ L’ordine appare nello stato previsto.'],
         ['Definisci il post-acquisto','Scegli una sola azione dopo l’ordine.','Azione: email, CRM, task o notifica.','✓ Sai cosa deve succedere.'],
@@ -290,7 +290,7 @@
     projects:{
       title:'Trasforma una richiesta in un’attività controllabile',
       steps:[
-        ['Apri '+((null)),'Crea un progetto/board/lista per un solo processo reale.','Azione: scegli un nome facile da capire.','✓ Il progetto è identificabile.'],
+        ['Apri AREA_TUTORIALE','Crea un progetto/board/lista per un solo processo reale.','Azione: scegli un nome facile da capire.','✓ Il progetto è identificabile.'],
         ['Crea un task','Inserisci una richiesta vera ma semplice.','Azione: compila titolo e contesto.','✓ Il task è leggibile.'],
         ['Assegna responsabile e data','Dai un proprietario e una scadenza.','Azione: evita attività senza responsabile.','✓ È chiaro chi deve fare cosa.'],
         ['Configura gli stati','Imposta una sequenza minima.','Azione: usa Da fare → In corso → Fatto come punto di partenza.','✓ Lo stato è leggibile.'],
@@ -301,7 +301,7 @@
     documents:{
       title:'Crea un documento ricorrente senza ricostruirlo ogni volta',
       steps:[
-        ['Apri '+((null)),'Vai in templates/documenti/modelli.','Azione: individua il tipo di documento ricorrente.','✓ Hai un documento campione.'],
+        ['Apri AREA_TUTORIALE','Vai in templates/documenti/modelli.','Azione: individua il tipo di documento ricorrente.','✓ Hai un documento campione.'],
         ['Crea il modello','Imposta testo fisso e campi variabili.','Azione: separa informazioni fisse da quelle del cliente.','✓ Il modello è riutilizzabile.'],
         ['Compila un caso test','Usa valori di prova e genera il documento.','Azione: verifica nomi, date e importi.','✓ Il documento è corretto.'],
         ['Invia o firma','Segui il passaggio di invio/firma previsto dal tool.','Azione: prova con destinatario di test.','✓ Il destinatario riceve il documento.'],
@@ -312,7 +312,7 @@
     ai:{
       title:'Trasforma un compito ripetitivo in una procedura AI',
       steps:[
-        ['Apri '+((null)),'Entra nell’area chat/project/documenti del tool.','Azione: identifica il compito che vuoi delegare.','✓ Il risultato atteso è scritto.'],
+        ['Apri AREA_TUTORIALE','Entra nell’area chat/project/documenti del tool.','Azione: identifica il compito che vuoi delegare.','✓ Il risultato atteso è scritto.'],
         ['Prepara il contesto','Inserisci obiettivo, dati, pubblico e vincoli.','Azione: elimina informazioni inutili o sensibili.','✓ L’AI comprende il caso.'],
         ['Scrivi il prompt','Indica formato, struttura e criteri di qualità.','Azione: chiedi un output controllabile.','✓ L’output ha una forma coerente.'],
         ['Revisiona','Controlla fatti, numeri, tono e completezza.','Azione: segna cosa deve restare umano.','✓ Sai cosa puoi delegare.'],
@@ -323,7 +323,7 @@
     seo:{
       title:'Da una ricerca SEO a una sola azione concreta',
       steps:[
-        ['Apri '+((null)),'Vai nella sezione progetto/audit/keyword del tool.','Azione: imposta dominio e mercato.','✓ Il progetto è corretto.'],
+        ['Apri AREA_TUTORIALE','Vai nella sezione progetto/audit/keyword del tool.','Azione: imposta dominio e mercato.','✓ Il progetto è corretto.'],
         ['Inserisci la query','Parti da un problema che il cliente cerca davvero.','Azione: raccogli poche query prioritarie.','✓ Hai un gruppo utile.'],
         ['Analizza i risultati','Guarda SERP, volume, intento o problemi tecnici a seconda dello strumento.','Azione: scegli un solo punto da migliorare.','✓ Sai cosa cambiare.'],
         ['Applica una modifica','Ottimizza una pagina o crea un contenuto mirato.','Azione: cambia poche cose misurabili.','✓ Puoi attribuire l’effetto.'],
@@ -334,7 +334,7 @@
     appointments:{
       title:'Permetti al cliente di prenotare senza coordinamento manuale',
       steps:[
-        ['Apri '+((null)),'Vai in Event Types/Appointment Types.','Azione: crea un solo servizio.','✓ L’evento è definito.'],
+        ['Apri AREA_TUTORIALE','Vai in Event Types/Appointment Types.','Azione: crea un solo servizio.','✓ L’evento è definito.'],
         ['Imposta durata e disponibilità','Scegli durata, giorni e fasce orarie.','Azione: collega il calendario reale.','✓ Gli slot occupati non vengono proposti.'],
         ['Crea il link','Salva il tipo di appuntamento e copia il link pubblico.','Azione: aprilo in una finestra anonima/test.','✓ Un cliente può arrivare alla prenotazione.'],
         ['Imposta il promemoria','Aggiungi una sola comunicazione di reminder.','Azione: controlla destinatario e tempistica.','✓ Il promemoria parte correttamente.'],
@@ -345,7 +345,7 @@
     productivity:{
       title:'Collega una informazione al passaggio successivo',
       steps:[
-        ['Apri '+((null)),'Individua email, file, foglio, calendario o area collaborazione.','Azione: scegli una sola attività ricorrente.','✓ Il punto di partenza è definito.'],
+        ['Apri AREA_TUTORIALE','Individua email, file, foglio, calendario o area collaborazione.','Azione: scegli una sola attività ricorrente.','✓ Il punto di partenza è definito.'],
         ['Crea un caso di prova','Prepara un file, email, riga o evento.','Azione: usa un esempio piccolo ma reale.','✓ Il caso è pronto.'],
         ['Definisci il passaggio','Scrivi cosa deve accadere dopo.','Azione: sposta, notifica, aggiorna o collega il dato.','✓ La regola è esprimibile in una frase.'],
         ['Esegui e controlla','Fai il passaggio manualmente una prima volta.','Azione: verifica dove deve finire il dato.','✓ Conosci il risultato atteso.'],
@@ -356,7 +356,7 @@
     design:{
       title:'Crea una volta un asset e riusalo',
       steps:[
-        ['Apri '+((null)),'Scegli il formato di contenuto che produci più spesso.','Azione: usa un solo formato pilota.','✓ Hai un obiettivo grafico chiaro.'],
+        ['Apri AREA_TUTORIALE','Scegli il formato di contenuto che produci più spesso.','Azione: usa un solo formato pilota.','✓ Hai un obiettivo grafico chiaro.'],
         ['Parti da un modello','Apri un template oppure crea una base vuota.','Azione: imposta dimensioni, griglia e gerarchia.','✓ Il layout è pronto.'],
         ['Inserisci i contenuti','Sostituisci testo e immagini senza rompere la struttura.','Azione: mantieni stile e gerarchia.','✓ Il risultato è leggibile.'],
         ['Duplica','Crea una copia e cambia solo i dati variabili.','Azione: usa la copia come seconda versione.','✓ La seconda creazione è più veloce.'],
@@ -403,7 +403,7 @@
     var o=OBJECTS[id]||[(tool&&tool.category)||'Software', 'procedura operativa', 'caso reale → configurazione → test'];
     var p=PACK[catKey(tool)]||PACK.productivity;
     var steps=p.steps.map(function(s){
-      return [s[0].replace('+((null))',o[0]),s[1].replace('+((null))',o[0]),s[2],s[3]];
+      return [s[0].replace('AREA_TUTORIALE',o[0]),s[1].replace('AREA_TUTORIALE',o[0]),s[2],s[3]];
     });
     return {
       id:id,
