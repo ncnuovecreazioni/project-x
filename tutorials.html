@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#060811">
+<meta name="description" content="PROJECT-X Tutorial: guide pratiche e visuali passo passo per usare i software del catalogo.">
+<title>PROJECT-X — Tutorial Software</title>
+<style>
+:root{--bg:#050711;--bg2:#0a0f1c;--panel:#0f1526;--line:rgba(255,255,255,.09);--text:#f7f9ff;--muted:#98a5bc;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.wrap{width:min(1160px,calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:20;height:66px;border-bottom:1px solid var(--line);background:rgba(5,7,17,.84);backdrop-filter:blur(18px)}.nav{height:100%;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:950;letter-spacing:.18em}.logo b{color:var(--p)}.nav a{color:#c8c0ff;text-decoration:none;font-size:10px;font-weight:900;border:1px solid rgba(124,92,255,.22);padding:8px 10px;border-radius:999px}.hero{text-align:center;padding:76px 0 42px}.eyebrow{display:inline-flex;padding:8px 11px;border:1px solid rgba(124,92,255,.3);border-radius:999px;background:rgba(124,92,255,.08);color:#c9bfff;font-size:10px;font-weight:900}.hero h1{margin:20px auto 12px;font-size:clamp(45px,7vw,78px);line-height:.92;letter-spacing:-.065em}.grad{background:linear-gradient(100deg,#fff,#ad9dff,#79aaff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:760px;margin:0 auto;color:var(--muted);font-size:16px;line-height:1.65}.searchbar{margin:30px auto 0;width:min(820px,100%);display:grid;grid-template-columns:1fr 180px;gap:9px}.searchbar input,.searchbar select{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025);color:#fff;outline:none}.searchbar select{color-scheme:dark}.searchbar option{background:#0d1321;color:#fff}.catalog{padding:25px 0 90px}.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px;color:#8290a7;font-size:10px}.meta strong{color:#fff}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(16,23,40,.94),rgba(8,12,22,.96));padding:16px;transition:.18s ease}.card:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.3)}.card-k{font-size:8px;color:#a99cff;letter-spacing:.12em;font-weight:950}.card h3{margin:7px 0 5px;font-size:16px;letter-spacing:-.025em}.card p{margin:0;color:#8e9bb0;font-size:10px;line-height:1.5}.card-flow{margin-top:10px;color:#cbd4e2;font-size:9px;line-height:1.45}.card .btn{margin-top:11px;width:100%;border:1px solid rgba(124,92,255,.28);background:rgba(124,92,255,.08);color:#ddd8ff;border-radius:10px;padding:9px 11px;font-size:9px;font-weight:900;cursor:pointer}.panel{display:none;margin:0 0 25px;padding:18px;border:1px solid rgba(124,92,255,.25);border-radius:24px;background:linear-gradient(145deg,rgba(15,22,39,.98),rgba(6,10,19,.99));box-shadow:0 28px 90px rgba(0,0,0,.28)}.panel.open{display:block}.panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.panel h2{margin:6px 0 7px;font-size:30px;letter-spacing:-.045em}.panel p{margin:0;color:#aab6c8;font-size:12px;line-height:1.6}.panel-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.tag{padding:7px 9px;border-radius:999px;background:rgba(255,255,255,.025);border:1px solid var(--line);color:#b7c2d4;font-size:8px;font-weight:900}.panel-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:16px;margin-top:16px}.flow{padding:14px;border-radius:16px;border:1px solid rgba(54,217,157,.12);background:rgba(54,217,157,.025)}.flow h4{margin:0;font-size:14px}.flow p{margin-top:5px;color:#8391a6;font-size:10px}.flowrail{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:10px}.flownode{padding:9px 6px;border:1px solid rgba(255,255,255,.06);border-radius:9px;background:rgba(255,255,255,.015);text-align:center}.flownode b{font-size:8px;line-height:1.25}.flownode small{display:block;margin-top:4px;color:#66758d;font-size:6px}.steps{display:grid;gap:8px;margin-top:12px}.step{display:grid;grid-template-columns:32px 1fr 20px;gap:9px;align-items:start;padding:11px;border:1px solid rgba(255,255,255,.065);border-radius:12px;background:rgba(255,255,255,.018);cursor:pointer}.step.selected{border-color:rgba(124,92,255,.5);background:rgba(124,92,255,.06)}.step.done{border-color:rgba(54,217,157,.16);background:rgba(54,217,157,.025)}.num{width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:rgba(124,92,255,.10);color:#c8c1ff;font-size:9px;font-weight:950}.step.done .num{background:rgba(54,217,157,.09);color:#7ce8bd}.step b{font-size:11px}.step p{margin-top:4px;font-size:9.5px;color:#aab5c7}.check{width:20px;height:20px;accent-color:#7c5cff}.visual{padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:17px;background:#060a12}.screenbar{display:flex;align-items:center;gap:7px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.06)}.dot{width:8px;height:8px;border-radius:50%;background:#36d99d}.brand{font-size:10px;font-weight:950}.live{margin-left:auto;color:#7ce8bd;font-size:7px;font-weight:900}.screenbody{display:grid;grid-template-columns:55px 1fr;gap:10px;padding-top:10px}.sidebar{display:grid;gap:5px}.sitem{height:11px;border-radius:5px;background:rgba(255,255,255,.055)}.sitem.active{height:17px;border:1px solid rgba(124,92,255,.35);background:rgba(124,92,255,.1)}.vmain h4{margin:0;font-size:11px}.widgetgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.widget{min-height:65px;padding:8px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(255,255,255,.018)}.widget.focus{border-color:rgba(124,92,255,.55);background:rgba(124,92,255,.09);box-shadow:0 0 0 3px rgba(124,92,255,.06)}.widget b{display:block;margin-top:4px;font-size:8px}.widget span{display:block;margin-top:3px;color:#718097;font-size:6.5px;line-height:1.35}.instruction{margin-top:8px;padding:7px;border:1px dashed rgba(124,92,255,.4);border-radius:8px;color:#c5bcff;font-size:7.5px;line-height:1.4}.visualnote{margin-top:7px;color:#68768d;font-size:7.5px;line-height:1.4}.close{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#d9e1ed;border-radius:10px;padding:9px 11px;font-size:9px;font-weight:900;cursor:pointer}.footer{text-align:center;padding:30px;border-top:1px solid var(--line);color:#67758d;font-size:9px}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}.panel-layout{grid-template-columns:1fr}.flowrail{grid-template-columns:1fr}.flownode{display:flex;justify-content:space-between}.searchbar{grid-template-columns:1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}.hero{padding-top:55px}.panel h2{font-size:24px}.screenbody{grid-template-columns:1fr}.sidebar{display:none}.widgetgrid{grid-template-columns:1fr 1fr}.widget:last-child{grid-column:1/-1}.panel-top{flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><a href="/">← Analizza un problema</a></div></header>
+<main>
+<section class="hero"><div class="wrap">
+<div class="eyebrow">✦ PROJECT-X TOOL SCHOOL</div>
+<h1>Non ti lascio solo davanti al software.<br><span class="grad">Ti mostro cosa fare.</span></h1>
+<p>Ogni tool del catalogo ha una guida pratica: cosa aprire, cosa impostare, come fare il primo test e cosa controllare. Le schermate qui sotto sono simulazioni visive per orientarti rapidamente.</p>
+<div class="searchbar"><input id="search" placeholder="Cerca un software…"><select id="category"><option value="">Tutte le categorie</option></select></div>
+</div></section>
+<section class="catalog"><div class="wrap">
+<div id="panel" class="panel"></div>
+<div class="meta"><span><strong id="count">0</strong> tutorial disponibili</span><span id="coverage"></span></div>
+<div id="grid" class="grid"></div>
+</div></section>
+</main>
+<footer class="footer">PROJECT-X · Tutorial School · Guide pratiche costruite attorno al problema reale.</footer>
+<script src="/database.js"></script>
+<script src="/tool-tutorials.js?v=20260920-tutorials1"></script>
+<script>
+(function(){
+'use strict';
+var db=Array.isArray(window.SOFTWARE_DATABASE)?window.SOFTWARE_DATABASE:[];
+var T=window.PROJECTX_TOOL_TUTORIALS;
+var search=document.getElementById('search'),cat=document.getElementById('category'),grid=document.getElementById('grid'),panel=document.getElementById('panel'),count=document.getElementById('count'),coverage=document.getElementById('coverage');
+var current=null,selected=0;
+var cats=[];
+db.forEach(function(t){if(t.category&&cats.indexOf(t.category)<0)cats.push(t.category)});
+cats.sort().forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;cat.appendChild(o)});
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function filter(){
+ var q=(search.value||'').trim().toLowerCase(),c=cat.value;
+ var list=db.filter(function(t){return (!q||String(t.name).toLowerCase().indexOf(q)>=0||String(t.category).toLowerCase().indexOf(q)>=0)&&(!c||t.category===c)});
+ count.textContent=list.length;
+ grid.innerHTML=list.map(function(t){
+   var d=T.get(t);
+   return '<div class="card"><div class="card-k">'+esc(d.area)+'</div><h3>'+esc(t.name)+'</h3><p>'+esc(d.focus)+'.</p><div class="card-flow">'+esc((d.flow||[]).join(' → '))+'</div><button class="btn" data-tool="'+esc(t.id)+'">Apri tutorial →</button></div>';
+ }).join('')||'<div class="card"><h3>Nessun risultato</h3><p>Prova con un altro nome o categoria.</p></div>';
+}
+function drawPanel(t){
+ var d=T.get(t),st=JSON.parse(localStorage.getItem('projectx_guide_state_v2')||'{}')[t.id]||{};
+ selected=Math.max(0,Math.min(d.steps.length-1,selected||0));
+ panel.classList.add('open');
+ panel.innerHTML='<div class="panel-top"><div><div class="card-k">'+esc(d.area)+'</div><h2>'+esc(t.name)+'</h2><p>'+esc(d.focus)+'. '+esc(d.mission)+'</p><div class="panel-tags"><span class="tag">'+esc(t.category)+'</span><span class="tag">'+d.steps.length+' passi</span><span class="tag">visuale + pratica</span></div></div><button id="closePanel" class="close">Chiudi</button></div><div class="panel-layout"><div><div class="flow"><h4>Il percorso</h4><p>Segui questo flusso senza cercare di imparare tutto il software.</p><div class="flowrail">'+(d.flow||[]).map(function(x,i){return '<div class="flownode"><b>'+esc(x)+'</b><small>FASE '+(i+1)+'</small></div>'}).join('')+'</div><div class="steps" id="psteps"></div></div><div id="visual"></div></div>';
+ panel.querySelector('#closePanel').onclick=function(){panel.classList.remove('open');current=null};
+ renderSteps(t,d,st);
+ panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderSteps(t,d,st){
+ var list=panel.querySelector('#psteps');
+ list.innerHTML=d.steps.map(function(s,i){return '<div class="step '+(i===selected?'selected ':'')+(st[String(i)]?'done':'')+'" data-step="'+i+'"><div class="num">'+String(i+1).padStart(2,'0')+'</div><div><b>'+esc(s.title)+'</b><p>'+esc(s.instruction)+'</p><p>✓ Quando va bene: '+esc(s.success)+'</p></div><input class="check" type="checkbox" data-check="'+i+'" '+(st[String(i)]?'checked':'')+'></div>'}).join('');
+ list.querySelectorAll('.step').forEach(function(row){row.onclick=function(e){if(e.target.classList.contains('check'))return;selected=Number(row.dataset.step);renderVisual(t,d,selected);renderSteps(t,d,st)}});
+ list.querySelectorAll('.check').forEach(function(cb){cb.onchange=function(e){e.stopPropagation();st[String(cb.dataset.check)]=cb.checked;localStorage.setItem('projectx_guide_state_v2',JSON.stringify(Object.assign(JSON.parse(localStorage.getItem('projectx_guide_state_v2')||'{}'),{[t.id]:st})));renderSteps(t,d,st);renderVisual(t,d,selected)}});
+ renderVisual(t,d,selected);
+}
+function renderVisual(t,d,idx){
+ var s=d.steps[idx],focus=idx%3;
+ panel.querySelector('#visual').innerHTML='<div class="visual"><div class="screenbar"><span class="dot"></span><span class="brand">'+esc(t.name)+'</span><span class="live">● tutorial mode</span></div><div class="screenbody"><div class="sidebar"><div class="sitem active"></div><div class="sitem"></div><div class="sitem"></div><div class="sitem"></div></div><div class="vmain"><h4>'+esc(s.title)+'</h4><div class="widgetgrid"><div class="widget '+(focus===0?'focus':'')+'"><b>AREA</b><span>'+esc(d.area)+'</span></div><div class="widget '+(focus===1?'focus':'')+'"><b>AZIONE</b><span>'+esc(d.action)+'</span></div><div class="widget '+(focus===2?'focus':'')+'"><b>CONTROLLO</b><span>Verifica l'esito del passo</span></div></div><div class="instruction">▸ '+esc(s.instruction)+'</div></div></div><div class="visualnote">Simulazione visiva: cerca nel software reale l'area che assomiglia a questa. Le etichette possono cambiare.</div></div>';
+}
+function openTool(id){
+ var t=db.find(function(x){return x.id===id});if(!t)return;
+ current=t.id;selected=0;drawPanel(t);
+}
+grid.addEventListener('click',function(e){var b=e.target.closest('[data-tool]');if(b)openTool(b.getAttribute('data-tool'))});
+search.oninput=filter;cat.onchange=filter;
+var urlTool=new URLSearchParams(location.search).get('tool');
+filter();
+if(urlTool){var t=db.find(function(x){return x.id===urlTool});if(t)openTool(t.id)}
+if(T&&T.coverage){var c=T.coverage();coverage.textContent=c.withTutorial+' / '+c.total+' tool con guida dedicata'};
+})();
+</script>
+</body>
+</html>
