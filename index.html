@@ -803,7 +803,7 @@ var impact=humanImpact(p);
 $('primaryMount').innerHTML=
 '<div class="resulthero">'+
   '<div class="label">01 · SCELTA PRINCIPALE</div>'+
-  '<div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ '+s+'% compatibilità</span><div class="hero-actions">'+cta+'<button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div>'+
+  '<div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ '+s+'% compatibilità</span><div class="hero-actions">'+cta+'<button id="tutorialTop" class="btn secondary">🎓 Tutorial: come usarlo</button><button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div>'+
   '<div class="commercial"><strong>Perché è qui:</strong> PROJECT-X incrocia il problema che hai descritto con bisogni, budget, tecnologia, team e strumenti già presenti.</div>'+
   disclosure+
 '</div>'+
@@ -821,6 +821,15 @@ $('primaryMount').innerHTML=
 '</div>';
 if($('primaryLink'))$('primaryLink').addEventListener('click',function(){event('affiliate_click',{tool:toolName(p),url:u,hasAffiliate:isCommercial})});
 if($('copyTop'))$('copyTop').onclick=copyReport;
+if($('tutorialTop'))$('tutorialTop').onclick=function(){
+  function go(){
+    var g=$('px-execution-guide');
+    if(g){g.scrollIntoView({behavior:'smooth',block:'start'});return true}
+    return false;
+  }
+  if(!go())setTimeout(go,120);
+  event('tutorial_open',{tool:toolName(p),toolId:p.id||''});
+};
 if($('planTop'))$('planTop').onclick=function(){$('planMount').scrollIntoView({behavior:'smooth'})};
 }
 function renderValue(v){var h=Number(v.hoursPerWeek||0)||0,rate=Number(v.hourlyValue||0)||0,monthly=Number(v.monthlyValue||h*rate*4.33)||0,annual=Number(v.annualValue||monthly*12)||0;$('valueMount').innerHTML='<h3>💰 Il valore del tempo</h3><div class="sub">Stima teorica basata sulle ore ripetitive indicate. Non è una promessa di risparmio.</div><div class="money">€'+Math.round(monthly).toLocaleString('it-IT')+'</div><div class="moneylabel">valore potenziale / mese</div><div class="moneyrow"><div class="moneymini"><b>€'+Math.round(annual).toLocaleString('it-IT')+'</b><span>su base annua</span></div><div class="moneymini"><b>'+h+' h</b><span>a settimana</span></div></div><div class="metric"><span style="color:var(--muted)">Valore orario</span><strong>€'+rate+'</strong></div>'}
