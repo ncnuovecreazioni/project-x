@@ -17,6 +17,8 @@ function addProfileMetadata(params, answers) {
     pain_point: clean(a.painPoint, 500),
     automation: clean(a.automation, 400),
     tech: clean(a.tech, 400),
+    hours: clean(a.hours, 80),
+    hourly_value: clean(a.hourlyValue, 80),
     existing_tools: Array.isArray(a.existingTools)
       ? a.existingTools.map(x => clean(x, 60)).slice(0, 12).join(" | ").slice(0, 500)
       : ""
