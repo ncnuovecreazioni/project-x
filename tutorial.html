@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#060811">
+<meta name="description" content="PROJECT-X: guida completa e pratica al software consigliato, con esempio reale, configurazione passo passo e prossimo passo.">
+<title>PROJECT-X — Guida completa al software</title>
+<style>
+:root{--bg:#050711;--bg2:#0a0f1c;--panel:#0f1526;--panel2:#111a2d;--line:rgba(255,255,255,.09);--text:#f7f9ff;--muted:#98a5bc;--muted2:#6f7d94;--p:#7c5cff;--p2:#5b8cff;--ok:#36d99d;--gold:#ffd166;--shadow:0 30px 100px rgba(0,0,0,.35);--r:22px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 12% 0%,rgba(124,92,255,.19),transparent 26%),radial-gradient(circle at 88% 0%,rgba(91,140,255,.11),transparent 24%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}.wrap{width:min(1120px,calc(100% - 28px));margin:auto}
+.top{position:sticky;top:0;z-index:50;height:66px;border-bottom:1px solid var(--line);background:rgba(5,7,17,.82);backdrop-filter:blur(18px)}.nav{height:100%;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:950;letter-spacing:.18em}.logo b{color:var(--p)}.navlinks{display:flex;gap:8px}.nav a,.nav button{text-decoration:none;color:#d5dcaa;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:8px 10px;border-radius:999px;font-size:9px;font-weight:900;cursor:pointer}
+.hero{padding:70px 0 34px;text-align:center}.eyebrow{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid rgba(124,92,255,.32);background:rgba(124,92,255,.08);border-radius:999px;color:#c9bfff;font-size:9px;font-weight:950;letter-spacing:.08em}.hero h1{margin:19px auto 11px;font-size:clamp(43px,7vw,76px);line-height:.93;letter-spacing:-.07em;max-width:920px}.grad{background:linear-gradient(100deg,#fff,#ad9dff 47%,#79aaff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:800px;margin:0 auto;color:var(--muted);line-height:1.68;font-size:15px}.hero-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:11px 15px;border-radius:12px;border:1px solid var(--line);font-size:10px;font-weight:950;text-decoration:none;cursor:pointer}.primary{color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));border-color:transparent;box-shadow:0 16px 46px rgba(124,92,255,.22)}.secondary{color:#dce4f2;background:rgba(255,255,255,.035)}
+.notice{margin:18px auto 0;max-width:850px;padding:11px 13px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.018);border-radius:13px;color:#77859b;font-size:9px;line-height:1.55}
+.main{padding:10px 0 100px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:15px;align-items:start}.card{border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(145deg,rgba(16,23,40,.95),rgba(8,12,22,.97));box-shadow:var(--shadow)}.section{padding:23px}.kicker{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#a99cff;font-weight:950}.h2{margin:7px 0 8px;font-size:28px;line-height:1.08;letter-spacing:-.045em}.lead{margin:0;color:#acb8ca;font-size:12px;line-height:1.65}
+.example{margin-top:15px;padding:16px;border:1px solid rgba(54,217,157,.15);background:linear-gradient(135deg,rgba(54,217,157,.05),rgba(124,92,255,.035));border-radius:17px}.example-title{font-size:16px;font-weight:950}.example-copy{margin-top:6px;color:#9dacbf;font-size:11px;line-height:1.6}.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.mini{padding:11px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.018)}.mini b{display:block;font-size:10px}.mini span{display:block;margin-top:4px;color:#8290a6;font-size:8px;line-height:1.45}
+.outcome{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}.outcome .mini{min-height:77px}.outcome .mini b{font-size:9px;color:#bcaeff}.outcome .mini span{color:#a0acc0}
+.steps{display:grid;gap:9px;margin-top:14px}.step{display:grid;grid-template-columns:36px 1fr auto;gap:11px;align-items:start;padding:14px;border:1px solid rgba(255,255,255,.065);border-radius:15px;background:rgba(255,255,255,.018);transition:.18s}.step:hover{transform:translateY(-1px);border-color:rgba(124,92,255,.25)}.num{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:rgba(124,92,255,.1);color:#c9c1ff;font-size:9px;font-weight:950}.step h3{margin:1px 0 0;font-size:12px}.step p{margin:5px 0 0;color:#9eabbe;font-size:10px;line-height:1.6}.click{margin-top:8px;padding:9px 10px;border:1px dashed rgba(124,92,255,.33);border-radius:10px;color:#c6beff;background:rgba(124,92,255,.035);font-size:8.5px;line-height:1.5}.expected{margin-top:7px;color:#7ce8bd;font-size:8.5px;line-height:1.5}.expected b{color:#d8f8ea}
+.screen{margin-top:15px;padding:13px;border:1px solid rgba(255,255,255,.09);border-radius:19px;background:#060a12}.screenbar{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.06)}.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 5px rgba(54,217,157,.07)}.screenbrand{font-size:10px;font-weight:950}.live{color:#7ce8bd;font-size:7px;font-weight:900}.screenbody{display:grid;grid-template-columns:73px 1fr;gap:10px;padding-top:11px}.side{display:grid;gap:5px}.side i{height:11px;border-radius:5px;background:rgba(255,255,255,.05)}.side i.active{height:19px;border:1px solid rgba(124,92,255,.34);background:rgba(124,92,255,.10)}.screenmain h4{margin:0;font-size:12px}.screenhint{color:#718097;font-size:7px}.widgets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.widget{min-height:66px;padding:8px;border:1px solid rgba(255,255,255,.06);border-radius:9px;background:rgba(255,255,255,.017)}.widget.focus{border-color:rgba(124,92,255,.52);background:rgba(124,92,255,.08)}.widget.ok{border-color:rgba(54,217,157,.23);background:rgba(54,217,157,.035)}.widget small{display:block;color:#657389;font-size:6px}.widget b{display:block;margin-top:5px;font-size:8px}.widget span{display:block;margin-top:3px;color:#77869d;font-size:6.5px;line-height:1.35}.screenaction{margin-top:8px;padding:8px;border:1px dashed rgba(124,92,255,.4);border-radius:8px;color:#c4bcff;font-size:7.5px;line-height:1.45}.screenfoot{margin-top:8px;color:#66758d;font-size:7.5px;line-height:1.4}
+.sidebar{position:sticky;top:83px}.toolcard{padding:20px}.toolname{font-size:25px;font-weight:950;letter-spacing:-.04em}.toolmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{padding:6px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);color:#aebacd;font-size:8px;font-weight:900}.sideblock{margin-top:13px;padding:13px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(255,255,255,.016)}.sideblock h4{margin:0;font-size:10px}.sideblock p{margin:5px 0 0;color:#8290a6;font-size:9px;line-height:1.55}.progress{height:8px;margin-top:8px;border-radius:99px;background:rgba(255,255,255,.055);overflow:hidden}.progress span{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--ok));transition:.25s}.monetize{padding:17px;border:1px solid rgba(255,209,102,.18);background:linear-gradient(145deg,rgba(255,209,102,.045),rgba(124,92,255,.035));border-radius:17px}.monetize h3{margin:0;font-size:14px}.monetize p{margin:6px 0 0;color:#9aa8bb;font-size:9.5px;line-height:1.55}.monetize .btn{width:100%;margin-top:10px}.disclosure{margin-top:8px;color:#737f92;font-size:7.5px;line-height:1.5}
+.bottom{margin-top:15px;padding:19px;text-align:center}.bottom h3{margin:0;font-size:20px;letter-spacing:-.03em}.bottom p{margin:7px auto 0;max-width:680px;color:#95a2b6;font-size:10.5px;line-height:1.55}.bottom .btn{margin-top:12px}
+.footer{text-align:center;padding:30px;color:#68768d;border-top:1px solid var(--line);font-size:8px;line-height:1.5}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.outcome{grid-template-columns:1fr}.hero{padding-top:52px}}
+@media(max-width:620px){.wrap{width:calc(100% - 20px)}.navlinks{display:none}.hero h1{font-size:44px}.hero p{font-size:13px}.section{padding:17px}.example-grid{grid-template-columns:1fr}.step{grid-template-columns:31px 1fr 22px}.num{width:30px;height:30px}.step p{font-size:9.5px}.widgets{grid-template-columns:1fr 1fr}.widget:last-child{grid-column:1/-1}.screenbody{grid-template-columns:1fr}.side{display:none}.live{display:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="navlinks"><a href="/">← Torna al risultato</a><a href="/report-pro.html">Report PRO</a></div></div></header>
+
+<main class="main"><div class="wrap">
+<section class="hero">
+  <div class="eyebrow">✦ PROJECT-X · GUIDA OPERATIVA</div>
+  <h1>Non solo cosa scegliere.<br><span class="grad">Ti faccio vedere come usarlo.</span></h1>
+  <p id="heroCopy">Un esempio concreto, una procedura corta, il test da fare e il risultato da controllare.</p>
+  <div class="hero-actions">
+    <a class="btn secondary" href="/">← Nuova analisi</a>
+    <a id="heroToolBtn" class="btn primary" href="#" target="_blank" rel="noopener noreferrer">Apri software ↗</a>
+  </div>
+  <div class="notice">Le interfacce dei software possono cambiare. Le istruzioni sono costruite per farti capire il processo e dove intervenire, non per sostituire la documentazione ufficiale del fornitore.</div>
+</section>
+
+<div class="layout">
+  <div>
+    <section class="card section">
+      <div class="kicker">01 · IL CASO PRATICO</div>
+      <div id="title" class="h2">Caricamento…</div>
+      <p id="intro" class="lead"></p>
+      <div class="example">
+        <div id="exampleTitle" class="example-title"></div>
+        <div id="exampleCopy" class="example-copy"></div>
+        <div id="exampleGrid" class="example-grid"></div>
+      </div>
+      <div id="outcome" class="outcome"></div>
+    </section>
+
+    <section class="card section">
+      <div class="kicker">02 · CONFIGURAZIONE PASSO PASSO</div>
+      <div class="h2">Fallo una volta. Poi replicalo.</div>
+      <p class="lead">Segui i passaggi in ordine. Il primo obiettivo non è diventare esperto del tool: è far funzionare un singolo caso reale.</p>
+      <div id="steps" class="steps"></div>
+      <div id="screen" class="screen"></div>
+    </section>
+
+    <section class="card monetize">
+      <h3 id="moneyTitle">Prossimo passo</h3>
+      <p id="moneyCopy"></p>
+      <a id="moneyBtn" class="btn primary" href="#" target="_blank" rel="noopener noreferrer">Continua con il software →</a>
+      <div id="disclosure" class="disclosure"></div>
+    </section>
+
+    <section class="card bottom">
+      <h3>Hai configurato il primo pezzo. Adesso puoi farlo diventare un sistema.</h3>
+      <p>PROJECT-X può trasformare questo tutorial in una roadmap più completa con automazioni, KPI, priorità e blueprint operativa.</p>
+      <a class="btn primary" href="/report-pro.html">Sblocca Report PRO →</a>
+    </section>
+  </div>
+
+  <aside class="sidebar">
+    <div class="card toolcard">
+      <div class="kicker">SOFTWARE PROPOSTO</div>
+      <div id="toolName" class="toolname">—</div>
+      <div id="toolMeta" class="toolmeta"></div>
+      <div class="sideblock"><h4>Missione</h4><p id="mission">—</p></div>
+      <div class="sideblock"><h4>Avanzamento</h4><div class="progress"><span id="progress"></span></div><p id="progressText">0 / 6 completati</p></div>
+      <button id="copy" class="btn secondary" style="width:100%;margin-top:10px">Copia la checklist</button>
+    </div>
+    <div class="card toolcard" style="margin-top:12px">
+      <div class="kicker">VALORE PROJECT-X</div>
+      <div style="margin-top:7px;font-size:17px;font-weight:950">Problema → software → processo → risultato</div>
+      <p style="margin:7px 0 0;color:#8592a7;font-size:9px;line-height:1.55">La guida non finisce sul link del software: il prossimo passo resta dentro PROJECT-X.</p>
+    </div>
+  </aside>
+</div>
+</div></main>
+
+<footer class="footer">PROJECT-X · Guida operativa · eventuali collegamenti commerciali sono dichiarati nella pagina.</footer>
+
+<script src="/database.js"></script>
+<script src="/tool-tutorials.js?v=20260920-tutorials1"></script>
+<script>
+(function(){
+'use strict';
+
+var db=Array.isArray(window.SOFTWARE_DATABASE)?window.SOFTWARE_DATABASE:[];
+var T=window.PROJECTX_TOOL_TUTORIALS;
+var eligible={systeme:1,pipedrive:1,getresponse:1,activecampaign:1,hubspot:1,shopify:1,make:1,brevo:1,monday:1,semrush:1,kit:1};
+
+var DETAILS={
+  make:{
+    scenarioTitle:'Esempio: ogni nuovo preventivo crea automaticamente un follow-up',
+    scenario:'Immagina di ricevere richieste da un modulo, da una email o da un foglio. Invece di copiare i dati a mano, usiamo Make per far arrivare la richiesta al posto giusto e creare la prossima azione.',
+    input:'Input: una nuova richiesta con nome, email e tipo di lavoro.',
+    setup:'Setup: trigger della nuova richiesta → mappatura dei dati → creazione della prossima azione → test.',
+    result:'Risultato: il nuovo caso arriva già nel sistema operativo e non devi rifare il passaggio a mano.',
+    why:'Partiamo da un workflow corto: se funziona, puoi aggiungere notifiche, email, CRM o archiviazione.',
+    steps:[
+      ['Crea uno scenario','Apri il builder di Make e parti da uno scenario vuoto. Inserisci per primo il servizio che genera la richiesta.','Azione: scegli il trigger più vicino al tuo caso reale e fai un test.','✓ Deve comparire almeno un record di esempio.'],
+      ['Collega la destinazione','Aggiungi il modulo che deve ricevere il dato: CRM, foglio, task o archivio.','Azione: collega il secondo modulo e seleziona l’operazione da eseguire.','✓ Il secondo modulo vede i campi provenienti dal trigger.'],
+      ['Mappa solo 3 dati','Porta nella destinazione solo nome, email e informazione utile al processo.','Azione: mappa i campi essenziali, senza aggiungere logica avanzata.','✓ Il record viene creato con i dati corretti.'],
+      ['Fai il primo test','Esegui il workflow con una richiesta di prova e guarda la cronologia.','Azione: usa un solo caso e verifica che l’azione avvenga una volta.','✓ Nessun duplicato e nessun errore.'],
+      ['Aggiungi il follow-up','Dopo il primo successo, aggiungi una sola azione: task, email o notifica.','Azione: inserisci il passaggio che elimina il lavoro manuale più fastidioso.','✓ Sai esattamente cosa succede dopo il nuovo caso.'],
+      ['Replica e misura','Ripeti lo scenario su pochi casi reali e misura i passaggi manuali evitati.','Azione: annota tempo prima e tempo dopo per una settimana.','✓ Hai una misura concreta del valore del workflow.']
+    ]
+  },
+  pipedrive:{
+    scenarioTitle:'Esempio: una richiesta commerciale diventa una prossima azione certa',
+    scenario:'Immagina di ricevere 20 richieste al mese e di perderne alcune perché restano nelle email. In Pipedrive crei un percorso semplice: lead → contatto → proposta → follow-up.',
+    input:'Input: nome del potenziale cliente, richiesta e data del prossimo contatto.',
+    setup:'Setup: pipeline minima → opportunità → prossima attività → follow-up.',
+    result:'Risultato: ogni opportunità ha uno stato visibile e una prossima azione.',
+    why:'Il valore del CRM non è riempire schede: è rendere impossibile dimenticare il prossimo passo.',
+    steps:[
+      ['Crea una pipeline minima','Apri l’area pipeline e usa pochi stati leggibili, evitando una struttura enorme.','Azione: imposta ad esempio Nuovo → Contatto → Proposta → Chiuso.','✓ Puoi capire a colpo d’occhio dove si trova un caso.'],
+      ['Inserisci un solo caso','Crea un’opportunità reale e collega il contatto.','Azione: compila solo i dati necessari a identificarlo.','✓ Il caso compare nella pipeline.'],
+      ['Imposta la prossima attività','Apri l’opportunità e crea una attività con data.','Azione: scrivi una frase concreta come “richiamare per conferma proposta”.','✓ Il caso non resta senza prossimo passo.'],
+      ['Esegui il follow-up','Quando arriva la data, apri la scheda e completa l’azione.','Azione: aggiorna stato e programma il passo successivo.','✓ La pipeline racconta cosa è successo.'],
+      ['Controlla le opportunità ferme','Filtra i casi senza attività futura o fermi da troppo tempo.','Azione: scegli una sola regola di controllo settimanale.','✓ Trovi rapidamente i casi che rischiano di bloccarsi.'],
+      ['Replica il modello','Dopo una settimana usa la stessa struttura sugli altri casi.','Azione: mantieni gli stessi stati e la stessa regola di prossima azione.','✓ Il processo diventa ripetibile per te o per il team.']
+    ]
+  },
+  hubspot:{
+    scenarioTitle:'Esempio: da lead a follow-up senza cercare informazioni in tre posti',
+    scenario:'Usiamo HubSpot per mettere in fila contatto, opportunità e attività. L’obiettivo è creare un caso pilota che mostri subito quale azione deve avvenire dopo.',
+    input:'Input: una richiesta arrivata da sito, email o altro canale.',
+    setup:'Setup: contatto → deal → attività → aggiornamento stato.',
+    result:'Risultato: il team vede il caso e la prossima azione nello stesso posto.',
+    why:'Partire da un caso reale permette di capire subito quali dati servono davvero.',
+    steps:[
+      ['Crea o apri il contatto','Vai nella sezione contatti e usa un solo contatto di prova reale o fittizio.','Azione: completa nome, email e una informazione utile al processo.','✓ Il contatto è ricercabile e completo.'],
+      ['Apri una opportunità','Collega al contatto un deal o opportunità.','Azione: assegna uno stato iniziale coerente con il tuo processo.','✓ Il caso è collegato alla persona giusta.'],
+      ['Crea la prossima attività','Programma la chiamata, email o verifica successiva.','Azione: assegna data e responsabile.','✓ La prossima azione non resta solo nella memoria del team.'],
+      ['Prova il passaggio','Esegui una modifica reale, ad esempio sposta lo stato dopo il contatto.','Azione: verifica che timeline, stato e attività restino coerenti.','✓ Il caso racconta cosa è stato fatto.'],
+      ['Controlla i casi senza attività','Cerca opportunità che non hanno un passo successivo.','Azione: correggi solo le opportunità più importanti.','✓ Hai una lista concreta da seguire.'],
+      ['Trasforma il caso in standard','Replica la struttura sui nuovi lead.','Azione: definisci quali 3 campi e quale attività sono sempre obbligatori.','✓ Il CRM diventa un processo, non solo un archivio.']
+    ]
+  },
+  shopify:{
+    scenarioTitle:'Esempio: un ordine genera subito una procedura post-acquisto',
+    scenario:'Partiamo da un singolo ordine per verificare il percorso: ordine ricevuto → cliente riconosciuto → azione post-acquisto → comunicazione → controllo.',
+    input:'Input: un ordine di prova con cliente, prodotto e stato.',
+    setup:'Setup: prodotto corretto → ordine → azione post-acquisto.',
+    result:'Risultato: capisci cosa deve succedere dopo ogni ordine senza gestire tutto a mano.',
+    why:'Prima dimostriamo il flusso su un ordine; poi lo colleghiamo a email, CRM o automazioni.',
+    steps:[
+      ['Controlla il prodotto','Apri l’area prodotti e verifica che prezzo, disponibilità e informazioni siano corrette.','Azione: scegli un prodotto reale o di test.','✓ Il prodotto è pronto per il caso pilota.'],
+      ['Verifica un ordine','Apri la sezione ordini e individua un ordine di prova.','Azione: controlla cliente, prodotto e stato.','✓ Sai quale evento userai per il workflow.'],
+      ['Definisci l’azione dopo l’ordine','Decidi una sola azione: email, tag, task o notifica.','Azione: scrivi il comportamento desiderato in una frase.','✓ Puoi spiegare il workflow senza tecnicismi.'],
+      ['Esegui il test','Usa il percorso di test disponibile nel tuo ambiente.','Azione: verifica che l’ordine provochi una sola azione.','✓ L’output è visibile e comprensibile.'],
+      ['Controlla tempi e duplicati','Verifica quando parte l’azione e cosa succede a un secondo evento.','Azione: controlla una sola regola anti-duplicato o condizione.','✓ Il processo non genera comunicazioni doppie.'],
+      ['Replica sul resto del flusso','Solo dopo il test collega il post-acquisto a CRM o marketing.','Azione: aggiungi un secondo passaggio alla volta.','✓ Il sistema cresce senza diventare fragile.']
+    ]
+  },
+  getresponse:{
+    scenarioTitle:'Esempio: una persona entra e riceve il follow-up senza intervento manuale',
+    scenario:'Creiamo un mini-percorso: nuovo contatto → messaggio utile → attesa → follow-up. L’obiettivo è automatizzare una comunicazione che oggi ripeti a mano.',
+    input:'Input: nuovo contatto che entra nella tua lista.',
+    setup:'Setup: trigger → email → attesa → seconda email.',
+    result:'Risultato: il follow-up parte secondo una regola e non dalla tua memoria.',
+    why:'Un workflow corto è più semplice da testare e da migliorare.',
+    steps:[
+      ['Crea un contatto di prova','Prepara un contatto dedicato al test.','Azione: inseriscilo nel pubblico o nella lista corretta.','✓ Il contatto è disponibile per il trigger.'],
+      ['Prepara il primo messaggio','Scrivi una email con un solo obiettivo.','Azione: collega il messaggio al problema reale del destinatario.','✓ Il messaggio è pronto per essere inviato in test.'],
+      ['Imposta il trigger','Apri l’automazione e scegli l’evento che deve avviare il percorso.','Azione: usa il nuovo contatto o una condizione semplice.','✓ Il workflow sa quando partire.'],
+      ['Aggiungi l’attesa','Inserisci una sola pausa prima del follow-up.','Azione: scegli un intervallo coerente con il tuo processo.','✓ Il percorso ha una sequenza comprensibile.'],
+      ['Testa l’intero ciclo','Fai partire il contatto e controlla entrambi i passaggi.','Azione: verifica invio, tempi e uscita.','✓ La sequenza segue la regola prevista.'],
+      ['Misura una metrica','Scegli un solo dato: clic, risposta o altra azione coerente con l’obiettivo.','Azione: confronta i risultati dopo un primo periodo.','✓ Sai quale modifica provare dopo.']
+    ]
+  },
+  activecampaign:{
+    scenarioTitle:'Esempio: una richiesta commerciale riceve il follow-up corretto',
+    scenario:'Trasformiamo una attività ripetitiva in una automazione: contatto → messaggio → condizione → uscita. Il punto è eliminare il promemoria manuale.',
+    input:'Input: contatto con un evento o tag iniziale.',
+    setup:'Setup: trigger → messaggio → condizione → follow-up.',
+    result:'Risultato: ogni nuovo caso entra in una sequenza coerente.',
+    why:'L’automazione deve servire il processo, non complicarlo.',
+    steps:[
+      ['Prepara il trigger','Scegli un solo evento che indica l’ingresso nel percorso.','Azione: usa un contatto di prova.','✓ Il trigger può essere testato.'],
+      ['Scrivi il primo messaggio','Crea una comunicazione breve e orientata a una sola azione.','Azione: collega il messaggio al problema reale.','✓ Il contenuto è pronto per il test.'],
+      ['Aggiungi una condizione','Inserisci una sola decisione, ad esempio ha risposto / non ha risposto.','Azione: mantieni il bivio semplice.','✓ Il workflow sa distinguere i due casi.'],
+      ['Definisci il follow-up','Collega una sola azione al ramo che ti interessa di più.','Azione: email, attività o altro passaggio utile.','✓ Il caso prosegue automaticamente.'],
+      ['Prova entrambi i percorsi','Usa contatti di test e verifica cosa succede nei due rami.','Azione: controlla cronologia e stato.','✓ Ogni ramo produce l’esito previsto.'],
+      ['Replicalo con una regola','Definisci quando il contatto deve uscire dal percorso.','Azione: evita sequenze infinite senza condizione di uscita.','✓ L’automazione è controllabile.']
+    ]
+  },
+  systeme:{
+    scenarioTitle:'Esempio: una richiesta da landing page diventa un follow-up automatico',
+    scenario:'Costruiamo il minimo indispensabile: pagina o form → contatto → messaggio → prossimo passo. L’obiettivo è far arrivare la richiesta nel percorso giusto.',
+    input:'Input: una persona compila un form.',
+    setup:'Setup: form → contatto → comunicazione → follow-up.',
+    result:'Risultato: ogni nuova richiesta entra nel percorso senza copia-incolla.',
+    why:'Il primo funnel deve dimostrare il processo, non cercare di essere perfetto.',
+    steps:[
+      ['Prepara la pagina o il form','Apri l’area del funnel e parti da un singolo punto di ingresso.','Azione: rendi chiaro cosa deve fare il visitatore.','✓ Il percorso parte da un punto preciso.'],
+      ['Collega il contatto','Configura dove viene salvato il nuovo lead.','Azione: verifica che email e nome arrivino correttamente.','✓ Il lead è presente nel sistema.'],
+      ['Prepara il messaggio','Crea una sola email di follow-up.','Azione: usa un messaggio utile e con un prossimo passo chiaro.','✓ Il contatto riceve una comunicazione coerente.'],
+      ['Testa il percorso','Compila il form come un visitatore reale.','Azione: segui il percorso fino alla ricezione del messaggio.','✓ Nessun passaggio resta manuale.'],
+      ['Controlla il punto di uscita','Decidi cosa deve succedere dopo la prima interazione.','Azione: link, risposta, prenotazione o altra azione.','✓ Il funnel ha un prossimo passo.'],
+      ['Misura un solo risultato','Scegli una metrica semplice legata all’obiettivo.','Azione: controlla il dato dopo i primi contatti.','✓ Sai dove intervenire per migliorare.']
+    ]
+  },
+  semrush:{
+    scenarioTitle:'Esempio: trovare una opportunità SEO prima di scrivere un nuovo articolo',
+    scenario:'Invece di pubblicare a caso, partiamo da un servizio reale: keyword → SERP → pagina da migliorare → monitoraggio.',
+    input:'Input: un servizio o prodotto che vuoi far trovare.',
+    setup:'Setup: progetto → keyword → SERP → ottimizzazione → monitoraggio.',
+    result:'Risultato: una singola opportunità SEO collegata a una azione concreta.',
+    why:'Una buona analisi SEO serve a decidere cosa fare dopo, non solo a produrre numeri.',
+    steps:[
+      ['Crea il progetto','Imposta il sito e il mercato che vuoi analizzare.','Azione: usa il dominio reale e il paese corretto.','✓ Il progetto mostra dati coerenti con il tuo mercato.'],
+      ['Parti da un problema del cliente','Inserisci poche keyword che una persona potrebbe cercare per trovare il tuo servizio.','Azione: seleziona un piccolo gruppo prioritario.','✓ Hai un set su cui ragionare.'],
+      ['Guarda la SERP','Analizza i risultati per capire l’intento e il tipo di pagina necessario.','Azione: guarda soprattutto i primi risultati e il loro formato.','✓ Sai quale contenuto serve.'],
+      ['Scegli una pagina','Individua una pagina esistente da migliorare oppure una nuova pagina da creare.','Azione: collega una sola keyword principale.','✓ L’azione SEO è concreta e circoscritta.'],
+      ['Fai l’intervento','Ottimizza contenuto, struttura o intent della pagina scelta.','Azione: cambia poche cose misurabili.','✓ Puoi distinguere ciò che ha funzionato.'],
+      ['Monitora','Torna sul progetto e confronta la situazione dopo un periodo coerente.','Azione: salva la keyword e osserva l’andamento.','✓ Hai un prima/dopo utilizzabile per il prossimo intervento.']
+    ]
+  },
+  monday:{
+    scenarioTitle:'Esempio: una richiesta entra e il team vede subito responsabile, stato e scadenza',
+    scenario:'Creiamo un board pilota per eliminare la domanda “a che punto siamo?” e automatizzare una sola regola utile.',
+    input:'Input: una nuova attività o richiesta.',
+    setup:'Setup: board → item → responsabile → stato → automazione.',
+    result:'Risultato: il lavoro è visibile e la prossima azione è più difficile da perdere.',
+    why:'Il board serve a rendere il processo leggibile, non a creare cento colonne.',
+    steps:[
+      ['Crea il board','Parti da un board dedicato a un processo reale e frequente.','Azione: usa un solo workflow pilota.','✓ Tutti riconoscono il processo che il board rappresenta.'],
+      ['Crea una attività','Inserisci una richiesta reale e completa titolo e informazioni essenziali.','Azione: evita campi che non servono per decidere.','✓ L’item è leggibile senza aprirlo molte volte.'],
+      ['Assegna responsabile e scadenza','Definisci chi deve agire e entro quando.','Azione: imposta proprietario e data.','✓ Ogni item ha una responsabilità.'],
+      ['Definisci pochi stati','Usa una sequenza minima, per esempio Da fare → In corso → Fatto.','Azione: cambia stato su una attività di test.','✓ È chiaro cosa è fermo e cosa è concluso.'],
+      ['Aggiungi una automazione','Imposta una sola regola, ad esempio notifica quando cambia lo stato.','Azione: testala su un item.','✓ L’automazione è prevedibile.'],
+      ['Controlla il collo di bottiglia','Guarda dove gli item restano fermi più spesso.','Azione: correggi prima quel punto, non tutto il board.','✓ Il board inizia a diventare un sistema di lavoro.']
+    ]
+  },
+  brevo:{
+    scenarioTitle:'Esempio: nuovo contatto → messaggio utile → follow-up',
+    scenario:'Costruiamo una automazione semplice che evita il primo follow-up manuale.',
+    input:'Input: nuovo contatto in una lista.',
+    setup:'Setup: contatto → trigger → email → attesa → follow-up.',
+    result:'Risultato: il primo tratto della comunicazione viene eseguito da una regola.',
+    why:'La semplicità facilita il test e riduce gli errori.',
+    steps:[
+      ['Crea un contatto test','Prepara un contatto che puoi controllare direttamente.','Azione: aggiungilo alla lista o al segmento corretto.','✓ Il contatto appare nell’audience.'],
+      ['Prepara una email','Scrivi un messaggio con una sola azione attesa.','Azione: usa una CTA chiara.','✓ La email è pronta per il test.'],
+      ['Imposta il trigger','Apri Automations e scegli l’evento di ingresso.','Azione: collega il contatto di prova.','✓ Il percorso sa quando partire.'],
+      ['Aggiungi il follow-up','Inserisci una attesa e una sola seconda azione.','Azione: mantieni il percorso corto.','✓ Il secondo passaggio avviene secondo la regola.'],
+      ['Fai il test','Esegui tutto il percorso con il contatto di prova.','Azione: controlla invio, tempi e uscita.','✓ Il flusso è leggibile end-to-end.'],
+      ['Misura e replica','Scegli una metrica e replica il percorso su un gruppo piccolo.','Azione: evita di cambiare tutto insieme.','✓ Puoi attribuire il miglioramento al workflow.']
+    ]
+  }
+};
+
+var CATEGORY={
+  "CRM":[
+    'Esempio: una nuova richiesta commerciale diventa una prossima azione certa.',
+    'Crea un caso reale → assegna stato → pianifica la prossima azione → verifica il follow-up.'
+  ],
+  "Automation":[
+    'Esempio: una nuova informazione entra in un sistema e genera automaticamente il passo successivo.',
+    'Trigger → dati → azione → controllo → replica.'
+  ],
+  "Marketing":[
+    'Esempio: un nuovo contatto entra in un mini-percorso di comunicazione senza intervento manuale.',
+    'Contatto → trigger → messaggio → attesa → risultato.'
+  ],
+  "E-commerce":[
+    'Esempio: un ordine reale attiva una procedura post-acquisto ordinata.',
+    'Ordine → cliente → azione → comunicazione → controllo.'
+  ],
+  "Projects":[
+    'Esempio: una richiesta entra in un processo con responsabile e scadenza.',
+    'Attività → responsabile → stato → scadenza → completato.'
+  ],
+  "Appointments":[
+    'Esempio: una richiesta di appuntamento arriva fino alla conferma senza coordinamento manuale.',
+    'Servizio → disponibilità → prenotazione → promemoria → appuntamento.'
+  ],
+  "Documents & Quotes":[
+    'Esempio: un preventivo ricorrente viene creato da un modello e inviato senza ricostruirlo ogni volta.',
+    'Richiesta → modello → documento → firma → archivio.'
+  ],
+  "AI":[
+    'Esempio: un compito ripetitivo viene trasformato in un prompt riutilizzabile con controllo umano.',
+    'Contesto → prompt → output → verifica → riutilizzo.'
+  ],
+  "SEO":[
+    'Esempio: una keyword reale diventa una singola azione SEO misurabile.',
+    'Keyword → SERP → contenuto → ottimizzazione → monitoraggio.'
+  ]
+};
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function findTool(id){return db.find(function(x){return x.id===id})}
+function getTutorial(tool){try{return T&&T.get?T.get(tool):null}catch(e){return null}}
+function getDetails(tool,tut){
+  if(DETAILS[tool.id]) return DETAILS[tool.id];
+  var cat=String(tool.category||'').toLowerCase();
+  var key=Object.keys(CATEGORY).find(function(k){return cat.indexOf(k.toLowerCase())>=0});
+  var fallback=CATEGORY[key]||['Esempio: prendi un’attività reale e portala dal punto di partenza al risultato senza cercare di configurare tutto il software.','Caso reale → configurazione minima → test → controllo → replica.'];
+  var steps=(tut&&tut.steps)||[];
+  return {
+    scenarioTitle:fallback[0],
+    scenario:fallback[0]+' '+(tut&&tut.focus?('In questa guida il focus è '+tut.focus+'.'):''),
+    input:'Input: un caso reale piccolo ma rappresentativo del tuo lavoro.',
+    setup:'Setup: '+fallback[1],
+    result:'Risultato: una procedura verificata che puoi replicare senza reinventarla ogni volta.',
+    why:'Il primo caso serve a capire cosa funziona prima di estendere il sistema.',
+    steps:steps.map(function(s,i){
+      return [s.title,s.instruction,'Azione: '+(s.instruction||'segui il passaggio indicato')+'.','✓ '+(s.success||'verifica il risultato prima del passo successivo')];
+    })
+  };
+}
+function commercialUrl(tool){
+  var id=String(tool.id||'').toLowerCase();
+  if(eligible[id]) return '/api/affiliate?tool='+encodeURIComponent(id)+'&source=tutorial-detail';
+  return tool.pricingUrl||tool.affiliateUrl||tool.url||'';
+}
+function toolLink(tool){return commercialUrl(tool)}
+function loadState(id){try{return JSON.parse(localStorage.getItem('projectx_guide_state_v2')||'{}')[id]||{}}catch(e){return {}}}
+function saveState(id,state){try{var all=JSON.parse(localStorage.getItem('projectx_guide_state_v2')||'{}');all[id]=state;localStorage.setItem('projectx_guide_state_v2',JSON.stringify(all))}catch(e){}}
+
+var id=new URLSearchParams(location.search).get('tool')||'';
+var tool=findTool(id);
+if(!tool){document.getElementById('title').textContent='Software non trovato';document.getElementById('intro').textContent='Apri questa pagina partendo da un risultato PROJECT-X.';return}
+var tut=getTutorial(tool);
+var d=getDetails(tool,tut);
+var state=loadState(tool.id),selected=0;
+
+document.getElementById('toolName').textContent=tool.name;
+document.getElementById('heroToolBtn').href=toolLink(tool);
+document.getElementById('title').textContent=tool.name+' · esempio pratico';
+document.getElementById('intro').textContent=(tut&&tut.mission? tut.mission+'. ':'')+d.why;
+document.getElementById('exampleTitle').textContent=d.scenarioTitle;
+document.getElementById('exampleCopy').textContent=d.scenario;
+document.getElementById('exampleGrid').innerHTML=[
+  ['PARTENZA',d.input],['CONFIGURAZIONE',d.setup]
+].map(function(x){return '<div class="mini"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'}).join('');
+document.getElementById('outcome').innerHTML=[
+  ['🎯 COSA OTTIENI',d.result],
+  ['🧪 COSA TESTI','Un solo caso, un solo workflow, una sola verifica.'],
+  ['📈 COSA FAI DOPO','Replichi il modello e misuri il tempo o gli errori evitati.']
+].map(function(x){return '<div class="mini"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'}).join('');
+document.getElementById('mission').textContent=(tut&&tut.action)||'costruisci un primo caso reale';
+document.getElementById('toolMeta').innerHTML='<span class="chip">'+esc(tool.category||'Software')+'</span><span class="chip">'+d.steps.length+' passi</span><span class="chip">guida pratica</span>';
+
+var moneyBtn=document.getElementById('moneyBtn'), moneyTitle=document.getElementById('moneyTitle'), moneyCopy=document.getElementById('moneyCopy'), disclosure=document.getElementById('disclosure');
+moneyBtn.href=toolLink(tool);
+if(eligible[String(tool.id).toLowerCase()]){
+  moneyTitle.textContent='Dalla guida al prossimo clic';
+  moneyCopy.textContent='Quando il tutorial ti è utile, puoi continuare direttamente con '+tool.name+'. Il collegamento passa dal sistema commerciale di PROJECT-X.';
+  disclosure.textContent='Collegamento commerciale: PROJECT-X può ricevere una commissione se ti registri o acquisti tramite questo link. La raccomandazione del motore e il collegamento commerciale sono gestiti separatamente.';
+  moneyBtn.textContent='Apri '+tool.name+' →';
+}else{
+  moneyTitle.textContent='Monetizziamo il progetto, non il tutorial';
+  moneyCopy.textContent='Per questo software non è configurato un collegamento affiliato nel progetto. Il percorso commerciale resta dentro PROJECT-X: Report PRO con roadmap, automazioni, KPI e blueprint operativa.';
+  disclosure.textContent='Nessun compenso affiliato viene dichiarato per questo software nella guida. L’offerta successiva è il servizio PRO di PROJECT-X.';
+  moneyBtn.href='/report-pro.html?tool='+encodeURIComponent(tool.id);
+  moneyBtn.target='_self';
+  moneyBtn.textContent='Trasforma questa guida in un piano PRO →';
+}
+document.getElementById('heroToolBtn').textContent='Apri '+tool.name+' ↗';
+
+function renderScreen(){
+  var s=d.steps[selected]||d.steps[0];
+  var focus=selected%3;
+  document.getElementById('screen').innerHTML='<div class="screen"><div class="screenbar"><span class="dot"></span><span class="screenbrand">'+esc(tool.name)+'</span><span class="live">● tutorial mode</span></div><div class="screenbody"><div class="side"><i class="active"></i><i></i><i></i><i></i><i></i></div><div class="screenmain"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h4>'+esc(s[0])+'</h4><span class="screenhint">area da cercare</span></div><div class="widgets"><div class="widget '+(focus===0?'focus':'')+'"><small>AREA</small><b>'+esc(tut&&tut.area||tool.category||'Software')+'</b><span>punto di partenza</span></div><div class="widget '+(focus===1?'focus':'')+'"><small>AZIONE</small><b>'+esc(tut&&tut.action||'segui il passaggio')+'</b><span>cosa impostare</span></div><div class="widget '+(focus===2?'ok':'')+'"><small>ESITO</small><b>Controlla</b><span>verifica il risultato</span></div></div><div class="screenaction">▸ '+esc(s[2]||s[1])+'</div><div class="screenfoot">Simulazione visiva: cerca nel software reale una sezione equivalente. Le etichette possono cambiare.</div></div></div></div>';
+}
+function renderSteps(){
+ var list=document.getElementById('steps');
+ list.innerHTML=d.steps.map(function(s,i){
+   var done=!!state[String(i)];
+   return '<div class="step '+(done?'done':'')+'" data-step="'+i+'"><div class="num">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(s[0])+'</h3><p>'+esc(s[1])+'</p><div class="click">▸ '+esc(s[2])+'</div><div class="expected">'+esc(s[3])+'</div></div><input class="check" type="checkbox" data-check="'+i+'" '+(done?'checked':'')+' aria-label="Completa passo '+(i+1)+'"></div>';
+ }).join('');
+ document.querySelectorAll('.step').forEach(function(row){row.onclick=function(e){if(e.target.classList.contains('check'))return;selected=Number(row.dataset.step||0);renderScreen();}});
+ document.querySelectorAll('.check').forEach(function(cb){cb.onchange=function(e){e.stopPropagation();state[String(cb.dataset.check)]=cb.checked;saveState(tool.id,state);updateProgress();}});
+ updateProgress();
+}
+function updateProgress(){
+ var done=Object.keys(state).filter(function(k){return state[k]}).length;
+ var pct=Math.round(done/d.steps.length*100);
+ document.getElementById('progress').style.width=pct+'%';
+ document.getElementById('progressText').textContent=done+' / '+d.steps.length+' completati';
+}
+document.getElementById('copy').onclick=function(){
+ var txt='PROJECT-X — Guida '+tool.name+'\n\n'+d.steps.map(function(s,i){return (i+1)+'. '+s[0]+'\n'+s[1]+'\n'+s[2]+'\n'+s[3]}).join('\n\n');
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt);
+};
+moneyBtn.addEventListener('click',function(){try{if(window.gtag)window.gtag('event','tutorial_monetization_click',{tool:tool.name,toolId:tool.id,eligible:!!eligible[tool.id]})}catch(e){}});
+document.getElementById('heroToolBtn').addEventListener('click',function(){try{if(window.gtag)window.gtag('event','tutorial_tool_click',{tool:tool.name,toolId:tool.id})}catch(e){}});
+
+renderSteps();renderScreen();
+})();
+</script>
+</body>
+</html>
