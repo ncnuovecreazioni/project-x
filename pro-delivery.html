@@ -17,7 +17,7 @@
 <section class="hero">
 <div class="eyebrow" id="badge">PROJECT-X · VERIFICA IN CORSO</div>
 <h1>Il tuo <span class="grad">Report PRO.</span></h1>
-<p id="intro">Sto verificando il pagamento Stripe e preparando il report sulla base del profilo PROJECT-X salvato in questo browser.</p>
+<p id="intro">Sto verificando il pagamento Stripe e preparando il report sulla base del profilo PROJECT-X associato all’ordine.</p>
 </section>
 
 <section id="gate" class="gate">
@@ -54,6 +54,21 @@ var report=document.getElementById('report');
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(n){return '€'+Math.round(Number(n)||0).toLocaleString('it-IT')}
 function answers(){try{return JSON.parse(localStorage.getItem('projectx_answers_v2')||'null')}catch(e){return null}}
+function normalizeServerProfile(p){
+  if(!p || typeof p!=='object') return null;
+  var has = p.businessType || p.teamSize || p.budget || p.goals || p.painPoint || p.automation || p.tech || (p.existingTools && p.existingTools.length);
+  if(!has) return null;
+  return {
+    businessType:String(p.businessType||''),
+    teamSize:String(p.teamSize||''),
+    budget:String(p.budget||''),
+    goals:String(p.goals||''),
+    painPoint:String(p.painPoint||''),
+    automation:String(p.automation||''),
+    tech:String(p.tech||''),
+    existingTools:Array.isArray(p.existingTools)?p.existingTools:[]
+  };
+}
 function showGate(title,text,html){
  document.getElementById('gateTitle').textContent=title;
  document.getElementById('gateText').textContent=text;
@@ -118,9 +133,9 @@ async function verify(){
        '<a class="btn" href="/pro-success.html?session_id='+encodeURIComponent(sid)+'">Aggiorna verifica →</a>');
      return;
    }
-   var a=answers();
+   var a=normalizeServerProfile(data.profile)||answers();
    if(!a){
-     showGate('Pagamento verificato · manca il profilo','Il pagamento è stato verificato, ma il profilo dell’analisi non è presente su questo dispositivo. Non è un errore del pagamento: per ora il report viene ricostruito dal browser usato durante l’analisi.',
+     showGate('Pagamento verificato · profilo non disponibile','Il pagamento è verificato, ma questo ordine non contiene ancora il profilo necessario per ricostruire il report. Questo può accadere con un vecchio checkout configurato prima del nuovo sistema.',
        '<a class="btn" href="/">Rifai l’analisi →</a><a class="btn secondary" href="/pro.html">Torna a PRO →</a>');
      return;
    }
