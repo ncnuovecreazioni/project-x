@@ -1,4 +1,4 @@
-/* PROJECT-X — DETAILED TUTORIAL LIBRARY
+/* PROJECT-X GUIDE AUTOPILOT v2 — DETAILED TUTORIAL LIBRARY
    Guide operative: scenario, click, dati da inserire, test, risultato, errori comuni.
    Le etichette UI possono cambiare; quando possibile usiamo nomenclature attuali del tool.
 */
