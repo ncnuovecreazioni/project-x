@@ -120,6 +120,7 @@
 <script src="/database.js"></script>
 <script src="/tool-tutorials.js?v=20260920-tutorials1"></script>
 <script src="/tutorial-library.js?v=20260920-detailed1"></script>
+<script src="/goal-guides.js?v=20260923-goals1"></script>
 <script src="/tutorial-boost.js?v=20260920-boost1"></script>
 <script>
 (function(){
@@ -365,6 +366,8 @@ function saveState(id,state){try{var all=JSON.parse(localStorage.getItem('projec
 
 var pathTool=(location.pathname.match(/^\/guide\/([^/]+)\.html$/)||[])[1]||'';
 var id=new URLSearchParams(location.search).get('tool')||pathTool||'';
+var goalApi=window.PROJECTX_GOAL_GUIDES;
+var goal=(goalApi&&pathTool&&goalApi.get)?goalApi.get(pathTool):null;
 if(pathTool){
   try{
     var canonical=document.querySelector('link[rel="canonical"]');
@@ -372,10 +375,23 @@ if(pathTool){
     canonical.href=location.origin+'/guide/'+encodeURIComponent(pathTool)+'.html';
   }catch(e){}
 }
-var tool=findTool(id);
-if(!tool){document.getElementById('title').textContent='Software non trovato';document.getElementById('intro').textContent='Apri questa pagina partendo da un risultato PROJECT-X.';return}
-var tut=getTutorial(tool);
-var d=getDetails(tool,tut);
+var tool=goal?{
+  id:goal.id,
+  name:goal.title,
+  category:goal.category,
+  description:goal.scenario,
+  url:'/?case='+encodeURIComponent(goal.caseKey||'zero')
+}:findTool(id);
+if(!tool){document.getElementById('title').textContent='Guida non trovata';document.getElementById('intro').textContent='Torna a PROJECT-X e parti dal tuo problema.';return}
+var tut=goal?{
+  area:goal.area,
+  action:'segui il caso pilota',
+  mission:goal.mission,
+  focus:goal.focus,
+  flow:goal.setup.split(' → '),
+  steps:goal.steps
+}:getTutorial(tool);
+var d=goal?goal:getDetails(tool,tut);
 var state=loadState(tool.id),selected=0;
 
 document.getElementById('toolName').textContent=tool.name;
@@ -385,32 +401,49 @@ document.getElementById('intro').textContent=(tut&&tut.mission? tut.mission+'. '
 document.getElementById('exampleTitle').textContent=d.scenarioTitle;
 document.getElementById('exampleCopy').textContent=d.scenario;
 document.getElementById('exampleGrid').innerHTML=[
-  ['PARTENZA',d.input],['CONFIGURAZIONE',d.setup]
+  ['PARTENZA',d.input],[(goal?'STACK CONSIGLIATO':'CONFIGURAZIONE'),goal?goal.stack.join(' → '):d.setup]
 ].map(function(x){return '<div class="mini"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'}).join('');
 document.getElementById('outcome').innerHTML=[
   ['🎯 COSA OTTIENI',d.result],
   ['🧪 COSA TESTI','Un solo caso, un solo workflow, una sola verifica.'],
   ['📈 COSA FAI DOPO','Replichi il modello e misuri il tempo o gli errori evitati.']
 ].map(function(x){return '<div class="mini"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'}).join('');
-document.getElementById('mission').textContent=(tut&&tut.action)||'costruisci un primo caso reale';
-document.getElementById('toolMeta').innerHTML='<span class="chip">'+esc(tool.category||'Software')+'</span><span class="chip">'+d.steps.length+' passi</span><span class="chip">guida pratica</span>';
+document.getElementById('mission').textContent=(goal&&goal.mission)||((tut&&tut.action)||'costruisci un primo caso reale');
+document.getElementById('toolMeta').innerHTML=goal?
+  '<span class="chip">obiettivo</span><span class="chip">'+d.steps.length+' passi</span><span class="chip">20–45 min</span><span class="chip">difficoltà: facile</span><span class="chip">1 caso di prova</span>':
+  '<span class="chip">'+esc(tool.category||'Software')+'</span><span class="chip">'+d.steps.length+' passi</span><span class="chip">guida pratica</span>';
+if(goal){
+  var sideK=document.querySelector('.sidebar .kicker');
+  if(sideK)sideK.textContent='OBIETTIVO + STACK';
+  document.getElementById('toolName').textContent=goal.stack.join(' + ');
+  document.getElementById('heroCopy').textContent='Una guida operativa di PROJECT-X: fai un passaggio alla volta, verifica il risultato e costruisci il primo workflow senza dover conoscere tutto il software.';
+  var hh=document.querySelector('.hero h1');
+  if(hh)hh.innerHTML=esc(goal.title)+'<br><span class="grad">Passo dopo passo.</span>';
+}
 
 var moneyBtn=document.getElementById('moneyBtn'), moneyTitle=document.getElementById('moneyTitle'), moneyCopy=document.getElementById('moneyCopy'), disclosure=document.getElementById('disclosure');
 moneyBtn.href=toolLink(tool);
-if(eligible[String(tool.id).toLowerCase()]){
+if(goal){
+  moneyTitle.textContent='Hai completato il primo workflow';
+  moneyCopy.textContent='Ora puoi tornare nell’analisi PROJECT-X con questo obiettivo già impostato e confrontare la soluzione con il tuo caso reale.';
+  disclosure.textContent='Questa guida è orientata al problema. Gli eventuali collegamenti commerciali ai singoli software vengono mostrati separatamente nelle rispettive guide.';
+  moneyBtn.href='/?case='+encodeURIComponent(goal.caseKey||'zero');
+  moneyBtn.target='_self';
+  moneyBtn.textContent='Continua con la tua analisi →';
+}else if(eligible[String(tool.id).toLowerCase()]){
   moneyTitle.textContent='Dalla guida al prossimo clic';
   moneyCopy.textContent='Quando il tutorial ti è utile, puoi continuare direttamente con '+tool.name+'. Il collegamento passa dal sistema commerciale di PROJECT-X.';
   disclosure.textContent='Collegamento commerciale: PROJECT-X può ricevere una commissione se ti registri o acquisti tramite questo link. La raccomandazione del motore e il collegamento commerciale sono gestiti separatamente.';
   moneyBtn.textContent='Apri '+tool.name+' →';
 }else{
-  moneyTitle.textContent='Monetizziamo il progetto, non il tutorial';
-  moneyCopy.textContent='Per questo software non è configurato un collegamento affiliato nel progetto. Il percorso commerciale resta dentro PROJECT-X: Report PRO con roadmap, automazioni, KPI e blueprint operativa.';
+  moneyTitle.textContent='Trasforma la guida in un sistema';
+  moneyCopy.textContent='Per questo software non è configurato un collegamento affiliato nel progetto. Il prossimo passo resta dentro PROJECT-X con roadmap, automazioni, KPI e blueprint operativa.';
   disclosure.textContent='Nessun compenso affiliato viene dichiarato per questo software nella guida. L’offerta successiva è il servizio PRO di PROJECT-X.';
   moneyBtn.href='/report-pro.html?tool='+encodeURIComponent(tool.id);
   moneyBtn.target='_self';
   moneyBtn.textContent='Trasforma questa guida in un piano PRO →';
 }
-document.getElementById('heroToolBtn').textContent='Apri '+tool.name+' ↗';
+document.getElementById('heroToolBtn').textContent=goal?'Torna all’analisi ↗':'Apri '+tool.name+' ↗';
 
 function renderScreen(){
   var s=d.steps[selected]||d.steps[0];
