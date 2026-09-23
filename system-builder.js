@@ -28,14 +28,14 @@ function buildCard(){
  var name=(p.querySelector('h2')&&p.querySelector('h2').textContent)||'la configurazione scelta';
  var problem=(q('quickProblem')&&q('quickProblem').value)||'Il problema che hai descritto';
  var card=document.createElement('div');card.id='px-build-card';card.className='px-build-card';
- card.innerHTML='<div class="px-build-kicker">BUILD MY SYSTEM</div><div class="px-build-title">Non fermarti alla scelta. Costruiamo il primo pezzo.</div><div class="px-build-grid"><div><span>PROBLEMA</span><b>'+esc(problem.slice(0,180))+'</b></div><div><span>NUCLEO</span><b>'+esc(name)+'</b></div><div><span>PRIMA AZIONE</span><b>Configura il nucleo e collegalo al passaggio più ripetitivo.</b></div></div><div class="px-build-actions"><a class="btn primary" href="/workspace.html">Apri il Workspace →</a><a class="btn secondary" href="/simulator.html">Simula il workflow</a></div><div class="px-build-note">Regola PROJECT-X: un workflow funzionante prima di aggiungere altri strumenti.</div>';
+ card.innerHTML='<div class="px-build-kicker">COSTRUISCI IL MIO SISTEMA</div><div class="px-build-title">Non fermarti alla scelta. Costruiamo il primo pezzo.</div><div class="px-build-grid"><div><span>PROBLEMA</span><b>'+esc(problem.slice(0,180))+'</b></div><div><span>NUCLEO</span><b>'+esc(name)+'</b></div><div><span>PRIMA AZIONE</span><b>Configura il nucleo e collegalo al passaggio più ripetitivo.</b></div></div><div class="px-build-actions"><a class="btn primary" href="/workspace.html">Apri il Workspace →</a><a class="btn secondary" href="/simulator.html">Simula il workflow</a></div><div class="px-build-note">Regola PROJECT-X: un workflow funzionante prima di aggiungere altri strumenti.</div>';
  p.insertAdjacentElement('afterend',card);
 }
 function init(){
  var box=q('quickProblem');if(!box)return;
  if(!q('pxBuilderSignals')){var h=document.createElement('div');h.id='pxBuilderSignals';h.className='px-builder-signals';box.insertAdjacentElement('afterend',h)}
  box.addEventListener('input',renderSignals);renderSignals();
- var btn=q('quickBtn');if(btn)btn.textContent='BUILD MY SYSTEM →';
+ var btn=q('quickBtn');if(btn)btn.textContent='COSTRUISCI IL MIO SISTEMA →';
  var full=q('fullBtn');if(full)full.textContent='Analisi completa';
  var obs=new MutationObserver(function(){if(q('results')&&!q('results').hidden)setTimeout(buildCard,40)});
  obs.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','style']});
