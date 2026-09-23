@@ -634,6 +634,24 @@ body:before{
 #results .bottom,#results #savebar{display:none!important}
 #results .resultgrid{display:block!important}
 @media(max-width:600px){#results .px-human-impact{padding:17px!important}}
+</style><style id="px-result-simple-v1">
+#results .resulthead{text-align:left!important;padding-bottom:8px!important}
+#results .resulthead .eyebrow{display:none!important}
+#results .resulthead h1{font-size:clamp(30px,5vw,46px)!important;margin-bottom:8px!important}
+#results .resulthead p{font-size:14px!important}
+#results #aiBadge{display:none!important}
+#results .resultgrid,#results .bottom,#results #savebar{display:none!important}
+#results .px-answer{max-width:720px;margin:12px auto 40px;padding:28px;border:1px solid rgba(255,255,255,.09);border-radius:24px;background:linear-gradient(180deg,rgba(124,92,255,.10),rgba(255,255,255,.025));box-shadow:0 24px 70px rgba(0,0,0,.25)}
+#results .px-answer-kicker{font-size:10px;letter-spacing:.14em;font-weight:800;color:#9e91ff;margin-bottom:9px}
+#results .px-answer h2{font-size:28px;margin:0 0 12px}
+#results .px-answer-problem{font-size:17px;line-height:1.6;color:#dbe2ee;margin:0}
+#results .px-answer-line{height:1px;background:rgba(255,255,255,.09);margin:23px 0}
+#results .px-answer h3{font-size:26px;margin:4px 0 8px}
+#results .px-answer>p:not(.px-answer-problem){font-size:15px;line-height:1.6;color:#aeb8c9;margin:0}
+#results .px-answer-result{margin-top:18px;padding:14px 16px;border-radius:14px;background:rgba(54,217,157,.055);border:1px solid rgba(54,217,157,.13);color:#c9d5e5;font-size:13px;line-height:1.5}
+#results .px-answer .hero-actions{margin-top:22px}
+#results .px-answer .hero-actions .primary{width:100%;min-height:54px}
+@media(max-width:600px){#results .px-answer{padding:21px;margin-top:8px;border-radius:20px}#results .px-answer h2{font-size:25px}#results .px-answer h3{font-size:23px}}
 </style></head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><a href="/build-room.html" style="font-size:10px;font-weight:900;color:#88efc5;text-decoration:none;padding:8px 10px;border:1px solid rgba(54,217,157,.18);border-radius:999px;background:rgba(54,217,157,.04)">Build Room</a><a class="px-nav-cta" href="#home">Analizza gratis →</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div><button type="button" id="pxMobileNavBtn" class="px-mobile-nav-btn" aria-expanded="false" aria-controls="pxMobileNav">☰ Menu</button><div id="pxMobileNav" class="px-mobile-nav" hidden><div class="px-mobile-nav-head"><strong>PROJECT-X</strong><button type="button" id="pxMobileNavClose" aria-label="Chiudi menu">×</button></div><a href="#home">Home</a><a href="/metodo.html">Metodo</a><a href="/software-index.html">Software Index</a><a href="/atlas.html">Decision Atlas</a><a href="/landscape.html">Landscape</a><a href="/coach.html">✦ AI Coach</a><a href="/pro.html">Report PRO →</a></div></div></header>
@@ -863,43 +881,30 @@ pain:pain
 };
 }
 function renderPrimary(p){
-var s=Math.max(0,Math.min(100,fit(p))),u=commercialUrl(p);
+var u=commercialUrl(p);
 var isCommercial=String(u||'').indexOf('/api/affiliate?tool=')===0;
-var cta=u?'<a id="primaryLink" class="btn primary" href="'+esc(u)+'" target="_blank" rel="noopener">Apri '+esc(toolName(p))+' →</a>':'<button id="copyTop" class="btn primary">Copia il mio piano →</button>';
-var disclosure=isCommercial?'<div class="commercial" style="margin-top:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018);color:#7f8da3;font-size:8px;line-height:1.45"><strong style="color:#dfe5ef">Collegamento commerciale.</strong> PROJECT-X può ricevere una commissione se ti registri o acquisti tramite questo collegamento. Questo non modifica la compatibilità calcolata dal motore.</div>':'';
+var problem=answers.painPoint||'il problema che hai descritto';
 var impact=humanImpact(p);
+var cta='<button id="tutorialTop" class="btn primary">Fammi vedere come →</button>';
+var disclosure=isCommercial?'<div class="commercial" style="margin-top:12px">Se scegli questo strumento tramite PROJECT-X, potremmo ricevere una commissione. La scelta nasce dal problema descritto.</div>':'';
 $('primaryMount').innerHTML=
-'<div class="resulthero">'+
-  '<div class="label">ECCO DA DOVE PARTIRE</div>'+
-  '<div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ Scelta costruita sul tuo problema</span><div class="hero-actions">'+cta+'<button id="tutorialTop" class="btn secondary">🎓 Tutorial: come usarlo</button><a id="guideTop" class="btn secondary" href="/tutorial.html?tool='+encodeURIComponent(String(p.id||''))+'">📘 Guida passo-passo</a><button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div>'+
-  '<div class="commercial"><strong>Perché è qui:</strong> PROJECT-X incrocia il problema che hai descritto con bisogni, budget, tecnologia, team e strumenti già presenti.</div>'+
-  disclosure+
-'</div>'+
-'<div class="px-human-impact">'+
-  '<div class="px-hi-top"><div><div class="px-hi-kicker">02 · IN PRATICA</div><div class="px-hi-title">'+esc(impact.title)+'</div></div><div class="px-hi-badge">Senza complicarti la vita</div></div>'+
-  '<div class="px-hi-flow">'+
-    '<div class="px-hi-stage"><div class="px-hi-index">01</div><div class="px-hi-label">IL PROBLEMA</div><div class="px-hi-text">'+esc(impact.pain||impact.today)+'</div><div class="px-hi-muted">'+esc(impact.today)+'</div></div>'+
-    '<div class="px-hi-connector"><span>→</span></div>'+
-    '<div class="px-hi-stage focus"><div class="px-hi-index">02</div><div class="px-hi-label">COSA FAI CON '+esc(toolName(p).toUpperCase())+'</div><div class="px-hi-text">'+esc(impact.action)+'</div><div class="px-hi-muted">Questo è il primo pezzo da impostare.</div></div>'+
-    '<div class="px-hi-connector"><span>→</span></div>'+
-    '<div class="px-hi-stage done"><div class="px-hi-index">03</div><div class="px-hi-label">IL RISULTATO</div><div class="px-hi-text">'+esc(impact.result)+'</div><div class="px-hi-muted">Non serve cambiare tutto insieme.</div></div>'+
-  '</div>'+
-  '<div class="px-hi-goal"><span>IL TUO OBIETTIVO</span><strong>'+esc(impact.goal)+'</strong></div>'+
-  '<div class="px-hi-note"><b>Adesso non devi imparare tutto.</b> Ti mostro solo il prossimo passo.</div>'+
+'<div class="px-answer">'+
+ '<div class="px-answer-kicker">HO CAPITO</div>'+
+ '<h2>Il punto è questo.</h2>'+
+ '<p class="px-answer-problem">'+esc(problem)+'</p>'+
+ '<div class="px-answer-line"></div>'+
+ '<div class="px-answer-kicker">PARTIREI DA QUI</div>'+
+ '<h3>'+esc(toolName(p))+'</h3>'+
+ '<p>'+esc(impact.action||p.description||'È il primo passo che affronterei.')+'</p>'+
+ '<div class="px-answer-result"><b>Obiettivo:</b> '+esc(impact.result||'ridurre il lavoro ripetitivo e avere un processo più semplice.')+'</div>'+
+ '<div class="hero-actions">'+cta+'</div>'+
+ disclosure+
 '</div>';
-if($('primaryLink'))$('primaryLink').addEventListener('click',function(){event('affiliate_click',{tool:toolName(p),url:u,hasAffiliate:isCommercial})});
-if($('copyTop'))$('copyTop').onclick=copyReport;
 if($('tutorialTop'))$('tutorialTop').onclick=function(){
-  function go(){
-    var g=$('px-execution-guide');
-    if(g){g.scrollIntoView({behavior:'smooth',block:'start'});return true}
-    return false;
-  }
-  if(!go())setTimeout(go,120);
-  event('tutorial_open',{tool:toolName(p),toolId:p.id||''});
+ function go(){var g=$('px-execution-guide');if(g){g.scrollIntoView({behavior:'smooth',block:'start');return true}return false}
+ if(!go())setTimeout(go,120);event('tutorial_open',{tool:toolName(p),toolId:p.id||''});
 };
-if($('guideTop'))$('guideTop').addEventListener('click',function(){event('tutorial_detail_open',{tool:toolName(p),toolId:p.id||''})});
-if($('planTop'))$('planTop').onclick=function(){$('planMount').scrollIntoView({behavior:'smooth'})};
+if(u&&isCommercial)event('result_commercial',{tool:toolName(p)});
 }
 function renderValue(v){var h=Number(v.hoursPerWeek||0)||0,rate=Number(v.hourlyValue||0)||0,monthly=Number(v.monthlyValue||h*rate*4.33)||0,annual=Number(v.annualValue||monthly*12)||0;$('valueMount').innerHTML='<h3>💰 Il valore del tempo</h3><div class="sub">Stima teorica basata sulle ore ripetitive indicate. Non è una promessa di risparmio.</div><div class="money">€'+Math.round(monthly).toLocaleString('it-IT')+'</div><div class="moneylabel">valore potenziale / mese</div><div class="moneyrow"><div class="moneymini"><b>€'+Math.round(annual).toLocaleString('it-IT')+'</b><span>su base annua</span></div><div class="moneymini"><b>'+h+' h</b><span>a settimana</span></div></div><div class="metric"><span style="color:var(--muted)">Valore orario</span><strong>€'+rate+'</strong></div>'}
 function renderArchitecture(r){var cov=Math.round(Number(r.stackCoverage||0)),count=(r.stack||[]).length||1,gaps=(r.missingNeeds||[]).length,role=r.dominantRole&&r.dominantRole.label||r.primaryRole&&r.primaryRole.label||'—';$('architectureMount').innerHTML='<h3>🧭 Il tuo sistema in 1 minuto</h3><div class="sub">Non scegliamo in base alla fama: cerchiamo ciò che si adatta davvero al tuo lavoro.</div><div class="three"><div class="score"><b>'+cov+'%</b><span>quanto ti copre</span></div><div class="score"><b>'+count+'</b><span>strumenti che servono</span></div><div class="score"><b>'+gaps+'</b><span>cosa manca</span></div></div><div class="metric"><span style="color:var(--muted)">Ruolo</span><strong>'+esc(role)+'</strong></div><div class="metric"><span style="color:var(--muted)">Il tuo prossimo passo</span><strong>'+esc(answers.budget||'—')+'</strong></div>'}
