@@ -118,6 +118,20 @@ export default async function handler(req, res) {
 
     const event = JSON.parse(rawBody);
 
+    if (event.type === "invoice.paid") {
+      const invoice = event.data && event.data.object ? event.data.object : {};
+      const parent = invoice.subscription ? String(invoice.subscription) : "";
+      if (parent) {
+        console.log("PROJECT-X recurring PRO invoice paid:", JSON.stringify({
+          eventId: String(event.id || ""),
+          subscriptionId: parent,
+          customerEmail: invoice.customer_email || "",
+          amountPaid: Number(invoice.amount_paid || 0),
+          currency: String(invoice.currency || "").toLowerCase()
+        }));
+      }
+    }
+
     if (event.type === "checkout.session.completed") {
       const session = event.data && event.data.object
         ? event.data.object
