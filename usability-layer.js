@@ -88,7 +88,7 @@
       '.px-blueprint-btn:hover{transform:translateY(-2px)}' +
       '@media(max-width:900px){.px-blueprint-flow{grid-template-columns:1fr}.px-blueprint-arrow{justify-self:center;transform:rotate(90deg)}}' +
       '@media(max-width:600px){.px-blueprint{padding:17px}.px-blueprint-title{font-size:20px}}' +
-      '@media(prefers-reduced-motion:reduce){.px-skip-link,.px-a11y-status,.px-dc-btn{transition:none}}';
+      '@media(prefers-reduced-motion:reduce){.px-skip-link,.px-a11y-status,.px-dc-btn{transition:none}}'      '.px-workflow{margin:0 0 15px;padding:20px;border:1px solid rgba(54,217,157,.16);border-radius:22px;background:linear-gradient(145deg,rgba(10,24,22,.96),rgba(7,11,20,.99));box-shadow:0 22px 70px rgba(0,0,0,.22)}' +      '.px-workflow-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}' +      '.px-workflow-k{font-size:8px;letter-spacing:.15em;font-weight:950;color:#70e5b5;text-transform:uppercase}' +      '.px-workflow-title{margin-top:6px;font-size:22px;font-weight:950;letter-spacing:-.04em}' +      '.px-workflow-copy{margin:6px 0 0;color:#8997ab;font-size:9px;line-height:1.5;max-width:760px}' +      '.px-workflow-progress{padding:7px 9px;border:1px solid rgba(54,217,157,.16);border-radius:999px;color:#7ce8bd;background:rgba(54,217,157,.035);font-size:8px;font-weight:950;white-space:nowrap}' +      '.px-workflow-steps{display:grid;gap:8px;margin-top:15px}' +      '.px-workflow-step{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.065);border-radius:14px;background:rgba(255,255,255,.018)}' +      '.px-workflow-step.done{border-color:rgba(54,217,157,.18);background:rgba(54,217,157,.035)}' +      '.px-workflow-num{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(124,92,255,.10);color:#c6bdff;font-size:8px;font-weight:950}' +      '.px-workflow-step.done .px-workflow-num{background:rgba(54,217,157,.12);color:#7ce8bd}' +      '.px-workflow-step b{font-size:10px;color:#e7edf5}.px-workflow-step p{margin:4px 0 0;color:#8b99ae;font-size:8px;line-height:1.45}' +      '.px-workflow-check{min-width:88px;min-height:36px;padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.035);color:#dfe6f1;font-size:8px;font-weight:950;cursor:pointer}' +      '.px-workflow-check.done{background:rgba(54,217,157,.10);border-color:rgba(54,217,157,.20);color:#7ce8bd}' +      '.px-workflow-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}' +      '.px-workflow-btn{min-height:40px;padding:9px 12px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.03);color:#dfe6f1;font-size:9px;font-weight:950;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}' +      '.px-workflow-btn.primary{background:linear-gradient(135deg,#36d99d,#1ebf87);border-color:transparent;color:#06140f}' +      '@media(max-width:600px){.px-workflow{padding:17px}.px-workflow-title{font-size:20px}.px-workflow-step{grid-template-columns:30px 1fr}.px-workflow-check{grid-column:2;width:max-content}}' +'@media(prefers-reduced-motion:reduce){.px-skip-link,.px-a11y-status,.px-dc-btn{transition:none}}';
     document.head.appendChild(s);
   }
 
@@ -385,6 +385,105 @@
     }
   }
 
+  function buildWorkflow(){
+    if($('#px-workflow')) return;
+    var section=$('#results');
+    if(!section || getComputedStyle(section).display==='none') return;
+    var r=getResult(),p=primary(r);
+    if(!p) return;
+
+    var tutorial=null;
+    try{
+      if(window.PROJECTX_TOOL_TUTORIALS && typeof window.PROJECTX_TOOL_TUTORIALS.get==='function'){
+        tutorial=window.PROJECTX_TOOL_TUTORIALS.get(String(p.id||''));
+      }
+    }catch(e){}
+    if(!tutorial || !Array.isArray(tutorial.steps) || !tutorial.steps.length) return;
+
+    var key='projectx_workflow_state_v1_'+String(p.id||'');
+    var state={};
+    try{state=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){state={};}
+
+    var card=document.createElement('section');
+    card.id='px-workflow';
+    card.className='px-workflow';
+    card.setAttribute('aria-label','Workflow guidato PROJECT-X');
+
+    var rows=tutorial.steps.slice(0,5).map(function(step,i){
+      var done=state[i+1]===true;
+      return '<div class="px-workflow-step'+(done?' done':'')+'" data-step="'+(i+1)+'">'+
+        '<div class="px-workflow-num">'+(done?'✓':String(i+1).padStart(2,'0'))+'</div>'+
+        '<div><b>'+escapeHtml(step.title||('Passo '+(i+1)))+'</b><p>'+escapeHtml(step.instruction||'Esegui questo passaggio nel software.')+'</p></div>'+
+        '<button type="button" class="px-workflow-check'+(done?' done':'')+'">'+(done?'✓ Fatto':'Segna fatto')+'</button>'+
+      '</div>';
+    }).join('');
+
+    var completed=Object.keys(state).filter(function(k){return state[k]===true;}).length;
+    var total=Math.min(5,tutorial.steps.length);
+
+    card.innerHTML=
+      '<div class="px-workflow-head">'+
+        '<div><div class="px-workflow-k">PROJECT-X · WORKFLOW GUIDATO</div><div class="px-workflow-title">Adesso lo costruiamo davvero.</div><p class="px-workflow-copy">'+escapeHtml(tutorial.mission||'Un solo processo reale, configurato passo dopo passo.')+'</p></div>'+
+        '<div id="px-workflow-progress" class="px-workflow-progress">'+completed+'/'+total+' COMPLETATI</div>'+
+      '</div>'+
+      '<div class="px-workflow-steps">'+rows+'</div>'+
+      '<div class="px-workflow-tools">'+
+        '<button id="px-workflow-copy" type="button" class="px-workflow-btn primary">⧉ Copia setup</button>'+
+        '<a class="px-workflow-btn" href="/tutorial.html?tool='+encodeURIComponent(String(p.id||''))+'">📘 Apri guida completa</a>'+
+      '</div>';
+
+    var anchor=$('#px-blueprint')||$('#px-decision-cockpit')||section.querySelector('.resultgrid');
+    if(anchor) anchor.insertAdjacentElement('afterend',card);
+    else section.appendChild(card);
+
+    function refresh(){
+      var count=0;
+      card.querySelectorAll('.px-workflow-step').forEach(function(row){
+        var n=Number(row.getAttribute('data-step'));
+        var done=state[n]===true;
+        var num=row.querySelector('.px-workflow-num');
+        var btn=row.querySelector('.px-workflow-check');
+        if(done) count++;
+        row.classList.toggle('done',done);
+        if(num) num.textContent=done?'✓':String(n).padStart(2,'0');
+        if(btn){
+          btn.classList.toggle('done',done);
+          btn.textContent=done?'✓ Fatto':'Segna fatto';
+        }
+      });
+      var progress=$('#px-workflow-progress');
+      if(progress) progress.textContent=count+'/'+total+' COMPLETATI';
+    }
+
+    card.querySelectorAll('.px-workflow-check').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var row=btn.closest('.px-workflow-step');
+        var n=Number(row.getAttribute('data-step'));
+        state[n]=state[n]!==true;
+        try{localStorage.setItem(key,JSON.stringify(state));}catch(e){}
+        refresh();
+        announce(state[n]?'Passo completato.':'Passo riaperto.');
+        try{fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'workflow_step_toggle',sessionId:Date.now().toString(),meta:{tool:String(p.id||''),step:n,done:!!state[n]}})}).catch(function(){})}catch(e){}
+      });
+    });
+
+    var copy=$('#px-workflow-copy');
+    if(copy){
+      copy.addEventListener('click',function(){
+        var text=[
+          'PROJECT-X — WORKFLOW '+String(p.name||p.id||'').toUpperCase(),
+          '',
+          'MISSIONE: '+String(tutorial.mission||''),
+          '',
+          tutorial.steps.slice(0,5).map(function(s,i){return (i+1)+'. '+s.title+' — '+s.instruction;}).join('\n')
+        ].join('\n');
+        if(navigator.clipboard&&navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(function(){announce('Setup copiato.');}).catch(function(){announce('Copia non disponibile.');});
+        }else announce('Copia non disponibile.');
+      });
+    }
+  }
+
   function improveResult(){
     var section=$('#results');
     if(!section) return;
@@ -396,6 +495,7 @@
 
     buildDecisionCockpit();
     buildBlueprint();
+    buildWorkflow();
   }
 
   function focusView(view){
