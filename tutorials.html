@@ -46,7 +46,7 @@ function filter(){
  count.textContent=list.length;
  grid.innerHTML=list.map(function(t){
    var d=T.get(t);
-   return '<div class="card"><div class="card-k">'+esc(d.area)+'</div><h3>'+esc(t.name)+'</h3><p>'+esc(d.focus)+'.</p><div class="card-flow">'+esc((d.flow||[]).join(' → '))+'</div><button class="btn" data-tool="'+esc(t.id)+'">Apri tutorial rapido →</button><a class="btn" style="display:block;text-align:center;text-decoration:none" href="/tutorial.html?tool='+encodeURIComponent(t.id)+'">📘 Guida completa + esempio →</a></div>';
+   return '<div class="card"><div class="card-k">'+esc(d.area)+'</div><h3>'+esc(t.name)+'</h3><p>'+esc(d.focus)+'.</p><div class="card-flow">'+esc((d.flow||[]).join(' → '))+'</div><button class="btn" data-tool="'+esc(t.id)+'">Apri tutorial rapido →</button><a class="btn" style="display:block;text-align:center;text-decoration:none" href="/guide/'+encodeURIComponent(t.id)+'.html">📘 Guida completa + esempio →</a></div>';
  }).join('')||'<div class="card"><h3>Nessun risultato</h3><p>Prova con un altro nome o categoria.</p></div>';
 }
 function drawPanel(t){
