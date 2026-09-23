@@ -9,6 +9,7 @@
 
   var current=0;
   var observer=null;
+  var assistantObserver=null;
   var storageKey='projectx_practice_v1_'+location.pathname;
 
   function esc(v){
@@ -368,21 +369,35 @@
 
   function syncFromExistingAssistant(){
     var rowsNow=rows();
-    rowsNow.forEach(function(row,i){
-      row.addEventListener('click',function(e){
+    var mount=document.getElementById('steps');
+    if(mount){
+      mount.addEventListener('click',function(e){
         if(e.target && e.target.closest && e.target.closest('button,input,label,summary,a'))return;
-        current=i;
-        refresh();
+        var row=e.target&&e.target.closest?e.target.closest('.step'):null;
+        if(!row)return;
+        var now=rows();
+        var idx=now.indexOf(row);
+        if(idx>=0){current=idx;refresh();}
       });
-    });
+    }
     if(observer)observer.disconnect();
     observer=new MutationObserver(function(){
       var count=rows().length;
       if(count && current>=count)current=count-1;
       refresh();
     });
-    var mount=document.getElementById('steps');
     if(mount)observer.observe(mount,{childList:true,subtree:true});
+    var assist=document.getElementById('assistTitle');
+    if(assistantObserver)assistantObserver.disconnect();
+    if(assist){
+      assistantObserver=new MutationObserver(function(){
+        var m=(assist.textContent||'').match(/Passo\s+(\d+)\s+di\s+\d+/i);
+        if(!m)return;
+        var idx=Math.max(0,Number(m[1])-1);
+        if(idx!==current && idx<rows().length){current=idx;refresh();}
+      });
+      assistantObserver.observe(assist,{childList:true,characterData:true,subtree:true});
+    }
   }
 
   function boot(){
