@@ -652,52 +652,34 @@ body:before{
 #results .px-answer .hero-actions{margin-top:22px}
 #results .px-answer .hero-actions .primary{width:100%;min-height:54px}
 @media(max-width:600px){#results .px-answer{padding:21px;margin-top:8px;border-radius:20px}#results .px-answer h2{font-size:25px}#results .px-answer h3{font-size:23px}}
+</style><style id="px-ultra-simple">
+#home .wrap{max-width:820px!important;margin:auto!important}
+#home{text-align:left!important;min-height:70vh!important;display:flex!important;align-items:center!important}
+#home .eyebrow{margin-bottom:16px!important}
+#home h1{font-size:clamp(42px,7vw,72px)!important;line-height:1.02!important;letter-spacing:-.04em!important}
+#home> .wrap>p,#home .wrap>p{font-size:18px!important;color:#aeb8c9!important;max-width:600px!important}
+#home .quickbox{margin-top:28px!important;padding:22px!important;max-width:720px!important}
+#home .quickhead{margin-bottom:10px!important;font-size:16px!important}
+#home textarea{min-height:145px!important;font-size:17px!important;padding:18px!important}
+#home .quickactions .primary{width:100%!important;min-height:56px!important;font-size:16px!important}
+#home .micro{text-align:center!important;margin-top:12px!important}
+@media(max-width:600px){#home{min-height:75vh!important}#home h1{font-size:42px!important}#home> .wrap>p,#home .wrap>p{font-size:16px!important}#home .quickbox{padding:16px!important}}
 </style></head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><a href="/build-room.html" style="font-size:10px;font-weight:900;color:#88efc5;text-decoration:none;padding:8px 10px;border:1px solid rgba(54,217,157,.18);border-radius:999px;background:rgba(54,217,157,.04)">Build Room</a><a class="px-nav-cta" href="#home">Analizza gratis →</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div><button type="button" id="pxMobileNavBtn" class="px-mobile-nav-btn" aria-expanded="false" aria-controls="pxMobileNav">☰ Menu</button><div id="pxMobileNav" class="px-mobile-nav" hidden><div class="px-mobile-nav-head"><strong>PROJECT-X</strong><button type="button" id="pxMobileNavClose" aria-label="Chiudi menu">×</button></div><a href="#home">Home</a><a href="/metodo.html">Metodo</a><a href="/software-index.html">Software Index</a><a href="/atlas.html">Decision Atlas</a><a href="/landscape.html">Landscape</a><a href="/coach.html">✦ AI Coach</a><a href="/pro.html">Report PRO →</a></div></div></header>
 <main>
 <section id="home" class="hero"><div class="wrap">
-<div class="eyebrow">✦ PARTIAMO DAL TUO PROBLEMA</div>
-<h1>Dimmi cosa vuoi sistemare.<br><span class="grad">Ti dico da dove partire.</span></h1>
-<p>Scrivimelo come lo diresti a un collega. Non devi conoscere software, automazioni o termini tecnici.</p>
+<div class="eyebrow">✦ PROJECT-X</div>
+<h1>Hai un problema al lavoro?<br><span class="grad">Raccontamelo.</span></h1>
+<p>Ti aiuto a capire cosa fare, senza complicazioni.</p>
 <div class="quickbox">
-<div class="journey" aria-label="Percorso PROJECT-X"><div class="journey-step"><b>01 · RACCONTA</b><span>Il problema reale</span></div><div class="journey-step"><b>02 · CAPISCI</b><span>Poche domande utili</span></div><div class="journey-step"><b>03 · DECIDI</b><span>Scelta + confronto</span></div><div class="journey-step"><b>04 · AGISCI</b><span>Piano + prossima azione</span></div></div>
-<div class="quickhead"><b>Raccontamelo con parole tue</b></div>
-<textarea id="quickProblem" maxlength="800" placeholder="Esempio: perdo ore a fare preventivi e poi mi dimentico di richiamare i clienti…"></textarea>
-<div class="quickgrid"><select id="quickBusiness" class="select" aria-label="La tua attività, facoltativa"><option value="">Attività · facoltativa</option><option>Professionista</option><option>Impresa di servizi</option><option>E-commerce</option><option>Agenzia</option><option>Ristorante / attività locale</option><option>Startup</option><option>Azienda</option></select><select id="quickBudget" class="select" aria-label="Budget mensile, facoltativo"><option value="">Budget · facoltativo</option><option>€0</option><option>€1–30</option><option>€31–50</option><option>€51–100</option><option>€101–250</option><option>€251+</option></select></div><div class="px-example-row"><span class="px-example-label">Inizia da un esempio:</span><button type="button" class="px-example" data-example="Perdo ore tra email e follow-up dei clienti">Email + follow-up</button><button type="button" class="px-example" data-example="Faccio preventivi a mano e copio sempre gli stessi dati">Preventivi</button><button type="button" class="px-example" data-example="Uso Excel per gestire dati e attività e vorrei automatizzare i passaggi ripetitivi">Excel + automazioni</button><button type="button" class="px-example" data-example="Gestisco ordini online, marketing e assistenza clienti in modo manuale">E-commerce</button></div>
-<div class="quickactions"><button type="button" id="quickBtn" class="btn primary">Fai partire PROJECT-X →</button><button type="button" id="fullBtn" class="btn secondary">Voglio capirlo fino in fondo</button><button type="button" id="demoBtn" class="btn secondary px-demo-btn">Guarda un esempio →</button></div><div class="micro">Non serve sapere quale software usare. Partiamo da quello che ti succede.</div>
+<div class="quickhead"><b>Che cosa ti fa perdere tempo?</b></div>
+<textarea id="quickProblem" maxlength="800" placeholder="Scrivi qui, come parleresti con un collega…"></textarea>
+<div class="quickactions"><button type="button" id="quickBtn" class="btn primary">Aiutami →</button></div>
+<div class="micro">È tutto qui. Non devi sapere quale software ti serve.</div>
 </div>
-<div class="px-showcase" aria-label="Anteprima del Decision Engine">
-  <div class="px-showcase-card">
-    <div class="px-mini-label">Il punto di partenza</div>
-    <div class="px-live-problem">“Ho troppi strumenti, perdo tempo tra email e attività e non so cosa automatizzare per primo.”</div>
-    <div class="px-flow" aria-hidden="true">
-      <div class="px-flow-node"><b>Il tuo problema</b><span>Come lavori davvero</span></div>
-      <div class="px-flow-arrow">→</div>
-      <div class="px-flow-node"><b>Decision Engine</b><span>La soluzione + vincoli</span></div>
-      <div class="px-flow-arrow">→</div>
-      <div class="px-flow-node"><b>Sistema</b><span>Scelta + piano</span></div>
-    </div>
-    <div class="px-showcase-note">Non vende una singola app: costruisce una direzione coerente con il tuo lavoro.</div>
-  </div>
-  <div class="px-showcase-card">
-    <div class="px-mini-label">Anteprima del risultato</div>
-    <div class="px-result">
-      <div class="px-result-top"><div class="px-result-name">Close</div><div class="px-score">93 / 100 · compatibilità</div></div>
-      <div class="px-result-meta"><span>CRM & Vendite</span><span>Automazioni</span><span>Follow-up</span><span>Microsoft 365</span></div>
-      <div class="px-bars">
-        <div class="px-bar"><span>La soluzione</span><i style="width:96%"></i><b>96</b></div>
-        <div class="px-bar"><span>Il tuo prossimo passo</span><i style="width:91%"></i><b>91</b></div>
-        <div class="px-bar"><span>Semplicità</span><i style="width:88%"></i><b>88</b></div>
-      </div>
-    </div>
-    <div class="px-showcase-note">Poi arrivano stack, automazioni, piano 7 giorni e confronto con le alternative.</div>
-  </div>
-</div>
-<div class="px-proof"><span>⚡ Analisi locale gratuita</span><span>🔒 Nessuna carta</span><span>🧩 Stack ragionato</span><span>🎯 Prima azione concreta</span></div>
-<div class="trust"><span>✓ Parti dal problema</span><span>✓ Rispetta il budget</span><span>✓ Valorizza ciò che hai</span><span>✓ Suggerisce cosa automatizzare</span></div>
 </div></section>
-<section id="benefits" class="section"><div class="wrap"><div class="title"><h2>Finalmente una risposta, non altri 100 tab aperti.</h2><p>PROJECT-X è costruito intorno a una domanda semplice: “Qual è il sistema che ha più senso per me, adesso?”</p></div><div class="cards"><div class="card feature"><div class="icon">🧠</div><h3>Capisce prima di consigliare</h3><p>Parte dal lavoro reale, non dal software più famoso del momento.</p></div><div class="card feature"><div class="icon">🧩</div><h3>Combina invece di accumulare</h3><p>Costruisce uno stack piccolo e prova a evitare doppioni e cambi inutili.</p></div><div class="card feature"><div class="icon">💶</div><h3>Trasforma il tempo in un numero</h3><p>Ti mostra il valore teorico delle ore ripetitive che hai indicato.</p></div></div><div class="numbers"><div class="card"><b>13</b><span>bisogni operativi modellati</span></div><div class="card"><b>55</b><span>strumenti nel catalogo</span></div><div class="card"><b>15</b><span>strumenti nel ranking</span></div><div class="card"><b>2</b><span>modi per analizzarti</span></div></div><div class="modes"><div class="card mode"><h3>⚡ Rapida</h3><p>Descrivi il problema e ottieni una direzione immediata. Perfetta per capire se PROJECT-X può aiutarti.</p><button type="button" class="btn secondary" id="quickBtn2">Prova la rapida →</button></div><div class="card mode"><h3>🎯 Completa</h3><p>Più contesto, più vincoli, strumenti già presenti e una configurazione più precisa.</p><button type="button" class="btn primary" id="fullBtn2">Costruisci il mio sistema →</button></div></div></div></section>
+
 <section id="questionnaire" hidden><div class="wrap qwrap"><div class="progressline"><span id="progressLabel"></span><span id="progressPct"></span></div><div class="progress"><div id="progressBar" class="bar"></div></div><div class="qmeta"><span id="questionWhy"></span><span id="modeLabel">ANALISI COMPLETA</span></div><div class="card qcard"><h2 id="qTitle"></h2><p id="qDesc" class="desc"></p><div id="qContent"></div><div class="actions"><button id="backBtn" class="btn secondary">← Indietro</button><button id="nextBtn" class="btn primary">Continua →</button></div><div class="hint">Puoi tornare indietro. Le risposte vengono mantenute durante l'analisi.</div></div></div></section>
 <section id="loading" hidden><div class="wrap"><div class="spinner"></div><div class="loadtitle">Sto costruendo il tuo sistema…</div><div id="loadingText" class="loadtext">Leggo il tuo problema.</div><div class="chips"><span class="chip">Il tuo problema</span><span class="chip">Le tue esigenze</span><span class="chip">La soluzione</span><span class="chip">Quanto combacia</span><span class="chip">Il tuo prossimo passo</span><span class="chip">Automazioni</span></div></div></section>
 <section id="results" hidden><div class="wrap"><div class="resulthead"><div class="eyebrow">✦ IL RISULTATO È PRONTO</div><h1>Ora hai una direzione.<br><span class="grad">Vediamo cosa farne.</span></h1><p id="resultModeText">Qui sotto trovi prima la spiegazione semplice, poi numeri, strumenti e piano.</p><div id="aiBadge" class="ai">✦ Il tuo problema affinato con Le tue esigenze</div></div><div id="insightMount"></div><div id="primaryMount"></div><div class="resultgrid"><div id="valueMount" class="card panel valuebox"></div><div id="architectureMount" class="card panel"></div><div id="planMount" class="card panel wide"></div><div id="stackMount" class="card panel"></div><div id="automationMount" class="card panel"></div><div id="rankingMount" class="card panel"></div><div id="gapMount" class="card panel"></div><div id="needsMount" class="card panel"></div><div id="whyMount" class="card panel wide"></div></div><div class="bottom"><button id="copyBtn" class="btn secondary">Copia il mio risultato</button><button id="shareBtn" class="btn secondary">Condividi</button><button id="leadBtn" class="btn secondary">📩 Mandami il risultato</button><button id="implementationBtn" class="btn secondary">🛠 Voglio trasformarlo in un sistema</button><button id="printBtn" class="btn secondary">Salva il risultato</button><button id="refineBtn" class="btn primary">Rendi la scelta più precisa →</button><button id="resetBtn" class="btn secondary">Riparti da zero</button></div><div id="savebar" style="margin-top:13px;padding:13px 14px;border:1px solid rgba(54,217,157,.16);background:rgba(54,217,157,.045);border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="color:var(--muted);font-size:10px;line-height:1.45"><b style="display:block;color:#fff;font-size:11px;margin-bottom:3px">🔗 Salva il tuo risultato</b>Il link ricrea questa analisi senza database: le risposte restano nel frammento del browser e non vengono inviate al server dal link.</div><button id="saveLinkBtn" class="btn secondary" style="padding:10px 13px;white-space:nowrap">Crea link →</button></div></div></section>
