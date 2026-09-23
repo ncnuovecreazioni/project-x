@@ -199,12 +199,31 @@
     var guide=document.createElement('div');
     guide.className='px-guide-card';
     var tid=p && (p.id||p.slug||'') || '';
+    var goalMap={
+      preventivi:'automatizzare-preventivi',
+      email:'automatizzare-follow-up-email',
+      clienti:'gestire-clienti',
+      excel:'automatizzare-excel',
+      ecommerce:'gestire-ecommerce',
+      progetti:'organizzare-progetti',
+      documenti:'gestire-documenti',
+      appuntamenti:'automatizzare-appuntamenti',
+      automazioni:'creare-workflow',
+      crm:'scegliere-crm',
+      ai:'usare-ai-al-lavoro',
+      marketing:'automatizzare-follow-up-email'
+    };
+    var goalSlug=goalMap[sc.key]||'';
+    var goalHref=goalSlug?'/guide/'+goalSlug+'.html':'/tutorial.html?tool='+encodeURIComponent(tid);
+    var guideTitle=goalSlug?'La guida esatta per il problema che hai descritto.':'Non lasciare il sistema sulla carta.';
+    var guideCopy=goalSlug?'Non devi partire dal software. Parti dal risultato e segui un caso pilota, un passo alla volta.':'Hai una direzione. Ora PROJECT-X ti accompagna nei primi minuti di configurazione di <b style="color:#eef2fb">'+esc(tool)+'</b>.';
+    var guideSteps=goalSlug?'① Definisci il risultato · ② Configura il minimo · ③ Fai il test · ④ Replica':'① Apri lo strumento · ② Configura il nucleo · ③ Attiva il primo workflow';
     guide.innerHTML=
       '<div><div class="px-guide-kicker">DAL RISULTATO ALL’AZIONE</div>'+
-      '<div class="px-guide-title">Non lasciare il sistema sulla carta.</div>'+
-      '<p class="px-guide-copy">Hai una direzione. Ora PROJECT-X ti accompagna nei primi minuti di configurazione di <b style="color:#eef2fb">'+esc(tool)+'</b>.</p>'+
-      '<div class="px-guide-steps"><span class="px-guide-step">① Apri lo strumento</span><span class="px-guide-step">② Configura il nucleo</span><span class="px-guide-step">③ Attiva il primo workflow</span><span class="px-guide-step">⏱ Parti da 10–15 min</span></div></div>'+
-      '<div class="px-guide-actions"><a class="px-guide-primary" href="/tutorials.html?tool='+encodeURIComponent(tid)+'">INIZIA LA GUIDA →</a><a class="px-guide-secondary" href="/workspace.html">APRI WORKSPACE</a></div>';
+      '<div class="px-guide-title">'+guideTitle+'</div>'+
+      '<p class="px-guide-copy">'+guideCopy+'</p>'+
+      '<div class="px-guide-steps"><span class="px-guide-step">'+guideSteps+'</span><span class="px-guide-step">🧭 PROJECT-X ti segue passo per passo</span></div></div>'+
+      '<div class="px-guide-actions"><a class="px-guide-primary" href="'+goalHref+'">INIZIA LA GUIDA →</a><a class="px-guide-secondary" href="/workspace.html">APRI WORKSPACE</a></div>';
 
     autos.after(guide);
   }
