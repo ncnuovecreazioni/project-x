@@ -489,6 +489,7 @@ function renderAssist(){
  document.getElementById('assistAction').textContent=s[2]||s[1]||'Segui il passaggio indicato.';
  document.getElementById('assistSuccess').textContent=s[3]||'Verifica che il passaggio produca il risultato previsto.';
  document.getElementById('assistWhere').textContent=stepWhere(selected);
+ document.getElementById('assistHelp').textContent=stepTrouble(s);
  document.getElementById('assistTrouble').textContent=stepTrouble(s);
  document.getElementById('assistCopy').disabled=false;
  document.getElementById('assistStatus').textContent=done?'✓ Passo completato. Puoi continuare.':'Quando hai completato il passaggio, premi “Ho completato questo passo”.';
