@@ -246,6 +246,33 @@ export default async function handler(req, res) {
 
   const mode = String(req.query && req.query.mode || "").trim().toLowerCase();
 
+  if (mode === "freshness") {
+    const feed = await loadFeed();
+    const fallback = {
+      generatedAt: "2026-09-23T00:00:00.000Z",
+      tools: {
+        make: "2026-09-23", pipedrive: "2026-09-23", hubspot: "2026-09-23",
+        shopify: "2026-09-23", brevo: "2026-09-23", monday: "2026-09-23",
+        getresponse: "2026-09-23", activecampaign: "2026-09-23", systeme: "2026-09-23",
+        semrush: "2026-09-23", kit: "2026-09-23", close: "2026-09-23",
+        zapier: "2026-09-23", asana: "2026-09-23", notion: "2026-09-23", clickup: "2026-09-23"
+      }
+    };
+    const data = feed.data && feed.data.tools ? feed.data : fallback;
+    const stale = Object.keys(data.tools || {}).map(function(id){
+      const days = Math.floor((Date.now() - new Date(data.tools[id]).getTime()) / 86400000);
+      return { id, verified: data.tools[id], days };
+    }).filter(function(x){ return x.days > 30; });
+    return res.status(200).json({
+      success: true,
+      generatedAt: data.generatedAt || new Date().toISOString(),
+      source: feed.data ? "external-feed" : "registry",
+      tools: data.tools || {},
+      staleCount: stale.length,
+      stale
+    });
+  }
+
   if (mode === "variant") {
     const feed = await loadFeed();
     const decision = chooseVariant(feed.data);
