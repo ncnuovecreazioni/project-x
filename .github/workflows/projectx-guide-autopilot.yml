@@ -1,0 +1,36 @@
+name: PROJECT-X Guide Autopilot
+
+on:
+  push:
+    paths:
+      - 'database.js'
+      - 'tool-tutorials.js'
+      - 'tutorial-library.js'
+      - 'generate-guides.js'
+      - '.github/workflows/projectx-guide-autopilot.yml'
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate software guides
+        run: node generate-guides.js
+      - name: Commit generated pages
+        run: |
+          git config user.name "PROJECT-X Autopilot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add guide sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No guide changes."
+          else
+            git commit -m "content: refresh software guides"
+            git push
+          fi
