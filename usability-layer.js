@@ -66,6 +66,28 @@
       '.px-dc-mini span{display:block;color:#6f7d94;font-size:7px;letter-spacing:.08em}.px-dc-mini b{display:block;margin-top:4px;color:#e6ecf5;font-size:10px}' +
       '@media(max-width:820px){.px-method-grid{grid-template-columns:1fr 1fr}.px-dc-grid{grid-template-columns:1fr}}' +
       '@media(max-width:600px){.px-method{width:calc(100% - 22px);padding:17px}.px-method-grid,.px-dc-foot{grid-template-columns:1fr}.px-dc-title{font-size:23px}.px-decision-cockpit{padding:18px}}' +
+
+      '.px-blueprint{margin:0 0 15px;padding:20px;border:1px solid rgba(91,140,255,.18);border-radius:22px;background:linear-gradient(145deg,rgba(12,19,34,.97),rgba(7,11,20,.99));box-shadow:0 22px 70px rgba(0,0,0,.22);position:relative;overflow:hidden}' +
+      '.px-blueprint-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}' +
+      '.px-blueprint-k{font-size:8px;letter-spacing:.15em;font-weight:950;color:#91a9ff;text-transform:uppercase}' +
+      '.px-blueprint-title{margin-top:6px;font-size:22px;font-weight:950;letter-spacing:-.04em}' +
+      '.px-blueprint-copy{margin:6px 0 0;color:#8997ab;font-size:9px;line-height:1.5;max-width:760px}' +
+      '.px-blueprint-status{padding:7px 9px;border:1px solid rgba(54,217,157,.14);border-radius:999px;background:rgba(54,217,157,.035);color:#7ce8bd;font-size:8px;font-weight:950}' +
+      '.px-blueprint-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:6px;align-items:center;margin-top:15px}' +
+      '.px-blueprint-node{min-width:0;padding:13px 10px;border:1px solid rgba(255,255,255,.065);border-radius:13px;background:rgba(255,255,255,.018);text-align:center}' +
+      '.px-blueprint-node.focus{border-color:rgba(124,92,255,.34);background:rgba(124,92,255,.055);box-shadow:0 0 0 3px rgba(124,92,255,.035)}' +
+      '.px-blueprint-node.done{border-color:rgba(54,217,157,.17);background:rgba(54,217,157,.028)}' +
+      '.px-blueprint-node span{display:block;color:#69778e;font-size:7px;letter-spacing:.09em;font-weight:950;text-transform:uppercase}' +
+      '.px-blueprint-node b{display:block;margin-top:5px;color:#e8edf5;font-size:9px;line-height:1.32}' +
+      '.px-blueprint-node small{display:block;margin-top:4px;color:#78869d;font-size:7px;line-height:1.35}' +
+      '.px-blueprint-arrow{color:#6677a1;font-weight:950;font-size:12px}' +
+      '.px-blueprint-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}' +
+      '.px-blueprint-btn{min-height:40px;padding:9px 12px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.03);color:#dfe6f1;font-size:9px;font-weight:950;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}' +
+      '.px-blueprint-btn.primary{background:linear-gradient(135deg,#5b8cff,#7c5cff);border-color:transparent;color:#fff}' +
+      '.px-blueprint-btn.green{background:linear-gradient(135deg,#36d99d,#1ebf87);border-color:transparent;color:#06140f}' +
+      '.px-blueprint-btn:hover{transform:translateY(-2px)}' +
+      '@media(max-width:900px){.px-blueprint-flow{grid-template-columns:1fr}.px-blueprint-arrow{justify-self:center;transform:rotate(90deg)}}' +
+      '@media(max-width:600px){.px-blueprint{padding:17px}.px-blueprint-title{font-size:20px}}' +
       '@media(prefers-reduced-motion:reduce){.px-skip-link,.px-a11y-status,.px-dc-btn{transition:none}}';
     document.head.appendChild(s);
   }
@@ -298,6 +320,71 @@
     }
   }
 
+
+  function buildBlueprint(){
+    if($('#px-blueprint')) return;
+
+    var section=$('#results');
+    if(!section || getComputedStyle(section).display==='none') return;
+
+    var r=getResult(),p=primary(r);
+    if(!p) return;
+
+    var a=getAnswers();
+    var tool=String(p.name||p.id||'Software');
+    var problem=String(a.painPoint||'Il problema operativo').trim();
+    var automation=firstAutomation();
+    var goal=Array.isArray(a.goals)&&a.goals.length ? String(a.goals[0]) : 'ridurre lavoro manuale';
+    var shortProblem=problem.length>88?problem.slice(0,85)+'…':problem;
+    var shortAutomation=automation.length>72?automation.slice(0,69)+'…':automation;
+
+    var card=document.createElement('section');
+    card.id='px-blueprint';
+    card.className='px-blueprint';
+    card.innerHTML=
+      '<div class="px-blueprint-head">'+
+        '<div><div class="px-blueprint-k">PROJECT-X · SYSTEM BLUEPRINT</div><div class="px-blueprint-title">Ecco come dovrebbe funzionare il tuo primo flusso.</div><div class="px-blueprint-copy">Un blueprint leggibile in pochi secondi: da dove entra il lavoro, quale strumento lo gestisce, cosa automatizzare e quale risultato controllare.</div></div>'+
+        '<div class="px-blueprint-status">PILOTA · 1 WORKFLOW</div>'+
+      '</div>'+
+      '<div class="px-blueprint-flow">'+
+        '<div class="px-blueprint-node"><span>INPUT</span><b>'+escapeHtml(shortProblem)+'</b><small>ciò che entra nel processo</small></div>'+
+        '<div class="px-blueprint-arrow">→</div>'+
+        '<div class="px-blueprint-node focus"><span>CORE</span><b>'+escapeHtml(tool)+'</b><small>strumento centrale</small></div>'+
+        '<div class="px-blueprint-arrow">→</div>'+
+        '<div class="px-blueprint-node"><span>AUTOMAZIONE</span><b>'+escapeHtml(shortAutomation)+'</b><small>il primo passaggio da collegare</small></div>'+
+        '<div class="px-blueprint-arrow">→</div>'+
+        '<div class="px-blueprint-node done"><span>OUTPUT</span><b>'+escapeHtml(goal)+'</b><small>il risultato da misurare</small></div>'+
+      '</div>'+
+      '<div class="px-blueprint-actions">'+
+        '<button id="px-blueprint-copy" type="button" class="px-blueprint-btn green">⧉ Copia blueprint</button>'+
+        '<a class="px-blueprint-btn primary" href="/tutorial.html?tool='+encodeURIComponent(String(p.id||''))+'">📘 Configura il nucleo</a>'+
+        '<a class="px-blueprint-btn" href="/workspace.html">Salva nel Workspace</a>'+
+      '</div>';
+
+    var anchor=$('#px-decision-cockpit')||section.querySelector('.resultgrid');
+    if(anchor) anchor.insertAdjacentElement('afterend',card);
+    else section.appendChild(card);
+
+    var copy=$('#px-blueprint-copy');
+    if(copy){
+      copy.addEventListener('click',function(){
+        var txt=[
+          'PROJECT-X — SYSTEM BLUEPRINT',
+          'INPUT: '+problem,
+          'CORE: '+tool,
+          'AUTOMAZIONE: '+automation,
+          'OUTPUT: '+goal
+        ].join('\n');
+        if(navigator.clipboard&&navigator.clipboard.writeText){
+          navigator.clipboard.writeText(txt).then(function(){announce('Blueprint copiato.');}).catch(function(){announce('Copia non disponibile.')});
+        }else{
+          announce('Copia non disponibile.');
+        }
+        try{fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'blueprint_copy',sessionId:Date.now().toString(),meta:{tool:tool}})}).catch(function(){})}catch(e){}
+      });
+    }
+  }
+
   function improveResult(){
     var section=$('#results');
     if(!section) return;
@@ -308,6 +395,7 @@
     if(h) h.id='px-results-title';
 
     buildDecisionCockpit();
+    buildBlueprint();
   }
 
   function focusView(view){
