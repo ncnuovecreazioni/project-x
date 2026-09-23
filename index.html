@@ -796,7 +796,17 @@ function renderInsight(r,p){
       '</div>'+
     '</div>';
 }
-function renderResults(r){var p=primary(r);renderInsight(r,p);$('resultModeText').textContent=mode==='quick'?'Prima direzione generata rapidamente. Puoi affinarla con l’analisi completa.':'Configurazione costruita intorno alle risposte che hai fornito.';if(r.aiAvailable===false){$('resultModeText').textContent+=' L’analisi è stata completata con il motore locale gratuito di PROJECT-X: nessun abbonamento Le tue esigenze necessario.';}if(!p){$('primaryMount').innerHTML='<div class="card panel"><strong>Nessun risultato disponibile.</strong></div>';return}renderPrimary(p);renderValue(r.valueEstimate||r.value||{});renderArchitecture(r);renderPlan(r,p);renderStack(r.stack||[]);renderAutomations(r.automationIdeas||r.automationSuggestions||[]);renderRanking(r.rankedTools||[]);renderMissing(r.missingNeeds||[]);renderNeeds(r.profile||{});renderWhy(r,p);$('aiBadge').style.display=r.aiAvailable?'inline-flex':'none';if(mode==='quick'){$('refineBtn').textContent='Rendi il risultato più preciso →'}else{$('refineBtn').textContent='Rifai l’analisi completa →'}}
+function renderResults(r){
+ var p=primary(r);
+ if(!p){
+   $('primaryMount').innerHTML='<div class="px-answer"><h2>Non ho trovato ancora una risposta.</h2><p>Proviamo a descrivere meglio il problema.</p></div>';
+   return;
+ }
+ $('resultModeText').textContent='Ecco da dove partire.';
+ renderPrimary(p);
+ $('aiBadge').style.display='none';
+ $('refineBtn').textContent='Voglio capire meglio';
+}
 function humanImpact(p){
 var cat=String(p&&p.category||'').toLowerCase();
 var goals=Array.isArray(answers.goals)?answers.goals:[];
