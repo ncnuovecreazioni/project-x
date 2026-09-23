@@ -709,6 +709,16 @@ body:before{
   #home .quickactions #quickBtn{display:flex!important;width:100%!important;min-height:54px!important}
   #home .micro{font-size:11px!important;line-height:1.4!important}
 }
+</style><style id="px-hide-side-links-final">
+#home .topnav,#home nav,#home .side-nav,#home .home-links,#home .quicklinks,
+#home [class*="nav"],#home [class*="links"],#home [class*="menu"]{
+  display:none!important;
+}
+@media(max-width:600px){
+  #home .wrap{position:relative!important;overflow:visible!important}
+  #home .quickbox{position:relative!important;z-index:5!important}
+  #home .quickbox ~ *{display:none!important}
+}
 </style></head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div></div></header>
