@@ -22,7 +22,7 @@
 .footer{text-align:center;padding:30px;color:#68768d;border-top:1px solid var(--line);font-size:8px;line-height:1.5}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.outcome{grid-template-columns:1fr}.hero{padding-top:52px}}
 @media(max-width:620px){.wrap{width:calc(100% - 20px)}.navlinks{display:none}.hero h1{font-size:44px}.hero p{font-size:13px}.section{padding:17px}.example-grid{grid-template-columns:1fr}.step{grid-template-columns:31px 1fr 22px}.num{width:30px;height:30px}.step p{font-size:9.5px}.widgets{grid-template-columns:1fr 1fr}.widget:last-child{grid-column:1/-1}.screenbody{grid-template-columns:1fr}.side{display:none}.live{display:none}}
-.px-assist{margin-top:15px;padding:18px;border:1px solid rgba(124,92,255,.28);border-radius:18px;background:linear-gradient(145deg,rgba(124,92,255,.08),rgba(54,217,157,.035))}.px-assist-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.px-assist-k{font-size:8px;letter-spacing:.14em;color:#bdb4ff;font-weight:950}.px-assist h3{margin:6px 0 5px;font-size:20px;letter-spacing:-.03em}.px-assist p{margin:0;color:#9eabbe;font-size:10px;line-height:1.6}.px-assist-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.px-helpbox{padding:11px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018)}.px-helpbox b{display:block;font-size:8px;color:#bcaeff;letter-spacing:.08em}.px-helpbox span{display:block;margin-top:5px;color:#aab6c8;font-size:9px;line-height:1.5}.px-assist-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.px-assist button{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#e8edf6;border-radius:10px;padding:10px 12px;font-size:9px;font-weight:950;cursor:pointer}.px-assist .px-primary{background:linear-gradient(135deg,var(--p),var(--p2));border-color:transparent}.px-status{margin-top:11px;padding:9px 10px;border-left:3px solid var(--ok);background:rgba(54,217,157,.035);color:#a9d9c5;font-size:8.5px;line-height:1.5}.px-where{margin-top:9px;color:#78879d;font-size:8px;line-height:1.5}.px-assist button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:620px){.px-assist-grid{grid-template-columns:1fr}.px-assist-top{flex-direction:column}}</style>
+.px-assist{position:sticky;top:78px;z-index:8;margin-top:15px;padding:18px;border:1px solid rgba(124,92,255,.28);border-radius:18px;background:linear-gradient(145deg,rgba(124,92,255,.08),rgba(54,217,157,.035))}.px-assist-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.px-assist-k{font-size:8px;letter-spacing:.14em;color:#bdb4ff;font-weight:950}.px-assist h3{margin:6px 0 5px;font-size:20px;letter-spacing:-.03em}.px-assist p{margin:0;color:#9eabbe;font-size:10px;line-height:1.6}.px-assist-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.px-helpbox{padding:11px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018)}.px-helpbox b{display:block;font-size:8px;color:#bcaeff;letter-spacing:.08em}.px-helpbox span{display:block;margin-top:5px;color:#aab6c8;font-size:9px;line-height:1.5}.px-assist-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.px-assist button{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#e8edf6;border-radius:10px;padding:10px 12px;font-size:9px;font-weight:950;cursor:pointer}.px-assist .px-primary{background:linear-gradient(135deg,var(--p),var(--p2));border-color:transparent}.px-status{margin-top:11px;padding:9px 10px;border-left:3px solid var(--ok);background:rgba(54,217,157,.035);color:#a9d9c5;font-size:8.5px;line-height:1.5}.px-where{margin-top:9px;color:#78879d;font-size:8px;line-height:1.5}.px-assist button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:620px){.px-assist-grid{grid-template-columns:1fr}.px-assist-top{flex-direction:column}}</style>
 </head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="navlinks"><a href="/">← Torna al risultato</a><a href="/report-pro.html">Report PRO</a></div></div></header>
@@ -76,9 +76,14 @@
   <div class="px-status" id="assistStatus">Quando hai completato il passaggio, premi “Ho completato questo passo”.</div>
   <div class="px-assist-actions">
     <button id="assistPrev">← Passo precedente</button>
+    <button id="assistCopy">📋 Copia questo passo</button>
     <button id="assistDone" class="px-primary">✓ Ho completato questo passo</button>
     <button id="assistNext">Passo successivo →</button>
   </div>
+  <details class="px-trouble">
+    <summary>❓ Se non funziona / non trovi la voce</summary>
+    <p id="assistTrouble">Cerca una voce equivalente nell'area indicata, verifica l'account collegato e ripeti il test con un solo caso.</p>
+  </details>
   <div class="px-where">Le interfacce dei software possono cambiare. PROJECT-X ti indica cosa cercare e come verificare il risultato.</div>
 </section>
     </section>
@@ -395,7 +400,7 @@ var d=goal?goal:getDetails(tool,tut);
 var state=loadState(tool.id),selected=0;
 
 document.getElementById('toolName').textContent=tool.name;
-document.getElementById('heroToolBtn').href=toolLink(tool);
+document.getElementById('heroToolBtn').href=goal?'/?case='+encodeURIComponent(goal.caseKey||'zero'):toolLink(tool);
 document.getElementById('title').textContent=tool.name+' · guida passo-passo';
 document.getElementById('intro').textContent=(tut&&tut.mission? tut.mission+'. ':'')+d.why;
 document.getElementById('exampleTitle').textContent=d.scenarioTitle;
@@ -454,6 +459,27 @@ function stepWhere(idx){
  var menu=d.menu||tut&&tut.area||tool.category||'Area principale';
  return menu+' → '+((d.steps[idx]&&d.steps[idx][0])||'passaggio corrente');
 }
+function stepTrouble(s){
+ var text=String((s&&s[0])||'').toLowerCase();
+ if(/connession|colleg|autorizz|account/.test(text)) return 'Controlla di aver effettuato l’accesso con l’account corretto. Se la connessione è presente ma il passaggio fallisce, rimuovila e ricreala oppure usa una voce equivalente per autorizzare il servizio.';
+ if(/trigger|evento|ingresso|contatto/.test(text)) return 'Se il workflow non parte, crea un nuovo caso di prova dopo aver salvato il trigger. Poi apri la cronologia delle esecuzioni e verifica se l’evento viene rilevato.';
+ if(/mapp|dati|campo|cliente|documento/.test(text)) return 'Se un campo non compare, esegui prima il trigger con un dato di esempio. Quindi riapri la selezione del campo e scegli il valore restituito dall’ultimo test.';
+ if(/email|messaggio|comunic/.test(text)) return 'Controlla destinatario, mittente, oggetto e stato del messaggio. Per il primo test usa un solo indirizzo controllabile direttamente.';
+ if(/test|verific|controll/.test(text)) return 'Non attivare ancora il workflow. Leggi l’esecuzione passo per passo e individua il primo punto che non restituisce il risultato atteso.';
+ if(/attiv|pubblic|replic/.test(text)) return 'Attiva solo dopo un test riuscito. Se qualcosa cambia rispetto al test, torna alla versione precedente e modifica una sola regola alla volta.';
+ return 'Riduci il caso a un solo input e un solo risultato. Cerca una voce equivalente nell’area indicata, esegui un test e controlla la cronologia prima di aggiungere altri passaggi.';
+}
+function copyCurrentStep(){
+ var s=d.steps[selected]||d.steps[0]; if(!s)return;
+ var txt='PROJECT-X — '+tool.name+'\nPASSO '+(selected+1)+' DI '+d.steps.length+'\n\nCOSA FARE\n'+(s[2]||s[1]||'')+'\n\nCOME SAI CHE È FATTO\n'+(s[3]||'')+'\n\nDOVE CERCARE\n'+stepWhere(selected);
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+   navigator.clipboard.writeText(txt).then(function(){
+     document.getElementById('assistStatus').textContent='✓ Passo copiato. Puoi incollarlo mentre configuri il software.';
+   }).catch(function(){ document.getElementById('assistStatus').textContent='Copia non disponibile su questo dispositivo.'; });
+ }else{
+   document.getElementById('assistStatus').textContent='Copia non disponibile su questo dispositivo.';
+ }
+}
 function renderAssist(){
  var s=d.steps[selected]||d.steps[0]; if(!s)return;
  var done=!!state[String(selected)];
@@ -463,6 +489,8 @@ function renderAssist(){
  document.getElementById('assistAction').textContent=s[2]||s[1]||'Segui il passaggio indicato.';
  document.getElementById('assistSuccess').textContent=s[3]||'Verifica che il passaggio produca il risultato previsto.';
  document.getElementById('assistWhere').textContent=stepWhere(selected);
+ document.getElementById('assistTrouble').textContent=stepTrouble(s);
+ document.getElementById('assistCopy').disabled=false;
  document.getElementById('assistStatus').textContent=done?'✓ Passo completato. Puoi continuare.':'Quando hai completato il passaggio, premi “Ho completato questo passo”.';
  document.getElementById('assistPrev').disabled=selected===0;
  document.getElementById('assistNext').textContent=selected===d.steps.length-1?'Vai al risultato →':'Passo successivo →';
@@ -498,6 +526,7 @@ document.getElementById('copy').onclick=function(){
  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt);
 };
 document.getElementById('assistPrev').onclick=function(){goAssist(-1)};
+document.getElementById('assistCopy').onclick=copyCurrentStep;
 document.getElementById('assistNext').onclick=function(){goAssist(1)};
 document.getElementById('assistDone').onclick=function(){
  state[String(selected)]=true;
