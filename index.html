@@ -664,6 +664,17 @@ body:before{
 #home .quickactions .primary{width:100%!important;min-height:56px!important;font-size:16px!important}
 #home .micro{text-align:center!important;margin-top:12px!important}
 @media(max-width:600px){#home{min-height:75vh!important}#home h1{font-size:42px!important}#home> .wrap>p,#home .wrap>p{font-size:16px!important}#home .quickbox{padding:16px!important}}
+</style><style id="px-result-ultra-simple">
+#results .resulthead h1{font-size:0!important;margin:0!important}
+#results .resulthead h1:after{content:"Ecco da dove partire.";font-size:clamp(30px,5vw,46px)!important;line-height:1.05}
+#results .resulthead p{font-size:15px!important;margin-top:10px!important}
+#results .px-answer{box-shadow:none!important;background:rgba(255,255,255,.025)!important;border-color:rgba(255,255,255,.08)!important}
+#results .px-answer-kicker{font-size:9px!important}
+#results .px-answer h2{font-size:24px!important}
+#results .px-answer h3{font-size:23px!important}
+#results .px-answer-problem{font-size:16px!important}
+#results .px-answer-result{background:transparent!important;border:0!important;padding:0!important;color:#aeb8c9!important}
+#results .commercial{font-size:11px!important;color:#7f8aa0!important}
 </style></head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><a href="/build-room.html" style="font-size:10px;font-weight:900;color:#88efc5;text-decoration:none;padding:8px 10px;border:1px solid rgba(54,217,157,.18);border-radius:999px;background:rgba(54,217,157,.04)">Build Room</a><a class="px-nav-cta" href="#home">Analizza gratis →</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div><button type="button" id="pxMobileNavBtn" class="px-mobile-nav-btn" aria-expanded="false" aria-controls="pxMobileNav">☰ Menu</button><div id="pxMobileNav" class="px-mobile-nav" hidden><div class="px-mobile-nav-head"><strong>PROJECT-X</strong><button type="button" id="pxMobileNavClose" aria-label="Chiudi menu">×</button></div><a href="#home">Home</a><a href="/metodo.html">Metodo</a><a href="/software-index.html">Software Index</a><a href="/atlas.html">Decision Atlas</a><a href="/landscape.html">Landscape</a><a href="/coach.html">✦ AI Coach</a><a href="/pro.html">Report PRO →</a></div></div></header>
@@ -893,8 +904,9 @@ $('primaryMount').innerHTML=
  disclosure+
 '</div>';
 if($('tutorialTop'))$('tutorialTop').onclick=function(){
- function go(){var g=$('px-execution-guide');if(g){g.scrollIntoView({behavior:'smooth',block:'start');return true}return false}
- if(!go())setTimeout(go,120);event('tutorial_open',{tool:toolName(p),toolId:p.id||''});
+ event('tutorial_open',{tool:toolName(p),toolId:p.id||''});
+ var id=String(p.id||'').trim();
+ if(id) location.href='/tutorial.html?tool='+encodeURIComponent(id);
 };
 if(u&&isCommercial)event('result_commercial',{tool:toolName(p)});
 }
