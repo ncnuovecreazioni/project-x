@@ -138,7 +138,7 @@ export default async function handler(req, res) {
       const amountMatchesPro = Number(session.amount_total || 0) === 2900 &&
         String(session.currency || "").toLowerCase() === "eur";
       const isProjectXOrder =
-        product === "project-x-report-pro" ||
+        product === "project-x-report-pro" || product === "project-x-pro-subscription" ||
         (configuredPaymentLinkId && paymentLinkId === configuredPaymentLinkId) ||
         (!product && paymentLinkId && amountMatchesPro);
 
@@ -153,7 +153,7 @@ export default async function handler(req, res) {
         paymentStatus,
         customerEmail: email,
         sessionId: String(session.id || ""),
-        product: "project-x-report-pro",
+        product: product === "project-x-pro-subscription" ? "project-x-pro-subscription" : "project-x-report-pro",
         clientReferenceId: String(session.client_reference_id || ""),
         paymentLinkId,
         amountTotal: Number(session.amount_total || 0),
@@ -189,7 +189,7 @@ export default async function handler(req, res) {
         }
       }
 
-      const emailSent = await sendReceiptEmail(order);
+      const emailSent = order.product === "project-x-report-pro" ? await sendReceiptEmail(order) : false;
       console.log("PROJECT-X Stripe payment confirmed:", JSON.stringify({ ...order, emailSent }));
     }
 
