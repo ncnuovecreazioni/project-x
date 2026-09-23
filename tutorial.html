@@ -22,7 +22,7 @@
 .footer{text-align:center;padding:30px;color:#68768d;border-top:1px solid var(--line);font-size:8px;line-height:1.5}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.outcome{grid-template-columns:1fr}.hero{padding-top:52px}}
 @media(max-width:620px){.wrap{width:calc(100% - 20px)}.navlinks{display:none}.hero h1{font-size:44px}.hero p{font-size:13px}.section{padding:17px}.example-grid{grid-template-columns:1fr}.step{grid-template-columns:31px 1fr 22px}.num{width:30px;height:30px}.step p{font-size:9.5px}.widgets{grid-template-columns:1fr 1fr}.widget:last-child{grid-column:1/-1}.screenbody{grid-template-columns:1fr}.side{display:none}.live{display:none}}
-</style>
+.px-assist{margin-top:15px;padding:18px;border:1px solid rgba(124,92,255,.28);border-radius:18px;background:linear-gradient(145deg,rgba(124,92,255,.08),rgba(54,217,157,.035))}.px-assist-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.px-assist-k{font-size:8px;letter-spacing:.14em;color:#bdb4ff;font-weight:950}.px-assist h3{margin:6px 0 5px;font-size:20px;letter-spacing:-.03em}.px-assist p{margin:0;color:#9eabbe;font-size:10px;line-height:1.6}.px-assist-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.px-helpbox{padding:11px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018)}.px-helpbox b{display:block;font-size:8px;color:#bcaeff;letter-spacing:.08em}.px-helpbox span{display:block;margin-top:5px;color:#aab6c8;font-size:9px;line-height:1.5}.px-assist-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.px-assist button{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#e8edf6;border-radius:10px;padding:10px 12px;font-size:9px;font-weight:950;cursor:pointer}.px-assist .px-primary{background:linear-gradient(135deg,var(--p),var(--p2));border-color:transparent}.px-status{margin-top:11px;padding:9px 10px;border-left:3px solid var(--ok);background:rgba(54,217,157,.035);color:#a9d9c5;font-size:8.5px;line-height:1.5}.px-where{margin-top:9px;color:#78879d;font-size:8px;line-height:1.5}.px-assist button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:620px){.px-assist-grid{grid-template-columns:1fr}.px-assist-top{flex-direction:column}}</style>
 </head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="navlinks"><a href="/">← Torna al risultato</a><a href="/report-pro.html">Report PRO</a></div></div></header>
@@ -58,7 +58,29 @@
       <div class="h2">Fallo una volta. Poi replicalo.</div>
       <p class="lead">Segui i passaggi in ordine. Il primo obiettivo non è diventare esperto del tool: è far funzionare un singolo caso reale.</p>
       <div id="steps" class="steps"></div>
-      <div id="screen" class="screen"></div>
+      <div id="screen" class="screen"></div><section class="card px-assist">
+  <div class="px-assist-top">
+    <div>
+      <div class="px-assist-k">🧭 PROJECT-X TI SEGUE</div>
+      <h3 id="assistTitle">Passo 1</h3>
+      <p id="assistIntro">Non guardare tutta la guida insieme. Fai solo il passo che vedi qui.</p>
+    </div>
+    <div class="chip" id="assistCounter">0 completati</div>
+  </div>
+  <div class="px-assist-grid">
+    <div class="px-helpbox"><b>👉 COSA FARE ADESSO</b><span id="assistAction">—</span></div>
+    <div class="px-helpbox"><b>👀 COSA DOVRESTI VEDERE</b><span id="assistSuccess">—</span></div>
+    <div class="px-helpbox"><b>📍 DOVE CERCARE</b><span id="assistWhere">—</span></div>
+    <div class="px-helpbox"><b>💡 SE NON LO TROVI</b><span id="assistHelp">Cerca una voce equivalente nell'area indicata. I nomi possono cambiare.</span></div>
+  </div>
+  <div class="px-status" id="assistStatus">Quando hai completato il passaggio, premi “Ho completato questo passo”.</div>
+  <div class="px-assist-actions">
+    <button id="assistPrev">← Passo precedente</button>
+    <button id="assistDone" class="px-primary">✓ Ho completato questo passo</button>
+    <button id="assistNext">Passo successivo →</button>
+  </div>
+  <div class="px-where">Le interfacce dei software possono cambiare. PROJECT-X ti indica cosa cercare e come verificare il risultato.</div>
+</section>
     </section>
 
     <section class="card monetize">
@@ -387,15 +409,42 @@ function renderScreen(){
   var focus=selected%3;
   document.getElementById('screen').innerHTML='<div class="screen"><div class="screenbar"><span class="dot"></span><span class="screenbrand">'+esc(tool.name)+'</span><span class="live">● tutorial mode</span></div><div class="screenbody"><div class="side"><i class="active"></i><i></i><i></i><i></i><i></i></div><div class="screenmain"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h4>'+esc(s[0])+'</h4><span class="screenhint">area da cercare</span></div><div class="widgets"><div class="widget '+(focus===0?'focus':'')+'"><small>AREA</small><b>'+esc(tut&&tut.area||tool.category||'Software')+'</b><span>punto di partenza</span></div><div class="widget '+(focus===1?'focus':'')+'"><small>AZIONE</small><b>'+esc(tut&&tut.action||'segui il passaggio')+'</b><span>cosa impostare</span></div><div class="widget '+(focus===2?'ok':'')+'"><small>ESITO</small><b>Controlla</b><span>verifica il risultato</span></div></div><div class="screenaction">▸ '+esc(s[2]||s[1])+'</div><div class="screenfoot">Simulazione visiva: cerca nel software reale una sezione equivalente. Le etichette possono cambiare.</div></div></div></div>';
 }
+function stepWhere(idx){
+ var menu=d.menu||tut&&tut.area||tool.category||'Area principale';
+ return menu+' → '+((d.steps[idx]&&d.steps[idx][0])||'passaggio corrente');
+}
+function renderAssist(){
+ var s=d.steps[selected]||d.steps[0]; if(!s)return;
+ var done=!!state[String(selected)];
+ var completed=Object.keys(state).filter(function(k){return state[k]}).length;
+ document.getElementById('assistTitle').textContent='Passo '+(selected+1)+' di '+d.steps.length+' · '+s[0];
+ document.getElementById('assistCounter').textContent=completed+' / '+d.steps.length+' completati';
+ document.getElementById('assistAction').textContent=s[2]||s[1]||'Segui il passaggio indicato.';
+ document.getElementById('assistSuccess').textContent=s[3]||'Verifica che il passaggio produca il risultato previsto.';
+ document.getElementById('assistWhere').textContent=stepWhere(selected);
+ document.getElementById('assistStatus').textContent=done?'✓ Passo completato. Puoi continuare.':'Quando hai completato il passaggio, premi “Ho completato questo passo”.';
+ document.getElementById('assistPrev').disabled=selected===0;
+ document.getElementById('assistNext').textContent=selected===d.steps.length-1?'Vai al risultato →':'Passo successivo →';
+}
+function goAssist(delta){
+ if(delta<0 && selected>0) selected--;
+ else if(delta>0 && selected<d.steps.length-1) selected++;
+ else if(delta>0 && selected===d.steps.length-1){
+   var out=document.getElementById('outcome');if(out)out.scrollIntoView({behavior:'smooth',block:'center'});
+   return;
+ }
+ renderAssist();renderScreen();
+ var row=document.querySelector('.step[data-step="'+selected+'"]');if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
+}
 function renderSteps(){
  var list=document.getElementById('steps');
  list.innerHTML=d.steps.map(function(s,i){
    var done=!!state[String(i)];
    return '<div class="step '+(done?'done':'')+'" data-step="'+i+'"><div class="num">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(s[0])+'</h3><p>'+esc(s[1])+'</p><div class="click">▸ '+esc(s[2])+'</div><div class="expected">'+esc(s[3])+'</div></div><input class="check" type="checkbox" data-check="'+i+'" '+(done?'checked':'')+' aria-label="Completa passo '+(i+1)+'"></div>';
  }).join('');
- document.querySelectorAll('.step').forEach(function(row){row.onclick=function(e){if(e.target.classList.contains('check'))return;selected=Number(row.dataset.step||0);renderScreen();}});
- document.querySelectorAll('.check').forEach(function(cb){cb.onchange=function(e){e.stopPropagation();state[String(cb.dataset.check)]=cb.checked;saveState(tool.id,state);updateProgress();}});
- updateProgress();
+ document.querySelectorAll('.step').forEach(function(row){row.onclick=function(e){if(e.target.classList.contains('check'))return;selected=Number(row.dataset.step||0);renderScreen();renderAssist();}});
+ document.querySelectorAll('.check').forEach(function(cb){cb.onchange=function(e){e.stopPropagation();selected=Number(cb.dataset.check||0);state[String(cb.dataset.check)]=cb.checked;saveState(tool.id,state);updateProgress();renderAssist();}});
+ updateProgress();renderAssist();
 }
 function updateProgress(){
  var done=Object.keys(state).filter(function(k){return state[k]}).length;
@@ -407,10 +456,20 @@ document.getElementById('copy').onclick=function(){
  var txt='PROJECT-X — Guida '+tool.name+'\n\n'+d.steps.map(function(s,i){return (i+1)+'. '+s[0]+'\n'+s[1]+'\n'+s[2]+'\n'+s[3]}).join('\n\n');
  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt);
 };
-moneyBtn.addEventListener('click',function(){try{if(window.gtag)window.gtag('event','tutorial_monetization_click',{tool:tool.name,toolId:tool.id,eligible:!!eligible[tool.id]})}catch(e){}});
+document.getElementById('assistPrev').onclick=function(){goAssist(-1)};
+document.getElementById('assistNext').onclick=function(){goAssist(1)};
+document.getElementById('assistDone').onclick=function(){
+ state[String(selected)]=true;
+ saveState(tool.id,state);
+ updateProgress();
+ renderSteps();
+ selected=selected<d.steps.length-1?selected+1:selected;
+ renderScreen();
+ renderAssist();
+};moneyBtn.addEventListener('click',function(){try{if(window.gtag)window.gtag('event','tutorial_monetization_click',{tool:tool.name,toolId:tool.id,eligible:!!eligible[tool.id]})}catch(e){}});
 document.getElementById('heroToolBtn').addEventListener('click',function(){try{if(window.gtag)window.gtag('event','tutorial_tool_click',{tool:tool.name,toolId:tool.id})}catch(e){}});
 
-renderSteps();renderScreen();
+renderSteps();renderScreen();renderAssist();
 })();
 </script>
 </body>
