@@ -160,9 +160,9 @@
         '<div class="px-foot">PROJECT-X non presume quali campi o piani siano disponibili: quando sei sul software reale, usa le voci che corrispondono alla funzione indicata.</div>'+
       '</div>'+
       '<div class="px-toolbar">'+
-        '<button id="pxWatch" class="pxp-btn primary">▶ Fammi vedere</button>'+
-        '<button id="pxTry" class="pxp-btn">✋ Prova tu</button>'+
-        '<button id="pxStuck" class="pxp-btn warn">❓ Non lo trovo</button>'+
+        '<button type="button" id="pxWatch" data-pxp-action="watch" class="pxp-btn primary">▶ Fammi vedere</button>'+
+        '<button type="button" id="pxTry" data-pxp-action="try" class="pxp-btn">✋ Prova tu</button>'+
+        '<button type="button" id="pxStuck" data-pxp-action="stuck" class="pxp-btn warn">❓ Non lo trovo</button>'+
         '<button id="pxOpenStep" class="pxp-btn">↗ Vai al passo</button>'+
       '</div>'+
       '<div class="pxp-stepbar">'+
@@ -211,6 +211,7 @@
 
     bindStart();
     bindActions();
+    installGlobalSafety();
     refresh();
     syncFromExistingAssistant();
     return true;
@@ -224,6 +225,31 @@
       try{el.checked=localStorage.getItem(startKey(k))==='1'}catch(e){}
       el.addEventListener('change',function(){try{localStorage.setItem(startKey(k),el.checked?'1':'0')}catch(e){}});
     });
+  }
+
+  function installGlobalSafety(){
+    if(window.__PROJECTX_PRACTICE_EVENTS__) return;
+    window.__PROJECTX_PRACTICE_EVENTS__=true;
+    document.addEventListener('click',function(e){
+      var b=e.target&&e.target.closest?e.target.closest('[data-pxp-action]'):null;
+      if(!b) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var action=b.getAttribute('data-pxp-action');
+      if(action==='watch'){
+        var v=document.getElementById('pxpVideo');
+        if(v)v.classList.add('open');
+        var t=document.querySelector('#pxpVideo .pxp-target');
+        if(t){t.classList.remove('pulse');void t.offsetWidth;t.classList.add('pulse');}
+      }else if(action==='try'){
+        var p=document.getElementById('pxpPractice'), input=document.getElementById('pxpInput');
+        if(p)p.scrollIntoView({behavior:'smooth',block:'center'});
+        if(input){input.focus();if(!input.value)input.value='Richiesta 001';}
+      }else if(action==='stuck'){
+        var h=document.getElementById('pxpHelp');
+        if(h){h.classList.add('open');h.scrollIntoView({behavior:'smooth',block:'center'});}
+      }
+    },true);
   }
 
   function bindActions(){
