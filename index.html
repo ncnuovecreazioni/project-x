@@ -618,20 +618,36 @@ body:before{
   .hero-actions #tutorialTop,.hero-actions #guideTop{flex:1 1 100%!important}
 }
 </style>
-</head>
+<style id="px-human-simple-v2">
+.px-example-row{display:none!important}.quickactions{margin-top:14px!important}
+#results .resulthead h1{font-size:clamp(38px,5vw,58px)!important}
+#results .resulthead p{font-size:15px!important;color:#aeb8c9!important}
+#results .px-human-impact{border:1px solid rgba(255,255,255,.08)!important;background:linear-gradient(180deg,rgba(124,92,255,.09),rgba(255,255,255,.025))!important;border-radius:24px!important;padding:24px!important}
+#results .px-hi-flow{grid-template-columns:1fr!important;gap:10px!important}
+#results .px-hi-connector{display:none!important}
+#results .px-hi-stage{padding:18px!important;border-radius:16px!important}
+#results .resulthero{background:transparent!important;border:0!important;padding:10px 0 18px!important}
+#results .resulthero .circle,#results .resulthero .fit{display:none!important}
+#results .hero-actions{gap:9px!important}
+#results .hero-actions #primaryLink{min-height:52px!important}
+#results .hero-actions #guideTop{display:none!important}
+#results .bottom,#results #savebar{display:none!important}
+#results .resultgrid{display:block!important}
+@media(max-width:600px){#results .px-human-impact{padding:17px!important}}
+</style></head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="topnav"><a href="/metodo.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Metodo</a><a href="/software-index.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Software Index</a><a href="/atlas.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Decision Atlas</a><a href="/landscape.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.20);border-radius:999px;background:rgba(124,92,255,.05)">Landscape</a><a href="/coach.html" style="font-size:10px;font-weight:900;color:#c9bfff;text-decoration:none;padding:8px 10px;border:1px solid rgba(124,92,255,.25);border-radius:999px;background:rgba(124,92,255,.07)">✦ AI Coach</a><a href="/build-room.html" style="font-size:10px;font-weight:900;color:#88efc5;text-decoration:none;padding:8px 10px;border:1px solid rgba(54,217,157,.18);border-radius:999px;background:rgba(54,217,157,.04)">Build Room</a><a class="px-nav-cta" href="#home">Analizza gratis →</a><span class="tag">Decision Engine</span><span class="tag">FREE</span></div><button type="button" id="pxMobileNavBtn" class="px-mobile-nav-btn" aria-expanded="false" aria-controls="pxMobileNav">☰ Menu</button><div id="pxMobileNav" class="px-mobile-nav" hidden><div class="px-mobile-nav-head"><strong>PROJECT-X</strong><button type="button" id="pxMobileNavClose" aria-label="Chiudi menu">×</button></div><a href="#home">Home</a><a href="/metodo.html">Metodo</a><a href="/software-index.html">Software Index</a><a href="/atlas.html">Decision Atlas</a><a href="/landscape.html">Landscape</a><a href="/coach.html">✦ AI Coach</a><a href="/pro.html">Report PRO →</a></div></div></header>
 <main>
 <section id="home" class="hero"><div class="wrap">
-<div class="eyebrow">✦ PARTI DA COME LAVORI. NON DAL SOFTWARE.</div>
-<h1>Raccontami cosa ti fa perdere tempo.<br><span class="grad">Ti mostro cosa fare dopo.</span></h1>
-<p>Tu descrivi il lavoro come lo descriveresti a una persona. PROJECT-X mette ordine, individua la soluzione più coerente e ti dice quale passaggio affrontare per primo.</p>
+<div class="eyebrow">✦ PARTIAMO DAL TUO PROBLEMA</div>
+<h1>Dimmi cosa vuoi sistemare.<br><span class="grad">Ti dico da dove partire.</span></h1>
+<p>Scrivimelo come lo diresti a un collega. Non devi conoscere software, automazioni o termini tecnici.</p>
 <div class="quickbox">
 <div class="journey" aria-label="Percorso PROJECT-X"><div class="journey-step"><b>01 · RACCONTA</b><span>Il problema reale</span></div><div class="journey-step"><b>02 · CAPISCI</b><span>Poche domande utili</span></div><div class="journey-step"><b>03 · DECIDI</b><span>Scelta + confronto</span></div><div class="journey-step"><b>04 · AGISCI</b><span>Piano + prossima azione</span></div></div>
-<div class="quickhead"><b>⚡ Analisi rapida</b><span>Scrivi il caso · PROJECT-X costruisce la prima direzione</span></div>
-<textarea id="quickProblem" maxlength="800" placeholder="Esempio: perdo ore con email, preventivi e follow-up; uso Excel e mi dimentico di richiamare i clienti…"></textarea>
+<div class="quickhead"><b>Raccontamelo con parole tue</b></div>
+<textarea id="quickProblem" maxlength="800" placeholder="Esempio: perdo ore a fare preventivi e poi mi dimentico di richiamare i clienti…"></textarea>
 <div class="quickgrid"><select id="quickBusiness" class="select" aria-label="La tua attività, facoltativa"><option value="">Attività · facoltativa</option><option>Professionista</option><option>Impresa di servizi</option><option>E-commerce</option><option>Agenzia</option><option>Ristorante / attività locale</option><option>Startup</option><option>Azienda</option></select><select id="quickBudget" class="select" aria-label="Budget mensile, facoltativo"><option value="">Budget · facoltativo</option><option>€0</option><option>€1–30</option><option>€31–50</option><option>€51–100</option><option>€101–250</option><option>€251+</option></select></div><div class="px-example-row"><span class="px-example-label">Inizia da un esempio:</span><button type="button" class="px-example" data-example="Perdo ore tra email e follow-up dei clienti">Email + follow-up</button><button type="button" class="px-example" data-example="Faccio preventivi a mano e copio sempre gli stessi dati">Preventivi</button><button type="button" class="px-example" data-example="Uso Excel per gestire dati e attività e vorrei automatizzare i passaggi ripetitivi">Excel + automazioni</button><button type="button" class="px-example" data-example="Gestisco ordini online, marketing e assistenza clienti in modo manuale">E-commerce</button></div>
-<div class="quickactions"><button type="button" id="quickBtn" class="btn primary">Fai partire PROJECT-X →</button><button type="button" id="fullBtn" class="btn secondary">Voglio capirlo fino in fondo</button><button type="button" id="demoBtn" class="btn secondary px-demo-btn">Guarda un esempio →</button></div><div class="micro">Gratis per iniziare · nessuna carta · prima risposta subito</div>
+<div class="quickactions"><button type="button" id="quickBtn" class="btn primary">Fai partire PROJECT-X →</button><button type="button" id="fullBtn" class="btn secondary">Voglio capirlo fino in fondo</button><button type="button" id="demoBtn" class="btn secondary px-demo-btn">Guarda un esempio →</button></div><div class="micro">Non serve sapere quale software usare. Partiamo da quello che ti succede.</div>
 </div>
 <div class="px-showcase" aria-label="Anteprima del Decision Engine">
   <div class="px-showcase-card">
@@ -854,22 +870,22 @@ var disclosure=isCommercial?'<div class="commercial" style="margin-top:10px;padd
 var impact=humanImpact(p);
 $('primaryMount').innerHTML=
 '<div class="resulthero">'+
-  '<div class="label">01 · SCELTA PRINCIPALE</div>'+
-  '<div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ '+s+'% compatibilità</span><div class="hero-actions">'+cta+'<button id="tutorialTop" class="btn secondary">🎓 Tutorial: come usarlo</button><a id="guideTop" class="btn secondary" href="/tutorial.html?tool='+encodeURIComponent(String(p.id||''))+'">📘 Guida passo-passo</a><button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div>'+
+  '<div class="label">ECCO DA DOVE PARTIRE</div>'+
+  '<div class="resultmain"><div><h2>'+esc(toolName(p))+'</h2><p>'+esc(p.description||'La scelta con la migliore aderenza al profilo.')+'</p><span class="fit">✓ Scelta costruita sul tuo problema</span><div class="hero-actions">'+cta+'<button id="tutorialTop" class="btn secondary">🎓 Tutorial: come usarlo</button><a id="guideTop" class="btn secondary" href="/tutorial.html?tool='+encodeURIComponent(String(p.id||''))+'">📘 Guida passo-passo</a><button id="planTop" class="btn secondary">Vedi il piano →</button></div></div><div class="circle" style="--a:'+(s*3.6)+'deg"><div>'+s+'%<small>FIT</small></div></div></div>'+
   '<div class="commercial"><strong>Perché è qui:</strong> PROJECT-X incrocia il problema che hai descritto con bisogni, budget, tecnologia, team e strumenti già presenti.</div>'+
   disclosure+
 '</div>'+
 '<div class="px-human-impact">'+
-  '<div class="px-hi-top"><div><div class="px-hi-kicker">02 · IN PRATICA</div><div class="px-hi-title">'+esc(impact.title)+'</div></div><div class="px-hi-badge">Te lo mostro in 3 passaggi</div></div>'+
+  '<div class="px-hi-top"><div><div class="px-hi-kicker">02 · IN PRATICA</div><div class="px-hi-title">'+esc(impact.title)+'</div></div><div class="px-hi-badge">Senza complicarti la vita</div></div>'+
   '<div class="px-hi-flow">'+
-    '<div class="px-hi-stage"><div class="px-hi-index">01</div><div class="px-hi-label">OGGI</div><div class="px-hi-text">'+esc(impact.pain||impact.today)+'</div><div class="px-hi-muted">'+esc(impact.today)+'</div></div>'+
+    '<div class="px-hi-stage"><div class="px-hi-index">01</div><div class="px-hi-label">IL PROBLEMA</div><div class="px-hi-text">'+esc(impact.pain||impact.today)+'</div><div class="px-hi-muted">'+esc(impact.today)+'</div></div>'+
     '<div class="px-hi-connector"><span>→</span></div>'+
     '<div class="px-hi-stage focus"><div class="px-hi-index">02</div><div class="px-hi-label">COSA FAI CON '+esc(toolName(p).toUpperCase())+'</div><div class="px-hi-text">'+esc(impact.action)+'</div><div class="px-hi-muted">Questo è il primo pezzo da impostare.</div></div>'+
     '<div class="px-hi-connector"><span>→</span></div>'+
-    '<div class="px-hi-stage done"><div class="px-hi-index">03</div><div class="px-hi-label">COSA OTTIENI</div><div class="px-hi-text">'+esc(impact.result)+'</div><div class="px-hi-muted">Non serve cambiare tutto insieme.</div></div>'+
+    '<div class="px-hi-stage done"><div class="px-hi-index">03</div><div class="px-hi-label">IL RISULTATO</div><div class="px-hi-text">'+esc(impact.result)+'</div><div class="px-hi-muted">Non serve cambiare tutto insieme.</div></div>'+
   '</div>'+
   '<div class="px-hi-goal"><span>IL TUO OBIETTIVO</span><strong>'+esc(impact.goal)+'</strong></div>'+
-  '<div class="px-hi-note"><b>La parte importante:</b> non devi diventare esperto del software. Devi far funzionare bene questo primo passaggio. Il resto viene dopo.</div>'+
+  '<div class="px-hi-note"><b>Adesso non devi imparare tutto.</b> Ti mostro solo il prossimo passo.</div>'+
 '</div>';
 if($('primaryLink'))$('primaryLink').addEventListener('click',function(){event('affiliate_click',{tool:toolName(p),url:u,hasAffiliate:isCommercial})});
 if($('copyTop'))$('copyTop').onclick=copyReport;
