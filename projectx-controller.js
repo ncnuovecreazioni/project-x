@@ -130,5 +130,14 @@
     bind();
     setTimeout(bind,350);
     setTimeout(bind,1000);
+    document.addEventListener('click',function(e){
+      var target=e.target&&e.target.closest?e.target.closest('#quickBtn'):null;
+      if(!target) return;
+      var ui=getUI();
+      if(!ui) return;
+      e.preventDefault();
+      e.stopPropagation();
+      try{ui.startQuick();}catch(err){}
+    },true);
   });
 })();
