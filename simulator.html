@@ -40,7 +40,7 @@
 <div class="sub">valore teorico recuperabile / mese</div>
 <div class="mini">
 <div class="stat"><b id="annual">€0</b><span>su base annua</span></div>
-<div class="stat"><b id="hours">0 h</b><span>ore potenziali recuperate / mese</span></div>
+<div class="stat"><b id="hoursResult">0 h</b><span>ore potenziali recuperate / mese</span></div>
 </div>
 <div class="bars">
 <div class="barRow"><span>Valore del tempo</span><div class="track"><i id="b1"></i></div><b id="v1">€0</b></div>
@@ -70,7 +70,7 @@ function update(){
  var diff=monthly-software;
  $('monthly').textContent=money(monthly);
  $('annual').textContent=money(annual);
- $('hours').textContent=monthlyHours.toFixed(1)+' h';
+ $('hoursResult').textContent=monthlyHours.toFixed(1)+' h';
  $('v1').textContent=money(monthly);
  $('v2').textContent=money(software);
  $('v3').textContent=money(diff);
