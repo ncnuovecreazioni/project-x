@@ -1,20 +1,226 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, 'guide');
 const BASE_URL = 'https://project-x-phi-steel.vercel.app';
-function loadProjectData(){ const ctx={console,window:{}}; vm.createContext(ctx); vm.runInContext(fs.readFileSync(path.join(ROOT,'database.js'),'utf8'),ctx); vm.runInContext(fs.readFileSync(path.join(ROOT,'tool-tutorials.js'),'utf8'),ctx); vm.runInContext(fs.readFileSync(path.join(ROOT,'tutorial-library.js'),'utf8'),ctx); vm.runInContext(fs.readFileSync(path.join(ROOT,'goal-guides.js'),'utf8'),ctx); return {db:vm.runInContext('SOFTWARE_DATABASE',ctx)||[],tutorials:ctx.window.PROJECTX_TOOL_TUTORIALS,detailed:ctx.window.PROJECTX_DETAILED_TUTORIALS,goals:ctx.window.PROJECTX_GOAL_GUIDES}; }
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function slug(id){return String(id||'').toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-|-$/g,'')}
-function cat(tool){var c=String(tool.category||'Software');if(/crm|sales/i.test(c))return 'CRM & vendite';if(/automation|workflow/i.test(c))return 'Automazione';if(/email|marketing/i.test(c))return 'Marketing & email';if(/e-commerce|ecommerce|shop/i.test(c))return 'E-commerce';if(/project|work management/i.test(c))return 'Gestione del lavoro';if(/seo/i.test(c))return 'SEO';if(/ai/i.test(c))return 'AI';if(/document|pdf|signature|quote/i.test(c))return 'Documenti';return c}
-function pageHtml(tool,tut,d,all){var name=tool.name||tool.id,title='Come usare '+name+': guida passo passo | PROJECT-X',desc='Guida pratica a '+name+': cosa aprire, cosa configurare, esempio reale, test, errori comuni e checklist passo passo.',url=BASE_URL+'/guide/'+slug(tool.id)+'.html',steps=Array.isArray(d.steps)?d.steps:[],mistakes=Array.isArray(d.mistakes)?d.mistakes:[],related=all.filter(function(t){return t.id!==tool.id&&t.category===tool.category}).slice(0,4);
-function richStep(s,i){var why='Questo passaggio prepara il dato o la configurazione necessari per quello successivo.';var example='Per il primo test usa un solo caso di prova. Controlla il risultato prima di aggiungere altri casi.';var trouble='Se non trovi la voce, cerca una funzione equivalente nell’area indicata. Se il passaggio non produce il risultato atteso, torna al test e verifica un elemento alla volta.';return '<article class="step" id="passo-'+(i+1)+'"><div class="stepnum">'+String(i+1).padStart(2,'0')+'</div><div class="stepbody"><div class="eyebrow">PASSO '+(i+1)+' · FAI CON ME</div><h2>'+esc(s[0])+'</h2><p>'+esc(s[1])+'</p><div class="why"><b>PERCHÉ</b><span>'+esc(why)+'</span></div><div class="action"><b>👉 COSA FARE, ESATTAMENTE</b><br>'+esc(s[2])+'</div><div class="examplebox"><b>🧪 ESEMPIO PRATICO</b><br>'+esc(example)+'</div><div class="success"><b>✓ COME SAI CHE È FATTO</b><br>'+esc(s[3])+'</div><details class="trouble"><summary>Se non funziona</summary><p>'+esc(trouble)+'</p></details></div></article>'}function pageStepHtml(steps){return steps.map(function(s,i){return richStep(s,i)}).join('');}var stepHtml=pageStepHtml(steps);
-var mistakeHtml=(mistakes.length?mistakes:['Configurare tutto insieme','Saltare il test','Non definire il risultato atteso']).map(function(x){return '<li>'+esc(x)+'</li>'}).join('');
-var relatedHtml=related.map(function(t){return '<a class="related" href="/guide/'+slug(t.id)+'.html"><b>'+esc(t.name)+'</b><span>'+esc(t.category||'Software')+'</span></a>'}).join('');
-var flow=tut&&Array.isArray(tut.flow)?tut.flow:[]; var commercial=['systeme','pipedrive','getresponse','activecampaign','hubspot','shopify','make','brevo','monday','semrush','kit'].indexOf(tool.id)>=0;
-return '<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#050711"><meta name="description" content="'+esc(desc)+'"><link rel="canonical" href="'+url+'"><title>'+esc(title)+'</title><style>'+CSS+'</style></head><body><header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><a href="/tutorials.html">← Tutti i tutorial</a></div></header><main><section class="hero"><div class="wrap"><div class="eyebrow">✦ GUIDA OPERATIVA · '+esc(cat(tool))+'</div><h1>Come usare '+esc(name)+'.<br><span class="grad">Passo dopo passo.</span></h1><p>'+esc(d.scenario||'Una guida pratica per portare un caso reale dal punto di partenza al risultato.')+'</p><div class="chips"><span class="chip">'+esc(name)+'</span><span class="chip">'+steps.length+' passi</span><span class="chip">esempio pratico</span><span class="chip">checklist</span></div></div></section><div class="wrap grid"><article><section class="card"><div class="eyebrow">PRIMA DI INIZIARE</div><p class="intro">'+esc(d.prepare||'Prepara un solo caso di prova, piccolo e rappresentativo del lavoro reale.')+'</p><div class="example"><h2>'+esc(d.object||'Il primo caso')+'</h2><p>'+esc(d.scenario||'')+'</p><div class="facts"><div class="fact"><b>MENU / AREA</b><span>'+esc(d.menu||tool.category||'Area principale')+'</span></div><div class="fact"><b>FLUSSO</b><span>'+esc(flow.join(' → ')||'Input → configurazione → test → risultato')+'</span></div><div class="fact"><b>OBIETTIVO</b><span>'+esc(tut&&tut.focus||'Far funzionare un processo reale')+'</span></div></div></div></section><section class="card section2"><div class="eyebrow">CONFIGURAZIONE PASSO PASSO</div><div class="steps">'+stepHtml+'</div><div class="mock"><div class="mockbar"><span class="dot"></span><span class="mockname">'+esc(name)+'</span><span class="live">TUTORIAL MODE</span></div><div class="mockgrid"><div class="menu"><i class="on"></i><i></i><i></i><i></i><i></i></div><div><h4>Trova questa area nel software</h4><div class="mockboxes"><div class="mockbox"><b>AREA</b><span>'+esc(d.menu||tool.category||'Area principale')+'</span></div><div class="mockbox"><b>AZIONE</b><span>'+esc(tut&&tut.action||'Segui il passo corrente')+'</span></div><div class="mockbox"><b>CONTROLLO</b><span>Verifica il risultato</span></div></div><div class="note">Schermata illustrativa: le interfacce dei software possono cambiare. Usa la guida per riconoscere il percorso, poi verifica sempre nell’interfaccia reale.</div></div></div></div></section><section class="mistakes"><h2>⚠️ Errori da evitare</h2><ul>'+mistakeHtml+'</ul></section><section class="cta"><h2>Hai finito il primo caso.</h2><p>Adesso replica il processo su pochi casi reali. Misura tempo, passaggi manuali ed errori prima di aggiungere altra complessità.</p><a class="btn" href="/simulator.html">Misura il valore →</a>'+(commercial?'<div class="disclosure">Collegamento commerciale: PROJECT-X può ricevere una commissione tramite il percorso commerciale del software. La presenza del collegamento non modifica la logica del motore.</div>':'')+'</section>'+(relatedHtml?'<section class="card related-wrap"><h2>Altre guide nella stessa area</h2>'+relatedHtml+'</section>':'')+'</article><aside class="side"><div class="card"><h3>In questa guida</h3>'+steps.map(function(s,i){return '<a href="#passo-'+(i+1)+'">'+String(i+1).padStart(2,'0')+' · '+esc(s[0])+'</a>'}).join('')+'<div class="mission"><b>MISSIONE</b><br>'+esc(tut&&tut.mission||'Non imparare tutto il software. Fai funzionare bene un solo processo.')+'</div></div><div class="card next"><h3>Continua con PROJECT-X</h3><a href="/audit.html">Audita il tuo stack →</a><a href="/build-room.html">Costruisci il sistema →</a><a href="/workflow-simulator.html">Simula il workflow →</a><a href="/report-pro.html">Report PRO →</a></div></aside></div></main><footer>PROJECT-X · Guide operative generate automaticamente dal catalogo e dalla libreria tutorial. Ultimo aggiornamento: '+new Date().toISOString().slice(0,10)+'.</footer></body></html>';}
-const CSS='*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#050711,#0a0f1c);color:#f7f9ff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{width:min(1080px,calc(100% - 26px));margin:auto}.top{position:sticky;top:0;z-index:20;height:64px;background:rgba(5,7,17,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.09)}.nav{height:100%;display:flex;justify-content:space-between;align-items:center}.logo{font-weight:950;letter-spacing:.16em}.logo b{color:#7c5cff}.nav a{color:#d8def0;text-decoration:none;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:8px 11px}.hero{padding:66px 0 34px}.eyebrow{font-size:8px;letter-spacing:.13em;color:#bdb4ff;font-weight:950}.hero h1{font-size:clamp(40px,7vw,72px);line-height:.95;letter-spacing:-.065em;margin:13px 0}.grad{background:linear-gradient(100deg,#fff,#b5a7ff,#8ab4ff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:800px;color:#9aa8bd;line-height:1.7;font-size:14px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}.chip{padding:7px 9px;border:1px solid rgba(255,255,255,.09);border-radius:999px;color:#bac5d7;font-size:8px;background:rgba(255,255,255,.02)}.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}.card{border:1px solid rgba(255,255,255,.09);border-radius:20px;background:linear-gradient(145deg,rgba(16,23,40,.96),rgba(7,11,20,.98));padding:20px}.section2{margin-top:14px}.side{position:sticky;top:80px}.side h3{margin:0 0 10px;font-size:13px}.side a{display:block;color:#aebbd0;text-decoration:none;font-size:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}.side .mission{margin-top:12px;padding:12px;border-radius:13px;background:rgba(124,92,255,.06);border:1px solid rgba(124,92,255,.18);color:#b9c4d7;font-size:9px;line-height:1.55}.next{margin-top:12px}.intro{font-size:13px;color:#c1cada;line-height:1.7}.example{margin:15px 0;padding:16px;border-radius:16px;border:1px solid rgba(54,217,157,.16);background:rgba(54,217,157,.035)}.example h2{margin:0;font-size:20px}.example p{color:#a4b1c4;font-size:10px;line-height:1.65}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}.fact{padding:11px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.018)}.fact b{display:block;font-size:8px;color:#bcaeff;letter-spacing:.08em}.fact span{display:block;margin-top:5px;color:#9ca9bc;font-size:9px;line-height:1.45}.steps{display:grid;gap:10px;margin-top:15px}.step{display:grid;grid-template-columns:44px 1fr;gap:13px;padding:16px;border:1px solid rgba(255,255,255,.07);border-radius:16px;background:rgba(255,255,255,.018)}.stepnum{width:42px;height:42px;display:grid;place-items:center;border-radius:11px;background:rgba(124,92,255,.11);color:#c9c1ff;font-size:10px;font-weight:950}.step h2{margin:5px 0 7px;font-size:17px}.step p{margin:0;color:#aab6c8;font-size:10.5px;line-height:1.7}.why,.examplebox,.trouble{margin-top:9px;padding:10px;border-radius:10px;font-size:9px;line-height:1.55}.why{border:1px solid rgba(124,92,255,.15);background:rgba(124,92,255,.025)}.why b,.examplebox b{display:block;color:#bcaeff;font-size:7px;letter-spacing:.08em;margin-bottom:4px}.why span{display:block}.examplebox{border:1px dashed rgba(255,255,255,.1);color:#aab6c8}.trouble{border:1px solid rgba(255,255,255,.07);color:#9eabbe}.trouble summary{cursor:pointer;color:#d7ddea;font-weight:800}.trouble p{margin:7px 0 0}.action,.success{margin-top:9px;padding:10px;border-radius:10px;font-size:9px;line-height:1.55}.action{border:1px dashed rgba(124,92,255,.35);color:#c9c1ff;background:rgba(124,92,255,.035)}.success{border:1px solid rgba(54,217,157,.13);color:#a6d9c3;background:rgba(54,217,157,.025)}.mock{margin-top:14px;padding:15px;border-radius:16px;background:#070b14;border:1px solid rgba(255,255,255,.08)}.mockbar{display:flex;gap:7px;align-items:center;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.06)}.dot{width:7px;height:7px;border-radius:50%;background:#36d99d}.mockname{font-size:9px;font-weight:950}.live{margin-left:auto;color:#7ce8bd;font-size:7px}.mockgrid{display:grid;grid-template-columns:70px 1fr;gap:10px;padding-top:10px}.menu{display:grid;gap:5px}.menu i{height:10px;border-radius:5px;background:rgba(255,255,255,.05)}.menu i.on{height:17px;background:rgba(124,92,255,.11);border:1px solid rgba(124,92,255,.3)}.mockboxes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.mockbox{min-height:62px;padding:8px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}.mockbox b{font-size:7px}.mockbox span{display:block;margin-top:5px;color:#748198;font-size:6.5px;line-height:1.35}.note{margin-top:7px;color:#6f7c91;font-size:7.5px;line-height:1.5}.mistakes{margin-top:14px;padding:16px;border:1px solid rgba(255,209,102,.14);border-radius:16px;background:rgba(255,209,102,.025)}.mistakes h2{margin:0;font-size:16px}.mistakes li{margin:7px 0;color:#aeb9ca;font-size:9.5px}.cta{margin-top:14px;padding:18px;border-radius:17px;border:1px solid rgba(124,92,255,.25);background:linear-gradient(135deg,rgba(124,92,255,.10),rgba(91,140,255,.04))}.cta h2{margin:0;font-size:19px}.cta p{color:#9eabbe;font-size:9.5px;line-height:1.6}.btn{display:inline-flex;margin-top:6px;padding:10px 13px;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff;text-decoration:none;font-size:9px;font-weight:950}.disclosure{margin-top:7px;color:#707c90;font-size:7.5px;line-height:1.5}.related-wrap{margin-top:14px}.related-wrap h2{font-size:15px}.related{display:flex;justify-content:space-between;gap:10px;padding:11px;border-bottom:1px solid rgba(255,255,255,.06);text-decoration:none;color:#dce3ef}.related span{color:#718098;font-size:8px}footer{padding:34px 0 60px;text-align:center;color:#68758b;font-size:8px;border-top:1px solid rgba(255,255,255,.09);margin-top:30px}@media(max-width:850px){.grid{grid-template-columns:1fr}.side{position:static}.facts{grid-template-columns:1fr}.mockgrid{grid-template-columns:1fr}.menu{display:none}.mockboxes{grid-template-columns:1fr 1fr}}@media(max-width:560px){.wrap{width:calc(100% - 20px)}.hero{padding-top:48px}.hero h1{font-size:43px}.card{padding:15px}.step{grid-template-columns:34px 1fr}.stepnum{width:34px;height:34px}.mockboxes{grid-template-columns:1fr}}';
-function updateSitemap(ids,goalIds){var file=path.join(ROOT,'sitemap.xml');var xml=fs.readFileSync(file,'utf8');xml=xml.replace(/\s*<url><loc>[^<]*\/guide\/[^<]*<\/loc><lastmod>[^<]*<\/lastmod><priority>[^<]*<\/priority><\/url>/g,'');var today=new Date().toISOString().slice(0,10);var toolEntries=ids.map(function(id){return '  <url><loc>'+BASE_URL+'/guide/'+slug(id)+'.html</loc><lastmod>'+today+'</lastmod><priority>0.72</priority></url>'}).join('\n');var goalEntries=(goalIds||[]).map(function(id){return '  <url><loc>'+BASE_URL+'/guide/'+slug(id)+'.html</loc><lastmod>'+today+'</lastmod><priority>0.82</priority></url>'}).join('\n');xml=xml.replace('</urlset>',toolEntries+'\n'+goalEntries+'\n</urlset>');fs.writeFileSync(file,xml);}
-function main(){var data=loadProjectData();if(!data.db.length)throw new Error('SOFTWARE_DATABASE vuoto o non caricabile.');fs.mkdirSync(OUT,{recursive:true});var ids=[];data.db.forEach(function(tool){var id=slug(tool.id);if(!id)return;var tut=data.tutorials&&data.tutorials.get?data.tutorials.get(tool):null;var d=data.detailed&&data.detailed.get?data.detailed.get(tool):null;if(!d)return;fs.writeFileSync(path.join(OUT,id+'.html'),pageHtml(tool,tut,d,data.db),'utf8');ids.push(tool.id);});var goalIds=data.goals&&data.goals.keys?data.goals.keys():[];updateSitemap(ids,goalIds);console.log('PROJECT-X guides generated:',ids.length,'goal routes:',goalIds.length);}
+
+function loadProjectData(){
+  const ctx = { console, window:{} };
+  vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT,'database.js'),'utf8'),ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT,'tool-tutorials.js'),'utf8'),ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT,'tutorial-library.js'),'utf8'),ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT,'goal-guides.js'),'utf8'),ctx);
+  return {
+    db: vm.runInContext('SOFTWARE_DATABASE',ctx) || [],
+    tutorials: ctx.window.PROJECTX_TOOL_TUTORIALS,
+    detailed: ctx.window.PROJECTX_DETAILED_TUTORIALS,
+    goals: ctx.window.PROJECTX_GOAL_GUIDES
+  };
+}
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function slug(id){
+  return String(id || '').toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-|-$/g,'');
+}
+
+function cat(tool){
+  const c = String(tool.category || 'Software');
+  if(/crm|sales/i.test(c)) return 'CRM & vendite';
+  if(/automation|workflow/i.test(c)) return 'Automazione';
+  if(/email|marketing/i.test(c)) return 'Marketing & email';
+  if(/e-commerce|ecommerce|shop/i.test(c)) return 'E-commerce';
+  if(/project|work management/i.test(c)) return 'Gestione del lavoro';
+  if(/seo/i.test(c)) return 'SEO';
+  if(/ai/i.test(c)) return 'AI';
+  if(/document|pdf|signature|quote/i.test(c)) return 'Documenti';
+  return c;
+}
+
+function toolTutorial(tool, tutorials){
+  try { return tutorials && tutorials.get ? tutorials.get(tool) : null; }
+  catch(e){ return null; }
+}
+
+function detailedTutorial(tool, detailed){
+  try { return detailed && detailed.get ? detailed.get(tool) : null; }
+  catch(e){ return null; }
+}
+
+function platformNote(tool){
+  const c = String(tool.category || '').toLowerCase();
+  if(/mobile|social/.test(c)) return 'Questa procedura può cambiare tra app e versione Web.';
+  if(/crm|sales|marketing|automation|ecommerce|project|document|seo|ai/.test(c)) return 'La guida assume l’uso della versione Web da computer, salvo diversa indicazione.';
+  return 'La guida è pensata per la versione Web del servizio.';
+}
+
+function richParagraphs(tool,tut,d){
+  const name = tool.name || tool.id;
+  const scenario = d && d.scenario ? d.scenario : 'Partiamo da un caso concreto e costruiamo una procedura semplice da verificare.';
+  const mission = (tut && tut.mission) || 'L’obiettivo è far funzionare bene un singolo processo prima di estenderlo.';
+  return [
+    scenario,
+    'Non è necessario conoscere tutte le funzioni di '+name+'. In questa guida ci concentriamo sulle operazioni che servono per ottenere il risultato indicato, evitando di complicare il primo test.',
+    mission+' Procedendo con ordine puoi capire non solo quali pulsanti usare, ma anche perché il passaggio è necessario e come verificare che abbia funzionato.'
+  ];
+}
+
+function toolStepHtml(steps){
+  return steps.map(function(s,i){
+    const title=s[0]||('Passaggio '+(i+1));
+    const intro=s[1]||'';
+    const action=s[2]||'';
+    const success=s[3]||'';
+    const why='Questo passaggio prepara il dato o la configurazione necessari per quello successivo. Non procedere oltre finché il risultato atteso non è chiaro.';
+    const example='Per il primo tentativo usa un solo caso. Se stai configurando un CRM, prova con un solo contatto; se stai creando un’automazione, usa un solo evento di test.';
+    const trouble='Se la voce indicata non compare, cerca nell’area equivalente o usa la ricerca interna del servizio. Controlla prima account, permessi e dati di prova, poi ripeti il test con una sola variabile alla volta.';
+    return '<section class="article-step" id="passo-'+(i+1)+'">'+
+      '<div class="step-head"><span class="step-no">'+String(i+1).padStart(2,'0')+'</span><div><div class="eyebrow">PASSO '+(i+1)+'</div><h2>'+esc(title)+'</h2></div></div>'+
+      '<p>'+esc(intro)+'</p>'+
+      '<div class="why"><b>PERCHÉ QUESTO PASSAGGIO</b><span>'+esc(why)+'</span></div>'+
+      '<div class="action"><b>👉 COSA FARE</b><span>'+esc(action)+'</span></div>'+
+      '<div class="examplebox"><b>🧪 UN ESEMPIO CONCRETO</b><span>'+esc(example)+'</span></div>'+
+      '<div class="success"><b>✓ COME CAPISCI CHE HAI FATTO BENE</b><span>'+esc(success)+'</span></div>'+
+      '<details class="trouble"><summary>Non trovi la voce o compare un errore?</summary><p>'+esc(trouble)+'</p></details>'+
+    '</section>';
+  }).join('');
+}
+
+function indexHtml(items){
+  return '<nav class="toc"><div class="toc-title">In questa guida</div><ol>'+
+    items.map(function(x,i){ return '<li><a href="#'+esc(x.id)+'">'+String(i+1)+'. '+esc(x.title)+'</a></li>'; }).join('')+
+  '</ol></nav>';
+}
+
+function factsHtml(items){
+  return '<div class="facts">'+items.map(function(x){
+    return '<div class="fact"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>';
+  }).join('')+'</div>';
+}
+
+function baseCss(){
+  return [
+    ':root{--bg:#f7f8fb;--paper:#fff;--ink:#1f2430;--muted:#687386;--line:#e7eaf0;--brand:#6357e8;--brand2:#4f8df7;--ok:#159b70;--warn:#a36b00;--shadow:0 12px 34px rgba(25,32,48,.08)}',
+    '*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.7}.wrap{width:min(1080px,calc(100% - 28px));margin:auto}',
+    '.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.nav{height:62px;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:950;letter-spacing:.14em}.logo b{color:var(--brand)}.nav a{color:#505a6d;text-decoration:none;font-size:12px;font-weight:800}',
+    '.hero{padding:56px 0 30px;background:linear-gradient(180deg,#fff,#f7f8fb)}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}.hero h1{max-width:900px;margin:12px 0 13px;font-size:clamp(38px,6.3vw,68px);line-height:1.02;letter-spacing:-.045em}.grad{color:var(--brand)}.hero p{max-width:850px;margin:0;color:#596477;font-size:17px;line-height:1.75}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}.chip{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#606b7e;font-size:10px;font-weight:800}',
+    '.page{padding:24px 0 80px}.grid{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:20px;align-items:start}.article{min-width:0}.card,.sidecard{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.section{padding:26px}.section h2{margin:0 0 12px;font-size:27px;line-height:1.15;letter-spacing:-.03em}.section p{margin:0 0 13px;color:#556174;font-size:15px}',
+    '.toc{padding:20px 22px;margin-bottom:20px;background:#fff;border:1px solid var(--line);border-radius:16px}.toc-title{font-weight:950;font-size:15px;margin-bottom:7px}.toc ol{margin:0;padding-left:19px}.toc a{color:#4f5a6e;text-decoration:none;font-size:13px}.toc a:hover{color:var(--brand)}',
+    '.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:17px}.fact{padding:13px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe}.fact b{display:block;font-size:9px;letter-spacing:.08em;color:#737e91}.fact span{display:block;margin-top:5px;color:#394354;font-size:12px;line-height:1.5}',
+    '.leadbox{padding:20px;border-left:4px solid var(--brand);background:#f7f6ff;border-radius:12px;margin-top:16px}.leadbox b{display:block;font-size:13px;margin-bottom:5px}.leadbox span{color:#5d677a;font-size:14px}',
+    '.article-step{padding:28px 0;border-top:1px solid var(--line);scroll-margin-top:80px}.step-head{display:flex;gap:14px;align-items:flex-start}.step-no{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#eeeafd;color:#4f42c7;font-weight:950;flex:0 0 auto}.article-step h2{margin:2px 0 8px;font-size:24px;line-height:1.2}.article-step>p{margin:0;color:#4f5b6f;font-size:15px;line-height:1.75}',
+    '.why,.action,.examplebox,.success{margin-top:14px;padding:13px 15px;border-radius:11px}.why{background:#f7f6ff;border:1px solid #e8e3ff}.action{background:#f4f8ff;border:1px solid #dfe9ff}.examplebox{background:#fbfbf5;border:1px dashed #eadfb7}.success{background:#f2fbf7;border:1px solid #d8f0e7}.why b,.action b,.examplebox b,.success b{display:block;font-size:9px;letter-spacing:.08em;margin-bottom:4px}.why b{color:#6255d8}.action b{color:#416fae}.examplebox b{color:#8b6a13}.success b{color:#137e5c}.why span,.action span,.examplebox span,.success span{display:block;color:#4e5a6d;font-size:13px;line-height:1.6}',
+    '.trouble{margin-top:12px;border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:#fff}.trouble summary{cursor:pointer;font-size:13px;font-weight:850;color:#434d5e}.trouble p{margin:8px 0 0!important;color:#647083!important;font-size:12px!important;line-height:1.6!important}',
+    '.side{position:sticky;top:79px}.sidecard{padding:18px}.sidecard+.sidecard{margin-top:12px}.sidecard h3{margin:0 0 10px;font-size:14px}.sidecard a{display:block;padding:8px 0;border-bottom:1px solid #f0f1f4;color:#596477;text-decoration:none;font-size:11px;line-height:1.45}.sidecard p{margin:0;color:#6a7587;font-size:11px;line-height:1.6}.side .pill{display:inline-flex;margin-top:7px;padding:6px 8px;background:#f3f1ff;color:#5a4fd1;border-radius:999px;font-size:9px;font-weight:900}',
+    '.checklist{padding:21px;background:#fff;border:1px solid var(--line);border-radius:16px;margin-top:20px}.checklist h2{margin:0 0 9px;font-size:21px}.checklist li{margin:7px 0;color:#566174;font-size:13px}',
+    '.cta{padding:23px;margin-top:20px;border-radius:16px;background:linear-gradient(135deg,#6357e8,#4f8df7);color:#fff}.cta h2{margin:0 0 7px;font-size:23px}.cta p{margin:0 0 12px;color:rgba(255,255,255,.88);font-size:13px}.btn{display:inline-flex;padding:10px 14px;border-radius:10px;background:#fff;color:#4338a9;text-decoration:none;font-size:11px;font-weight:950}',
+    '.related{padding:21px;margin-top:20px}.related h2{margin:0 0 7px;font-size:20px}.related a{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);color:#404a5b;text-decoration:none;font-size:12px}.related span{color:#8993a5;font-size:10px}',
+    '.visual{margin-top:18px;padding:18px;border-radius:16px;background:#171b28;color:#fff}.visual-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.visual-title{font-weight:950}.visual-label{font-size:9px;letter-spacing:.08em;color:#94a2bb}.visual-grid{display:grid;grid-template-columns:70px 1fr;gap:12px;margin-top:13px}.visual-nav div{height:12px;margin-bottom:6px;border-radius:5px;background:rgba(255,255,255,.07)}.visual-nav .active{height:18px;background:rgba(124,92,255,.28);border:1px solid rgba(124,92,255,.5)}.visual-main{padding:13px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.025)}.visual-main h4{margin:0 0 8px;font-size:13px}.visual-field{padding:9px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin-top:7px}.visual-field b{display:block;font-size:7px;color:#8e9bb3;letter-spacing:.08em}.visual-field span{display:block;margin-top:3px;font-size:10px;color:#e8edf7}.visual-note{margin-top:9px;font-size:9px;color:#8794a9;line-height:1.5}',
+    'footer{padding:32px 0 55px;border-top:1px solid var(--line);text-align:center;color:#8791a2;font-size:10px}',
+    '@media(max-width:860px){.grid{grid-template-columns:1fr}.side{position:static}.facts{grid-template-columns:1fr 1fr}}@media(max-width:560px){.wrap{width:calc(100% - 20px)}.hero{padding-top:40px}.hero h1{font-size:39px}.hero p{font-size:14px}.section{padding:18px}.facts{grid-template-columns:1fr}.article-step h2{font-size:21px}}'
+  ].join('');
+}
+
+function visual(tool,d){
+  return '<div class="visual"><div class="visual-head"><div class="visual-title">Schermata di riferimento</div><div class="visual-label">ILLUSTRATIVA</div></div>'+
+    '<div class="visual-grid"><div class="visual-nav"><div class="active"></div><div></div><div></div><div></div><div></div></div>'+
+    '<div class="visual-main"><h4>'+esc(tool.name)+' · area da trovare</h4><div class="visual-field"><b>AREA</b><span>'+esc(d.menu||tool.category||'Area principale')+'</span></div><div class="visual-field"><b>AZIONE</b><span>'+esc((d.steps&&d.steps[0]&&d.steps[0][2])||'Segui il passaggio indicato nella guida')+'</span></div><div class="visual-note">Questa schermata è una simulazione grafica. Quando disponiamo di una schermata ufficiale aggiornata, la inseriamo qui; non utilizziamo immagini inventate come se fossero l’interfaccia reale.</div></div></div></div>';
+}
+
+function toolPage(tool,tut,d,all){
+  const name=tool.name||tool.id;
+  const steps=Array.isArray(d&&d.steps)?d.steps:[];
+  const url=BASE_URL+'/guide/'+slug(tool.id)+'.html';
+  const intro=richParagraphs(tool,tut,d);
+  const toc=[
+    {id:'prima',title:'Prima di iniziare'},
+    {id:'procedura',title:'Procedura passo passo'},
+    {id:'controllo',title:'Controllo finale'},
+    {id:'dopo',title:'Cosa fare dopo'}
+  ];
+  const related=all.filter(function(t){return t.id!==tool.id&&t.category===tool.category}).slice(0,5);
+  return '<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="description" content="'+esc('Guida completa a '+name+': spiegazione, preparazione, procedura passo passo, esempi, controllo finale ed errori comuni.')+'"><link rel="canonical" href="'+url+'"><title>'+esc('Come usare '+name+' passo passo | PROJECT-X')+'</title><style>'+baseCss()+'</style></head><body>'+
+    '<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><a href="/tutorials.html">← Tutti i tutorial</a></div></header>'+
+    '<section class="hero"><div class="wrap"><div class="eyebrow">GUIDA PROJECT-X · '+esc(cat(tool))+'</div><h1>Come usare '+esc(name)+'<br><span class="grad">passo dopo passo</span></h1>'+
+    '<p>'+esc(intro[0])+'</p><div class="chips"><span class="chip">Tempo indicativo: 20–45 min</span><span class="chip">'+steps.length+' passaggi</span><span class="chip">Livello: facile</span><span class="chip">Versione Web</span></div></div></section>'+
+    '<main class="page"><div class="wrap grid"><article class="article">'+indexHtml(toc)+
+    '<section id="prima" class="card section"><div class="eyebrow">PRIMA DI INIZIARE</div><h2>Prima di cominciare, facciamo chiarezza</h2>'+
+    intro.slice(1).map(function(p){return '<p>'+esc(p)+'</p>';}).join('')+
+    factsHtml([
+      ['COSA TI SERVE',d.prepare||'Un solo caso di prova e i dati minimi necessari.'],
+      ['DOVE CERCARE',d.menu||tool.category||'Area principale'],
+      ['OBIETTIVO',d.result||'Un primo processo funzionante e verificabile.']
+    ])+
+    '<div class="leadbox"><b>Nota importante</b><span>'+esc(platformNote(tool))+' Le etichette possono cambiare: quando accade, cerca la funzione equivalente senza modificare l’obiettivo del passaggio.</span></div></section>'+
+    '<section id="procedura" class="card section" style="margin-top:20px"><div class="eyebrow">PROCEDURA</div><h2>Adesso facciamolo davvero</h2><p>Non limitarti a leggere: completa un passaggio alla volta. Dopo ogni operazione fermati e verifica il risultato indicato.</p>'+
+    toolStepHtml(steps)+visual(tool,d)+'</section>'+
+    '<section id="controllo" class="checklist"><h2>✓ Controllo finale</h2><ul><li>Hai completato il caso di prova dall’inizio alla fine.</li><li>Il risultato finale corrisponde a quello definito prima di iniziare.</li><li>Hai verificato che il workflow non generi duplicati o passaggi inattesi.</li><li>Sai spiegare a un’altra persona cosa succede quando arriva un nuovo caso.</li><li>Hai annotato almeno una misura prima/dopo: tempo, errori o passaggi manuali.</li></ul></section>'+
+    '<section id="dopo" class="cta"><h2>La parte difficile è fatta.</h2><p>Adesso non aggiungere altre funzioni a caso. Replica il processo su pochi casi reali, misura il risultato e solo dopo amplia il sistema.</p><a class="btn" href="/simulator.html">Misura il valore del workflow →</a></section>'+
+    (related.length?'<section class="card related"><h2>Continua da qui</h2>'+related.map(function(t){return '<a href="/guide/'+slug(t.id)+'.html"><b>'+esc(t.name)+'</b><span>'+esc(t.category||'Software')+'</span></a>';}).join('')+'</section>':'')+
+    '</article><aside class="side"><div class="sidecard"><h3>Sei qui</h3>'+toc.map(function(x){return '<a href="#'+x.id+'">'+esc(x.title)+'</a>';}).join('')+'<div class="pill">'+steps.length+' passaggi guidati</div></div><div class="sidecard"><h3>Missione</h3><p>'+esc((tut&&tut.mission)||'Fai funzionare bene un solo processo prima di aggiungere complessità.')+'</p></div><div class="sidecard"><h3>PROJECT-X</h3><p>La guida spiega il processo. Il motore decisionale ti aiuta a capire quale configurazione usare per il tuo caso.</p></div></aside></div></main><footer>PROJECT-X · Guide operative · contenuti generati dal catalogo e dalla libreria tutorial.</footer></body></html>';
+}
+
+function goalPage(g,goals){
+  const steps=Array.isArray(g.steps)?g.steps:[];
+  const url=BASE_URL+'/guide/'+slug(g.id)+'.html';
+  const toc=[{id:'prima',title:'Prima di iniziare'},{id:'procedura',title:'Procedura passo passo'},{id:'controllo',title:'Controllo finale'},{id:'dopo',title:'Cosa fare dopo'}];
+  const related=(goals||[]).filter(function(x){return x&&x.id!==g.id}).slice(0,5);
+  return '<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="'+esc(g.mission+' '+g.focus)+'"><link rel="canonical" href="'+url+'"><title>'+esc(g.title)+' | PROJECT-X</title><style>'+baseCss()+'</style></head><body>'+
+    '<header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><a href="/">← Torna a PROJECT-X</a></div></header>'+
+    '<section class="hero"><div class="wrap"><div class="eyebrow">GUIDA PROJECT-X · '+esc(g.category)+'</div><h1>'+esc(g.title)+'<br><span class="grad">facciamolo insieme</span></h1><p>'+esc(g.scenario)+'</p><div class="chips"><span class="chip">'+steps.length+' passaggi</span><span class="chip">Tempo indicativo: 20–45 min</span><span class="chip">Livello: facile</span><span class="chip">Caso pilota</span></div></div></section>'+
+    '<main class="page"><div class="wrap grid"><article class="article">'+indexHtml(toc)+
+    '<section id="prima" class="card section"><div class="eyebrow">PRIMA DI INIZIARE</div><h2>Prima di toccare il software, definiamo il risultato</h2><p>'+esc(g.mission)+'</p><p>'+esc(g.why)+'</p>'+
+    factsHtml([['PARTENZA',g.input||'Un caso reale piccolo e rappresentativo.'],['STACK',(g.stack||[]).join(' → ')||'Lo stack verrà definito durante l’analisi.'],['RISULTATO',g.result||'Un primo workflow funzionante.']])+
+    '<div class="leadbox"><b>La regola di questa guida</b><span>Prima facciamo funzionare un caso. Poi lo replichiamo. Solo alla fine aggiungiamo automazioni più complesse.</span></div></section>'+
+    '<section id="procedura" class="card section" style="margin-top:20px"><div class="eyebrow">PROCEDURA</div><h2>Passo dopo passo</h2><p>'+esc(g.setup||'Segui i passaggi in ordine e verifica ogni risultato prima di proseguire.')+'</p>'+toolStepHtml(steps)+'</section>'+
+    '<section id="controllo" class="checklist"><h2>✓ Prima di considerarlo davvero pronto</h2><ul><li>Il caso pilota attraversa l’intero percorso.</li><li>Hai controllato sia il caso che deve passare sia quello che non deve passare, quando previsto.</li><li>Hai verificato destinatari, dati e condizioni prima dell’attivazione.</li><li>Puoi misurare il tempo o gli errori prima e dopo.</li><li>Il processo è abbastanza chiaro da poter essere spiegato a un’altra persona.</li></ul></section>'+
+    '<section id="dopo" class="cta"><h2>Adesso trasformiamo il test in sistema.</h2><p>'+esc(g.result)+'</p><a class="btn" href="/?case='+encodeURIComponent(g.caseKey||'zero')+'">Continua con la mia analisi →</a></section>'+
+    (related.length?'<section class="card related"><h2>Altri obiettivi</h2>'+related.map(function(x){return '<a href="/guide/'+slug(x.id)+'.html"><b>'+esc(x.title)+'</b><span>'+esc(x.category||'PROJECT-X')+'</span></a>';}).join('')+'</section>':'')+
+    '</article><aside class="side"><div class="sidecard"><h3>Sei qui</h3>'+toc.map(function(x){return '<a href="#'+x.id+'">'+esc(x.title)+'</a>';}).join('')+'<div class="pill">'+steps.length+' passi</div></div><div class="sidecard"><h3>Obiettivo</h3><p>'+esc(g.mission)+'</p></div><div class="sidecard"><h3>Focus</h3><p>'+esc(g.focus)+'</p></div></aside></div></main><footer>PROJECT-X · Guide operative per obiettivi · contenuti generati automaticamente.</footer></body></html>';
+}
+
+function updateSitemap(ids,goalIds){
+  const file=path.join(ROOT,'sitemap.xml');
+  let xml=fs.readFileSync(file,'utf8');
+  xml=xml.replace(/\s*<url><loc>[^<]*\/guide\/[^<]*<\/loc><lastmod>[^<]*<\/lastmod><priority>[^<]*<\/priority><\/url>/g,'');
+  const today=new Date().toISOString().slice(0,10);
+  const toolEntries=ids.map(function(id){return '  <url><loc>'+BASE_URL+'/guide/'+slug(id)+'.html</loc><lastmod>'+today+'</lastmod><priority>0.72</priority></url>';}).join('\n');
+  const goalEntries=(goalIds||[]).map(function(id){return '  <url><loc>'+BASE_URL+'/guide/'+slug(id)+'.html</loc><lastmod>'+today+'</lastmod><priority>0.82</priority></url>';}).join('\n');
+  xml=xml.replace('</urlset>',toolEntries+'\n'+goalEntries+'\n</urlset>');
+  fs.writeFileSync(file,xml);
+}
+
+function main(){
+  const data=loadProjectData();
+  if(!data.db.length) throw new Error('SOFTWARE_DATABASE vuoto o non caricabile.');
+  fs.mkdirSync(OUT,{recursive:true});
+
+  const ids=[];
+  data.db.forEach(function(tool){
+    const id=slug(tool.id);
+    if(!id)return;
+    const tut=toolTutorial(tool,data.tutorials);
+    const d=detailedTutorial(tool,data.detailed);
+    if(!d)return;
+    fs.writeFileSync(path.join(OUT,id+'.html'),toolPage(tool,tut,d,data.db),'utf8');
+    ids.push(tool.id);
+  });
+
+  const goalIds=data.goals&&data.goals.keys?data.goals.keys():[];
+  const goalObjects=goalIds.map(function(id){return data.goals.get(id);}).filter(Boolean);
+  goalObjects.forEach(function(g){
+    fs.writeFileSync(path.join(OUT,slug(g.id)+'.html'),goalPage(g,goalObjects),'utf8');
+  });
+
+  updateSitemap(ids,goalIds);
+  console.log('PROJECT-X editorial guides generated:',ids.length,'software +',goalObjects.length,'goal guides');
+}
+
 main();
