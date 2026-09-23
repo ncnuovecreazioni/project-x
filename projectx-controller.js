@@ -126,10 +126,17 @@
     }
   }
 
+  function cleanHome(){
+    var ids=['quickBtn2','fullBtn','demoBtn','fullBtn2','pxMobileNavBtn','pxMobileNav','quickBusiness','quickBudget','benefits'];
+    ids.forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
+    document.querySelectorAll('.topnav,.journey,.quickgrid,.px-example-row,.px-showcase,.px-proof,.trust').forEach(function(el){el.remove();});
+    document.querySelectorAll('#home .quickactions .secondary').forEach(function(el){el.remove();});
+  }
   ready(function(){
+    cleanHome();
     bind();
-    setTimeout(bind,350);
-    setTimeout(bind,1000);
+    setTimeout(function(){cleanHome();bind();},350);
+    setTimeout(function(){cleanHome();bind();},1000);
     document.addEventListener('click',function(e){
       var target=e.target&&e.target.closest?e.target.closest('#quickBtn'):null;
       if(!target) return;
