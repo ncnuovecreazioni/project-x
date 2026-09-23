@@ -127,4 +127,13 @@
 
   function boot(){setTimeout(install,120);setTimeout(install,900);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+
+  /* Load the interactive practice tutor after the existing guide UI is ready. */
+  try{
+    var practiceScript=document.createElement('script');
+    practiceScript.src='/guide-practice.js?v=20260923-practice1';
+    practiceScript.defer=true;
+    practiceScript.setAttribute('data-projectx-practice','1');
+    document.head.appendChild(practiceScript);
+  }catch(e){}
 })();
