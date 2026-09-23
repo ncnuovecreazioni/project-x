@@ -64,12 +64,14 @@ export default async function handler(req, res) {
 
   const source = String((req.query && req.query.source) || "project-x").slice(0, 120);
   const handoffId = String((req.query && req.query.handoffId) || "").trim().slice(0, 80);
+  const checkoutMode = String((req.query && req.query.mode) || "payment").trim().toLowerCase();
+  const subscription = checkoutMode === "subscription";
   const secret = String(process.env.STRIPE_SECRET_KEY || "").trim();
 
   if (secret && /^sk_(test|live)_/i.test(secret)) {
     await trackCheckoutStart(source, handoffId, "stripe-session");
     try {
-      const priceId = await resolvePriceId(secret);
+      const priceId = subscription ? String(process.env.STRIPE_SUBSCRIPTION_PRICE_ID || "").trim() : await resolvePriceId(secret);
 
       if (priceId) {
         const origin = /^https?:\/\//i.test(process.env.APP_URL || "")
@@ -77,12 +79,12 @@ export default async function handler(req, res) {
           : `${req.headers && req.headers.host ? "https://" + req.headers.host : "https://project-x-phi-steel.vercel.app"}`;
 
         const params = new URLSearchParams();
-        params.set("mode", "payment");
+        params.set("mode", subscription ? "subscription" : "payment");
         params.set("line_items[0][price]", priceId);
         params.set("line_items[0][quantity]", "1");
         params.set("success_url", origin + "/pro-success.html?session_id={CHECKOUT_SESSION_ID}");
         params.set("cancel_url", origin + "/pro.html?checkout=cancelled");
-        params.set("metadata[product]", "project-x-report-pro");
+        params.set("metadata[product]", subscription ? "project-x-pro-subscription" : "project-x-report-pro");
         params.set("metadata[source]", source);
 
         if (handoffId && /^pxh-[a-z0-9-]+$/i.test(handoffId)) {
@@ -108,6 +110,10 @@ export default async function handler(req, res) {
 
   // Fallback: keep the currently working Payment Link.
   await trackCheckoutStart(source, handoffId, "payment-link");
+  if (subscription) {
+    return res.redirect(302, "/pro-plus.html?subscription=missing");
+  }
+
   const checkoutUrl = String(process.env.PRO_CHECKOUT_URL || "").trim();
   if (!checkoutUrl || !/^https?:\/\//i.test(checkoutUrl)) {
     return res.redirect(302, "/pro.html?checkout=missing");
