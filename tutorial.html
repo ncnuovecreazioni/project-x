@@ -363,7 +363,15 @@ function toolLink(tool){return commercialUrl(tool)}
 function loadState(id){try{return JSON.parse(localStorage.getItem('projectx_guide_state_v2')||'{}')[id]||{}}catch(e){return {}}}
 function saveState(id,state){try{var all=JSON.parse(localStorage.getItem('projectx_guide_state_v2')||'{}');all[id]=state;localStorage.setItem('projectx_guide_state_v2',JSON.stringify(all))}catch(e){}}
 
-var id=new URLSearchParams(location.search).get('tool')||'';
+var pathTool=(location.pathname.match(/^\/guide\/([^/]+)\.html$/)||[])[1]||'';
+var id=new URLSearchParams(location.search).get('tool')||pathTool||'';
+if(pathTool){
+  try{
+    var canonical=document.querySelector('link[rel="canonical"]');
+    if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.appendChild(canonical)}
+    canonical.href=location.origin+'/guide/'+encodeURIComponent(pathTool)+'.html';
+  }catch(e){}
+}
 var tool=findTool(id);
 if(!tool){document.getElementById('title').textContent='Software non trovato';document.getElementById('intro').textContent='Apri questa pagina partendo da un risultato PROJECT-X.';return}
 var tut=getTutorial(tool);
