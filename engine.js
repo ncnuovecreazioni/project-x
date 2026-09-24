@@ -355,6 +355,11 @@
   const NEED_INTENTS = [
     { id:"file-organization", label:"Organizzazione dei file", summary:"Mettere ordine in file e cartelle e ridurre il lavoro manuale.", keywords:["file","files","cartella","cartelle","desktop","download","pdf","documenti","documento","ordinare","organizzare","ordine","spostare","sposta","rinominare","rinomina","archiviare","archivia","archivio","computer","pc"], profile:{documents:92,automation:88,excel:20}, preferredToolId:"power-automate" },
     { id:"data-transfer-automation", label:"Automazione del passaggio dati", summary:"Collegare strumenti e spostare dati automaticamente senza copia-incolla.", keywords:["copiare dati","copiando dati","copia dati","trasferire dati","passare dati","da excel a","da excel nelle","tra excel e","tra excel ed","dati nelle email"], profile:{automation:100,excel:92,email:88,documents:42}, preferredToolId:"power-automate" },
+    { id:"password-security", label:"Gestione sicura di password e accessi", summary:"Centralizzare password e credenziali e ridurre la gestione manuale degli accessi.", keywords:["password","passwords","credenziali","accessi","login","segreti","chiavi","token","account"], profile:{documents:42,automation:44,ai:35}, preferredToolId:"1password" },
+    { id:"meeting-transcription", label:"Riunioni e trascrizioni", summary:"Registrare, trascrivere e riassumere riunioni senza prendere tutto a mano.", keywords:["riunione","riunioni","meeting","call","trascrivere","trascrizione","verbale","appunti","registrare","registrazione"], profile:{appointments:58,documents:72,automation:62,ai:90}, preferredToolId:"otter" },
+    { id:"form-collection", label:"Raccolta dati con moduli", summary:"Raccogliere richieste e dati in modo ordinato invece di copiarli manualmente.", keywords:["modulo","moduli","form","forms","questionario","iscrizioni","raccolta dati","risposte","richieste online"], profile:{documents:54,automation:72,excel:64}, preferredToolId:"jotform" },
+    { id:"esignature", label:"Firma elettronica", summary:"Inviare, firmare e tracciare documenti senza passaggi cartacei.", keywords:["firmare","firma elettronica","firma digitale","firmare documenti","firme","sign"], profile:{documents:96,automation:58}, preferredToolId:"docusign" },
+    { id:"scheduling", label:"Prenotazioni e agenda", summary:"Lasciare che le persone prenotino in autonomia evitando il giro di messaggi.", keywords:["appuntamento","appuntamenti","prenotazione","prenotazioni","agenda","disponibilita","calendario","meeting"], profile:{appointments:98,automation:74,email:42}, preferredToolId:"calendly" },
     { id:"email-management", label:"Gestione delle email", summary:"Ridurre il tempo perso a leggere, smistare e seguire le email.", keywords:["email","e-mail","mail","posta","inbox","casella","messaggi","rispondere","risposte","smistare"], profile:{email:94,automation:82,followup:58}, preferredToolId:"power-automate" },
     { id:"repetitive-automation", label:"Automazione del lavoro ripetitivo", summary:"Eliminare passaggi manuali che vengono ripetuti spesso.", keywords:["ripetitivo","ripetitive","ripetutamente","manuale","manualmente","copia","incolla","copio","incollo","ogni giorno","ogni settimana","perdo tempo","perdo ore","sempre le stesse"], profile:{automation:98,ai:60}, preferredToolId:"power-automate" },
     { id:"excel-data", label:"Lavoro con Excel e dati", summary:"Semplificare attività, dati, report e passaggi ripetitivi in Excel.", keywords:["excel","foglio","fogli","tabella","tabelle","celle","report","dashboard","dati","numeri","csv"], profile:{excel:96,automation:72,ai:42}, preferredToolId:"power-automate" },
@@ -5133,6 +5138,15 @@
         preferredToolId: needInterpretation.preferredToolId || ""
       },
 
+      solutionDiscovery:
+        buildSolutionDiscovery(
+          answers,
+          profile,
+          needInterpretation,
+          answers && answers._aiSolution ? answers._aiSolution : null,
+          primaryTool
+        ),
+
       dominantRole:
         dominantRole,
 
@@ -5246,6 +5260,52 @@
   }
 
 
+  function buildSolutionDiscovery(answers, profile, needInterpretation, aiSolution, primaryTool) {
+    const focusEntries = Object.keys(profile || {}).map(function(need){
+      return { need:need, score:Number(profile[need]||0) };
+    }).sort(function(a,b){ return b.score-a.score; });
+
+    const focus = focusEntries[0] || {need:"automation",score:0};
+    const category = String(
+      (aiSolution && aiSolution.category) ||
+      needInterpretation.label ||
+      "Soluzione digitale"
+    ).trim();
+
+    const outcome = String(
+      (aiSolution && aiSolution.outcome) ||
+      needInterpretation.summary ||
+      "Ridurre il lavoro manuale e arrivare al risultato con meno passaggi."
+    ).trim();
+
+    const capabilities = Array.isArray(aiSolution && aiSolution.capabilities) && aiSolution.capabilities.length
+      ? aiSolution.capabilities.slice(0,6)
+      : [category, "Configurazione semplice", "Automazione del passaggio principale"];
+
+    const query = String(
+      (aiSolution && aiSolution.discoveryQuery) ||
+      (needInterpretation.summary || category)
+    ).trim();
+
+    const catalogConfidence = primaryTool
+      ? Number(primaryTool.compatibility || 0)
+      : 0;
+
+    return {
+      mode: catalogConfidence >= 55 ? "catalog" : "open",
+      category: category,
+      outcome: outcome,
+      capabilities: capabilities,
+      discoveryQuery: query,
+      focusNeed: focus.need,
+      focusScore: focus.score,
+      primaryTool: primaryTool ? String(primaryTool.name || primaryTool.id || "") : "",
+      catalogConfidence: catalogConfidence,
+      toolTypes: Array.isArray(aiSolution && aiSolution.toolTypes) ? aiSolution.toolTypes.slice(0,4) : []
+    };
+  }
+
+
   /* =========================================================
      22. PUBLIC API
      ========================================================= */
@@ -5278,6 +5338,9 @@
 
     interpretNeed:
       interpretNeed,
+
+    buildSolutionDiscovery:
+      buildSolutionDiscovery,
 
     buildNeedsProfile:
       buildNeedsProfile,
