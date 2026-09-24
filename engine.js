@@ -354,6 +354,7 @@
 
   const NEED_INTENTS = [
     { id:"file-organization", label:"Organizzazione dei file", summary:"Mettere ordine in file e cartelle e ridurre il lavoro manuale.", keywords:["file","files","cartella","cartelle","desktop","download","pdf","documenti","documento","ordinare","organizzare","ordine","spostare","sposta","rinominare","rinomina","archiviare","archivia","archivio","computer","pc"], profile:{documents:92,automation:88,excel:20}, preferredToolId:"power-automate" },
+    { id:"data-transfer-automation", label:"Automazione del passaggio dati", summary:"Collegare strumenti e spostare dati automaticamente senza copia-incolla.", keywords:["copiare dati","copiando dati","copia dati","trasferire dati","passare dati","da excel a","da excel nelle","tra excel e","tra excel ed","dati nelle email"], profile:{automation:100,excel:92,email:88,documents:42}, preferredToolId:"power-automate" },
     { id:"email-management", label:"Gestione delle email", summary:"Ridurre il tempo perso a leggere, smistare e seguire le email.", keywords:["email","e-mail","mail","posta","inbox","casella","messaggi","rispondere","risposte","smistare"], profile:{email:94,automation:82,followup:58}, preferredToolId:"power-automate" },
     { id:"repetitive-automation", label:"Automazione del lavoro ripetitivo", summary:"Eliminare passaggi manuali che vengono ripetuti spesso.", keywords:["ripetitivo","ripetitive","ripetutamente","manuale","manualmente","copia","incolla","copio","incollo","ogni giorno","ogni settimana","perdo tempo","perdo ore","sempre le stesse"], profile:{automation:98,ai:60}, preferredToolId:"power-automate" },
     { id:"excel-data", label:"Lavoro con Excel e dati", summary:"Semplificare attività, dati, report e passaggi ripetitivi in Excel.", keywords:["excel","foglio","fogli","tabella","tabelle","celle","report","dashboard","dati","numeri","csv"], profile:{excel:96,automation:72,ai:42}, preferredToolId:"power-automate" },
@@ -4960,7 +4961,7 @@
 
 
 
-    const stack =
+    let stack =
       buildStack(
         rankedTools,
         answers,
@@ -4968,9 +4969,27 @@
         dominantRole
       );
 
+    const preferredSolution =
+      needInterpretation.preferredToolId
+        ? rankedTools.find(function(tool){
+            return String(tool.id || "") === String(needInterpretation.preferredToolId);
+          })
+        : null;
+
+    if (preferredSolution) {
+      stack = stack.filter(function(tool){
+        return String(tool.id || "") !== String(preferredSolution.id || "");
+      });
+      stack.unshift(preferredSolution);
+
+      if (stack.length > CONFIG.MAX_STACK_TOOLS) {
+        stack.length = CONFIG.MAX_STACK_TOOLS;
+      }
+    }
+
 
     const primaryTool =
-      stack[0] ||
+      (preferredSolution || stack[0]) ||
 
       choosePrimary(
         rankedTools,
