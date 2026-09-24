@@ -5142,6 +5142,10 @@
 
       solutionDiscovery:
         buildSolutionDiscovery(
+          answers && answers.painPoint ? answers.painPoint : "",
+          answers
+        ),
+        buildSolutionDiscovery(
           answers,
           profile,
           needInterpretation,
@@ -5312,6 +5316,98 @@
 
 
   /* =========================================================
+     21B. OPEN SOLUTION DISCOVERY
+     Turns an unmet need into a useful software category even
+     when the exact product is not already in the catalog.
+     ========================================================= */
+
+  const SOLUTION_DISCOVERY_MAP = [
+    { keywords:["file","cartella","cartelle","desktop","download","ordinare","archiviare","rinominare"], category:"file_automation", toolTypes:["desktop automation","workflow automation","file management"], query:"software automazione file cartelle desktop Windows" },
+    { keywords:["email","mail","posta","inbox","casella","rispondere","smistare"], category:"email_automation", toolTypes:["email automation","workflow automation","AI email assistant"], query:"software automazione email AI gestione posta" },
+    { keywords:["pdf","documento","documenti","contratto","contratti","firma"], category:"document_automation", toolTypes:["document automation","OCR","e-signature"], query:"software automazione documenti PDF OCR firma elettronica" },
+    { keywords:["fattura","fatture","pagamento","pagamenti","incasso","incassi"], category:"finance_automation", toolTypes:["invoicing","accounting automation","payment automation"], query:"software automazione fatture pagamenti contabilità" },
+    { keywords:["cliente","clienti","lead","contatti","vendite","commerciale"], category:"crm", toolTypes:["CRM","sales automation","lead management"], query:"software CRM automazione vendite lead" },
+    { keywords:["appuntamento","appuntamenti","agenda","prenotazione","prenotazioni","calendario"], category:"scheduling", toolTypes:["scheduling","booking","calendar automation"], query:"software prenotazioni agenda calendario online" },
+    { keywords:["progetto","progetti","task","attività","scadenza","scadenze","lavori","commessa"], category:"project_management", toolTypes:["project management","workflow management"], query:"software gestione progetti attività scadenze team" },
+    { keywords:["excel","foglio","fogli","csv","dati","report","dashboard"], category:"data_automation", toolTypes:["spreadsheet automation","BI","data automation"], query:"software automazione Excel dati report dashboard" },
+    { keywords:["social","marketing","newsletter","campagna","campagne","pubblicità","ads"], category:"marketing_automation", toolTypes:["marketing automation","social media management","email marketing"], query:"software marketing automation social newsletter" },
+    { keywords:["modulo","form","questionario","richiesta","richieste"], category:"form_workflow", toolTypes:["forms","workflow automation","data collection"], query:"software moduli form workflow automazione" },
+    { keywords:["ai","intelligenza artificiale","chatbot","assistente"], category:"ai_assistant", toolTypes:["AI assistant","AI automation","chatbot"], query:"software AI assistant automazione chatbot" }
+  ];
+
+  function discoverSolutionNeed(value) {
+    const text=normalizeText(value);
+    let best=null,bestMatches=0;
+    SOLUTION_DISCOVERY_MAP.forEach(function(item){
+      const matches=item.keywords.reduce(function(n,k){
+        return n+(text.indexOf(normalizeText(k))>=0?1:0);
+      },0);
+      if(matches>bestMatches){bestMatches=matches;best=item;}
+    });
+
+    if(!best) {
+      return {
+        found:false,
+        category:"general_productivity",
+        toolTypes:["productivity","workflow automation","AI assistant"],
+        query:"software soluzione automazione produttività lavoro",
+        matches:0
+      };
+    }
+
+    return {
+      found:true,
+      category:best.category,
+      toolTypes:best.toolTypes.slice(),
+      query:best.query,
+      matches:bestMatches
+    };
+  }
+
+  function buildSolutionDiscovery(value, answers) {
+    const need=discoverSolutionNeed(value);
+    const catalog=getDatabase();
+    const text=normalizeText(value);
+    let candidates=Array.isArray(catalog)?catalog.slice():[];
+
+    // Search the catalog using capabilities, integrations and descriptions,
+    // not just the product name.
+    const scored=candidates.map(function(tool){
+      const hay=normalizeText([
+        tool.name,tool.description,tool.category,
+        Array.isArray(tool.integrations)?tool.integrations.join(" "):"",
+        Array.isArray(tool.features)?tool.features.join(" "):"",
+        Array.isArray(tool.useCases)?tool.useCases.join(" "):""
+      ].join(" "));
+      let score=0;
+      need.toolTypes.forEach(function(type){
+        const words=normalizeText(type).split(" ");
+        words.forEach(function(word){
+          if(word.length>2 && hay.indexOf(word)>=0) score+=5;
+        });
+      });
+      text.split(" ").forEach(function(word){
+        if(word.length>3 && hay.indexOf(word)>=0) score+=2;
+      });
+      return {tool:tool,score:score};
+    }).filter(function(x){return x.score>0;})
+      .sort(function(a,b){return b.score-a.score;});
+
+    const matches=scored.slice(0,6).map(function(x){return x.tool;});
+
+    return {
+      need:need,
+      query:need.query,
+      category:need.category,
+      toolTypes:need.toolTypes,
+      catalogMatches:matches,
+      catalogConfidence:matches.length?Math.min(92,38+matches.length*9):0,
+      openDiscoveryRequired:matches.length===0
+    };
+  }
+
+
+  /* =========================================================
      22. PUBLIC API
      ========================================================= */
 
@@ -5346,6 +5442,9 @@
 
     buildSolutionDiscovery:
       buildSolutionDiscovery,
+
+    discoverSolutionNeed:
+      discoverSolutionNeed,
 
     buildNeedsProfile:
       buildNeedsProfile,
