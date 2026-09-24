@@ -261,15 +261,20 @@
   }
 
   function update(){
+    var home=document.getElementById('home');
+    var results=document.getElementById('results');
+    if(home && results && (results.hidden || results.style.display==='none')) return;
+
     injectWowStyles();
-    addWowHomeLayer();
-    if(document.getElementById('results') && document.getElementById('results').style.display!=='none') addProButton();
-    rewriteAffiliateLinks();
-    loadAutopilot();
-    loadExperience();
-    loadProductLayer();
-    loadBlueprintLayer();
-    loadConversionLayer();
+    if(results && results.style.display!=='none'){
+      addProButton();
+      rewriteAffiliateLinks();
+      loadAutopilot();
+      loadExperience();
+      loadProductLayer();
+      loadBlueprintLayer();
+      loadConversionLayer();
+    }
   }
 
   var observer=new MutationObserver(update);
