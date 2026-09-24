@@ -4940,6 +4940,26 @@
     }
 
 
+    if (
+      needInterpretation.preferredToolId &&
+      Array.isArray(rankedTools) &&
+      rankedTools.length
+    ) {
+      rankedTools.forEach(function(tool) {
+        if (String(tool.id || "") === String(needInterpretation.preferredToolId)) {
+          tool.rankingScore = round(Number(tool.rankingScore || 0) + 18, 1);
+          tool.solutionPreferred = true;
+        }
+      });
+
+      rankedTools.sort(function(a,b){
+        if (b.rankingScore !== a.rankingScore) return b.rankingScore-a.rankingScore;
+        return Number(b.compatibility||0)-Number(a.compatibility||0);
+      });
+    }
+
+
+
     const stack =
       buildStack(
         rankedTools,
@@ -5009,25 +5029,6 @@
             : "complementary";
       }
     );
-
-
-    if (
-      needInterpretation.preferredToolId &&
-      Array.isArray(rankedTools) &&
-      rankedTools.length
-    ) {
-      rankedTools.forEach(function(tool) {
-        if (String(tool.id || "") === String(needInterpretation.preferredToolId)) {
-          tool.rankingScore = round(Number(tool.rankingScore || 0) + 18, 1);
-          tool.solutionPreferred = true;
-        }
-      });
-
-      rankedTools.sort(function(a,b){
-        if (b.rankingScore !== a.rankingScore) return b.rankingScore-a.rankingScore;
-        return Number(b.compatibility||0)-Number(a.compatibility||0);
-      });
-    }
 
 
     const finalRanking =
