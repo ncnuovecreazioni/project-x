@@ -348,6 +348,62 @@
   }
 
 
+  /* =========================================================
+     3B. HUMAN NEED INTERPRETATION
+     ========================================================= */
+
+  const NEED_INTENTS = [
+    { id:"file-organization", label:"Organizzazione dei file", summary:"Mettere ordine in file e cartelle e ridurre il lavoro manuale.", keywords:["file","files","cartella","cartelle","desktop","download","pdf","documenti","documento","ordinare","organizzare","ordine","spostare","sposta","rinominare","rinomina","archiviare","archivia","archivio","computer","pc"], profile:{documents:92,automation:88,excel:20}, preferredToolId:"power-automate" },
+    { id:"email-management", label:"Gestione delle email", summary:"Ridurre il tempo perso a leggere, smistare e seguire le email.", keywords:["email","e-mail","mail","posta","inbox","casella","messaggi","rispondere","risposte","smistare"], profile:{email:94,automation:82,followup:58}, preferredToolId:"power-automate" },
+    { id:"repetitive-automation", label:"Automazione del lavoro ripetitivo", summary:"Eliminare passaggi manuali che vengono ripetuti spesso.", keywords:["ripetitivo","ripetitive","ripetutamente","manuale","manualmente","copia","incolla","copio","incollo","ogni giorno","ogni settimana","perdo tempo","perdo ore","sempre le stesse"], profile:{automation:98,ai:60}, preferredToolId:"power-automate" },
+    { id:"excel-data", label:"Lavoro con Excel e dati", summary:"Semplificare attività, dati, report e passaggi ripetitivi in Excel.", keywords:["excel","foglio","fogli","tabella","tabelle","celle","report","dashboard","dati","numeri","csv"], profile:{excel:96,automation:72,ai:42}, preferredToolId:"power-automate" },
+    { id:"clients-sales", label:"Gestione di clienti e vendite", summary:"Tenere sotto controllo clienti, lead, richieste e follow-up.", keywords:["cliente","clienti","contatto","contatti","lead","commerciale","vendite","vendita","pipeline","follow up","follow-up","richiamare","ricontattare"], profile:{crm:96,sales:88,followup:86,automation:62}, preferredToolId:"hubspot" },
+    { id:"quotes", label:"Preventivi e offerte", summary:"Ridurre il lavoro necessario per creare e seguire preventivi e offerte.", keywords:["preventivo","preventivi","offerta","offerte","quotazione","quotazioni"], profile:{quotes:98,sales:72,automation:58}, preferredToolId:"hubspot" },
+    { id:"appointments", label:"Appuntamenti e prenotazioni", summary:"Semplificare la gestione di agenda, riunioni e prenotazioni.", keywords:["appuntamento","appuntamenti","prenotazione","prenotazioni","agenda","calendario","riunione","riunioni","meeting","booking"], profile:{appointments:98,automation:64,crm:52}, preferredToolId:"hubspot" },
+    { id:"projects", label:"Organizzazione di attività e progetti", summary:"Tenere sotto controllo attività, scadenze e lavori senza perdersi passaggi.", keywords:["progetto","progetti","task","attività","scadenza","scadenze","commessa","commesse","lavori","workflow","team"], profile:{projects:94,automation:60,documents:46}, preferredToolId:"monday" },
+    { id:"documents", label:"Gestione documenti", summary:"Centralizzare documenti, contratti e archivi e trovare tutto più facilmente.", keywords:["documenti","documento","contratti","contratto","firma","firme","archivio","archivi","pdf"], profile:{documents:94,automation:58}, preferredToolId:"microsoft-365" },
+    { id:"marketing", label:"Marketing e acquisizione clienti", summary:"Organizzare campagne, contatti e attività di marketing in modo più automatico.", keywords:["marketing","campagna","campagne","newsletter","social","seo","ads","advertising","contenuti","content"], profile:{marketing:96,email:78,automation:68}, preferredToolId:"getresponse" },
+    { id:"generic-productivity", label:"Produttività e semplificazione del lavoro", summary:"Ridurre passaggi inutili e trovare uno strumento più semplice per lavorare.", keywords:[], profile:{automation:52,documents:38,projects:30}, preferredToolId:"microsoft-365" }
+  ];
+
+  function isGreeting(text) {
+    const t=normalizeText(text);
+    if(!t) return false;
+    const greetings=["ciao","salve","saluti","buongiorno","buonasera","buonanotte","hello","hi","hey","ehi","come stai","come va"];
+    return greetings.some(function(g){return t===g||t.indexOf(g+" ")===0||t.indexOf(" "+g)>=0;});
+  }
+
+  function interpretNeed(value) {
+    const text=normalizeText(value);
+    if(!text) return {kind:"empty",label:"",summary:"",confidence:0,profile:{},preferredToolId:""};
+    if(isGreeting(text)) return {kind:"greeting",label:"Conversazione",summary:"Un saluto non contiene ancora un bisogno da risolvere.",confidence:100,profile:{},preferredToolId:""};
+
+    let best=NEED_INTENTS[NEED_INTENTS.length-1],bestMatches=0;
+    NEED_INTENTS.forEach(function(intent){
+      if(!intent.keywords.length) return;
+      const matches=intent.keywords.reduce(function(count,k){
+        return count+(text.indexOf(normalizeText(k))>=0?1:0);
+      },0);
+      if(matches>bestMatches){bestMatches=matches;best=intent;}
+    });
+
+    const confidence=bestMatches
+      ? Math.min(98,58+bestMatches*12+Math.min(20,Math.floor(text.length/40)*5))
+      : Math.min(72,44+Math.min(24,Math.floor(text.length/12)*4));
+
+    return {
+      kind:"need",
+      id:best.id,
+      label:best.label,
+      summary:best.summary,
+      confidence:confidence,
+      matchedKeywords:bestMatches,
+      profile:Object.assign({},best.profile),
+      preferredToolId:best.preferredToolId||""
+    };
+  }
+
+
   function toArray(value) {
 
     if (Array.isArray(value)) {
@@ -4820,10 +4876,26 @@
       di essere utilizzato.
     */
 
+    const needInterpretation =
+      interpretNeed(
+        getAnswer(
+          answers,
+          ["painPoint","pain","problem","problems"],
+          ""
+        )
+      );
+
+    const mergedAiProfile =
+      Object.assign(
+        {},
+        needInterpretation.profile || {},
+        aiProfile || {}
+      );
+
     const profile =
       buildNeedsProfile(
         answers,
-        aiProfile
+        mergedAiProfile
       );
 
 
@@ -4939,6 +5011,25 @@
     );
 
 
+    if (
+      needInterpretation.preferredToolId &&
+      Array.isArray(rankedTools) &&
+      rankedTools.length
+    ) {
+      rankedTools.forEach(function(tool) {
+        if (String(tool.id || "") === String(needInterpretation.preferredToolId)) {
+          tool.rankingScore = round(Number(tool.rankingScore || 0) + 18, 1);
+          tool.solutionPreferred = true;
+        }
+      });
+
+      rankedTools.sort(function(a,b){
+        if (b.rankingScore !== a.rankingScore) return b.rankingScore-a.rankingScore;
+        return Number(b.compatibility||0)-Number(a.compatibility||0);
+      });
+    }
+
+
     const finalRanking =
       rankedTools.slice(
         0,
@@ -5011,6 +5102,16 @@
 
       answers:
         answers,
+
+      needInterpretation:
+        needInterpretation,
+
+      solutionHint: {
+        label: needInterpretation.label || "Soluzione operativa",
+        summary: needInterpretation.summary || "Cerco il modo più semplice per arrivare al risultato.",
+        confidence: needInterpretation.confidence || 0,
+        preferredToolId: needInterpretation.preferredToolId || ""
+      },
 
       dominantRole:
         dominantRole,
@@ -5154,6 +5255,9 @@
 
     interpretPainPoint:
       interpretPainPoint,
+
+    interpretNeed:
+      interpretNeed,
 
     buildNeedsProfile:
       buildNeedsProfile,
