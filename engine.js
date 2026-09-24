@@ -355,9 +355,11 @@
   const NEED_INTENTS = [
     { id:"file-organization", label:"Organizzazione dei file", summary:"Mettere ordine in file e cartelle e ridurre il lavoro manuale.", keywords:["file","files","cartella","cartelle","desktop","download","pdf","documenti","documento","ordinare","organizzare","ordine","spostare","sposta","rinominare","rinomina","archiviare","archivia","archivio","computer","pc"], profile:{documents:92,automation:88,excel:20}, preferredToolId:"power-automate" },
     { id:"data-transfer-automation", label:"Automazione del passaggio dati", summary:"Collegare strumenti e spostare dati automaticamente senza copia-incolla.", keywords:["copiare dati","copiando dati","copia dati","trasferire dati","passare dati","da excel a","da excel nelle","tra excel e","tra excel ed","dati nelle email"], profile:{automation:100,excel:92,email:88,documents:42}, preferredToolId:"power-automate" },
-    { id:"password-security", label:"Gestione sicura di password e accessi", summary:"Centralizzare password e credenziali e ridurre la gestione manuale degli accessi.", keywords:["password","passwords","credenziali","accessi","login","segreti","chiavi","token","account"], profile:{documents:42,automation:44,ai:35}, preferredToolId:"1password" },
+    { id:"ocr-documents", label:"Digitalizzazione di documenti e scansioni", summary:"Trasformare documenti e scansioni in file utilizzabili e ricercabili senza ricopiare tutto a mano.", keywords:["ocr","scansioni","scansione","scansionato","scansionati","scanned","estrarre testo","riconoscimento testo"], profile:{documents:96,automation:72,ai:78}, preferredToolId:"adobe-acrobat" },
+    { id:"access-management", label:"Controllo degli accessi", summary:"Gestire chi può accedere a sistemi e credenziali in modo più ordinato e sicuro.", keywords:["chi entra","chi accede","accesso ai sistemi","controllare gli accessi","permessi","autorizzazioni","privilegi","account aziendali"], profile:{documents:58,automation:50,ai:40}, preferredToolId:"1password" },
+    { id:"password-security", label:"Gestione sicura di password e accessi", summary:"Centralizzare password e credenziali e ridurre la gestione manuale degli accessi.", keywords:["password","passwords","credenziali","accessi","accesso","login","segreti","chiavi","token","account","permessi","autorizzazioni"], profile:{documents:42,automation:44,ai:35}, preferredToolId:"1password" },
     { id:"meeting-transcription", label:"Riunioni e trascrizioni", summary:"Registrare, trascrivere e riassumere riunioni senza prendere tutto a mano.", keywords:["riunione","riunioni","meeting","call","trascrivere","trascrizione","verbale","appunti","registrare","registrazione"], profile:{appointments:58,documents:72,automation:62,ai:90}, preferredToolId:"otter" },
-    { id:"form-collection", label:"Raccolta dati con moduli", summary:"Raccogliere richieste e dati in modo ordinato invece di copiarli manualmente.", keywords:["modulo","moduli","form","forms","questionario","iscrizioni","raccolta dati","risposte","richieste online"], profile:{documents:54,automation:72,excel:64}, preferredToolId:"jotform" },
+    { id:"form-collection", label:"Raccolta dati con moduli", summary:"Raccogliere richieste e dati in modo ordinato invece di copiarli manualmente.", keywords:["modulo","moduli","form","forms","questionario","iscrizioni","raccolta dati","risposte","richieste online","sito","formulario"], profile:{documents:54,automation:72,excel:64}, preferredToolId:"jotform" },
     { id:"esignature", label:"Firma elettronica", summary:"Inviare, firmare e tracciare documenti senza passaggi cartacei.", keywords:["firmare","firma elettronica","firma digitale","firmare documenti","firme","sign"], profile:{documents:96,automation:58}, preferredToolId:"docusign" },
     { id:"scheduling", label:"Prenotazioni e agenda", summary:"Lasciare che le persone prenotino in autonomia evitando il giro di messaggi.", keywords:["appuntamento","appuntamenti","prenotazione","prenotazioni","agenda","disponibilita","calendario","meeting"], profile:{appointments:98,automation:74,email:42}, preferredToolId:"calendly" },
     { id:"email-management", label:"Gestione delle email", summary:"Ridurre il tempo perso a leggere, smistare e seguire le email.", keywords:["email","e-mail","mail","posta","inbox","casella","messaggi","rispondere","risposte","smistare"], profile:{email:94,automation:82,followup:58}, preferredToolId:"power-automate" },
@@ -5292,7 +5294,10 @@
       : 0;
 
     return {
-      mode: catalogConfidence >= 55 ? "catalog" : "open",
+      mode: (
+        needInterpretation.id === "generic-productivity" ||
+        catalogConfidence < 55
+      ) ? "open" : "catalog",
       category: category,
       outcome: outcome,
       capabilities: capabilities,
