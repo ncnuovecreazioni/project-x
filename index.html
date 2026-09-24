@@ -825,16 +825,47 @@ else{var w=document.createElement('div');w.className='options';q.options.forEach
 $('backBtn').disabled=step===0;$('nextBtn').textContent=step===questions.length-1?'Analizza il mio sistema →':'Continua →'}
 function next(){var q=questions[step];if(q.text)answers[q.key]=($('painInput').value||'').trim();if(['businessType','teamSize','budget','techLevel','automationLevel','hours','hourlyValue'].indexOf(q.key)>=0&&!answers[q.key]){alert('Seleziona un’opzione per continuare.');return}if(q.key==='goals'&&!answers.goals.length){alert('Seleziona almeno un obiettivo.');return}if(q.key==='painPoint'&&!answers.painPoint){alert('Descrivi brevemente il problema.');return}save();if(step<questions.length-1){step++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}else analyze()}
 function prev(){if(step>0){step--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}}
-function getAi(){var controller=typeof AbortController!=='undefined'?new AbortController():null;var timer=controller?setTimeout(function(){controller.abort()},2200):null;var opts={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:answers})};if(controller)opts.signal=controller.signal;return fetch('/api/analyze',opts).then(function(r){if(timer)clearTimeout(timer);if(!r.ok)throw new Error('Le tue esigenze');return r.json()}).then(function(d){return d&&d.success&&d.profile?d.profile:null}).catch(function(){if(timer)clearTimeout(timer);return null})}
-function analyze(){setView('loading');var detected=(E&&typeof E.interpretNeed==='function')?E.interpretNeed(answers.painPoint||''):null;var msgs=[
+function getAi(){var controller=typeof AbortController!=='undefined'?new AbortController():null;var timer=controller?setTimeout(function(){controller.abort()},1800):null;var opts={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:answers})};if(controller)opts.signal=controller.signal;return fetch('/api/analyze',opts).then(function(r){if(timer)clearTimeout(timer);if(!r.ok)throw new Error('AI non disponibile');return r.json()}).then(function(d){return d&&d.success&&d.profile?{profile:d.profile,solution:d.solution||null}:null}).catch(function(){if(timer)clearTimeout(timer);return null})}
+function analyze(){
+setView('loading');
+var detected=(E&&typeof E.interpretNeed==='function')?E.interpretNeed(answers.painPoint||''):null;
+var msgs=[
 detected&&detected.label?'Ho capito: '+detected.label.toLowerCase()+'…':'Leggo quello che mi hai scritto…',
 'Trasformo il bisogno in una soluzione…',
 'Cerco gli strumenti compatibili…',
 'Scelgo da dove partire…',
 'Preparo il primo passo pratico…',
 'Controllo che la proposta sia coerente…'
-];var i=0,timer=setInterval(function(){$('loadingText').textContent=msgs[i%msgs.length];i++},480);try{if(!E||typeof E.analyzeAnswers!=='function')throw new Error('Decision Engine non disponibile');result=E.analyzeAnswers(answers,null);if(!result)throw new Error('Analisi non disponibile');result.aiAvailable=false;setView('results');renderResults(result);event('analysis_complete',{mode:mode,primary:result.primaryTool&&result.primaryTool.name||'',compatibility:result.primaryTool&&result.primaryTool.compatibility||0});window.scrollTo({top:0,behavior:'smooth'})}catch(err){setView(mode==='full'?'questionnaire':'home');alert(err&&err.message?err.message:'Analisi non disponibile.')}finally{clearInterval(timer)}}
-function primary(r){return r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]))}
+];
+var i=0,timer=setInterval(function(){if($('loadingText'))$('loadingText').textContent=msgs[i%msgs.length];i++},420);
+try{
+ if(!E||typeof E.analyzeAnswers!=='function')throw new Error('Decision Engine non disponibile');
+ result=E.analyzeAnswers(answers,null);
+ if(!result)throw new Error('Analisi non disponibile');
+ result.aiAvailable=false;
+ renderResults(result);
+ setView('results');
+ event('analysis_complete',{mode:mode,primary:result.primaryTool&&result.primaryTool.name||'',compatibility:result.primaryTool&&result.primaryTool.compatibility||0,ai:false});
+
+ getAi().then(function(ai){
+   if(!ai||!ai.profile||!E||typeof E.analyzeAnswers!=='function')return;
+   var previous=answers._aiSolution;
+   answers._aiSolution=ai.solution||null;
+   var refined=E.analyzeAnswers(answers,ai.profile);
+   refined.aiAvailable=true;
+   refined.aiSolution=ai.solution||null;
+   refined.solutionDiscovery=E.buildSolutionDiscovery?
+     E.buildSolutionDiscovery(answers,refined.profile,refined.needInterpretation,ai.solution,refined.primaryTool):
+     refined.solutionDiscovery;
+   result=refined;
+   renderResults(result);
+   event('analysis_ai_refined',{mode:mode,primary:refined.primaryTool&&refined.primaryTool.name||'',previousPrimary:previous&&previous.category||'',ai:true});
+ }).catch(function(){});
+}catch(err){
+ setView(mode==='full'?'questionnaire':'home');
+ alert(err&&err.message?err.message:'Analisi non disponibile.')
+}finally{clearInterval(timer)}
+}function primary(r){return r&&(r.primaryTool||r.primary||(r.rankedTools&&r.rankedTools[0]))}
 function toolName(t){return t&&(t.name||t.id)||'Strumento'}
 function fit(t){return Math.round(Number(t&&(t.compatibility!=null?t.compatibility:t.score))||0)}
 function safeUrl(u){
@@ -972,6 +1003,9 @@ var problem=answers.painPoint||'il problema che hai descritto';
 var ni=result&&result.needInterpretation||null;
 var needLabel=ni&&ni.label?ni.label:'Il bisogno';
 var needSummary=ni&&ni.summary?ni.summary:'Cerco una soluzione concreta in base a ciò che mi hai descritto.';
+var sd=result&&result.solutionDiscovery||null;
+var openMode=sd&&sd.mode==='open';
+var openCopy=openMode?'<div class="px-answer-solution"><b>Sto cercando oltre il catalogo:</b> '+esc(sd.category||'una soluzione adatta')+'. '+esc(sd.outcome||'')+'</div>':'';
 var impact=humanImpact(p);
 var cta='<button id="tutorialTop" class="btn primary">Fammi vedere come →</button>';
 var disclosure=isCommercial?'<div class="commercial" style="margin-top:12px">Se scegli questo strumento tramite PROJECT-X, potremmo ricevere una commissione. La scelta nasce dal problema descritto.</div>':'';
@@ -981,6 +1015,7 @@ $('primaryMount').innerHTML=
  '<h2>'+esc(needLabel)+'</h2>'+
  '<p class="px-answer-problem">'+esc(problem)+'</p>'+
  '<div class="px-answer-solution"><b>Come lo sto leggendo:</b> '+esc(needSummary)+'</div>'+
+ openCopy+
  '<div class="px-answer-line"></div>'+
  '<div class="px-answer-kicker">PARTIREI DA QUI</div>'+
  '<h3>'+esc(toolName(p))+'</h3>'+
