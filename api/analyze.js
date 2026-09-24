@@ -83,16 +83,24 @@ Sei il modulo AI di PROJECT-X.
 Il tuo unico compito è INTERPRETARE le esigenze dell'utente.
 
 NON devi:
-- scegliere software;
-- consigliare software;
-- confrontare marchi;
+- scegliere un marchio come vincitore;
 - considerare commissioni affiliate;
 - inventare prezzi;
 - inventare integrazioni;
 - determinare il ranking finale.
 
-Devi trasformare le risposte dell'utente in un profilo strutturato
-di bisogni.
+Devi fare due cose:
+1. trasformare le risposte dell'utente in un profilo strutturato di bisogni;
+2. costruire un BLUEPRINT DELLA SOLUZIONE, cioè spiegare quale tipo di capacità serve per risolvere il problema anche quando non riconosci un software già presente nel catalogo.
+
+Per il blueprint indica:
+- categoria della soluzione;
+- risultato concreto desiderato;
+- 2-6 capacità necessarie;
+- una query descrittiva utile per cercare uno strumento adatto;
+- 2-4 tipi di strumenti possibili, senza inventare marchi se non sei sicuro.
+
+Non trasformare il blueprint in una classifica di marchi.
 
 Usa esclusivamente questi bisogni:
 
@@ -333,6 +341,33 @@ Restituisci esclusivamente il JSON richiesto dallo schema.
               type: "number",
               minimum: 0,
               maximum: 100
+            },
+
+            solution: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                category: { type: "string" },
+                outcome: { type: "string" },
+                capabilities: {
+                  type: "array",
+                  items: { type: "string" },
+                  maxItems: 6
+                },
+                discoveryQuery: { type: "string" },
+                toolTypes: {
+                  type: "array",
+                  items: { type: "string" },
+                  maxItems: 4
+                }
+              },
+              required: [
+                "category",
+                "outcome",
+                "capabilities",
+                "discoveryQuery",
+                "toolTypes"
+              ]
             }
 
           },
@@ -351,7 +386,8 @@ Restituisci esclusivamente il JSON richiesto dallo schema.
             "documents",
             "appointments",
             "ecommerce",
-            "ai"
+            "ai",
+            "solution"
 
           ]
 
@@ -831,6 +867,25 @@ Restituisci esclusivamente il JSON richiesto dallo schema.
      14. RISPOSTA FINALE
      ======================================================= */
 
+  const rawSolution =
+    profile &&
+    profile.solution &&
+    typeof profile.solution === "object"
+      ? profile.solution
+      : {};
+
+  const normalizedSolution = {
+    category: String(rawSolution.category || "").slice(0, 160),
+    outcome: String(rawSolution.outcome || "").slice(0, 240),
+    capabilities: Array.isArray(rawSolution.capabilities)
+      ? rawSolution.capabilities.map(function (x) { return String(x || "").slice(0, 140); }).filter(Boolean).slice(0, 6)
+      : [],
+    discoveryQuery: String(rawSolution.discoveryQuery || "").slice(0, 300),
+    toolTypes: Array.isArray(rawSolution.toolTypes)
+      ? rawSolution.toolTypes.map(function (x) { return String(x || "").slice(0, 120); }).filter(Boolean).slice(0, 4)
+      : []
+  };
+
   return res.status(200).json({
 
     success:
@@ -841,6 +896,9 @@ Restituisci esclusivamente il JSON richiesto dallo schema.
 
     profile:
       normalizedProfile,
+
+    solution:
+      normalizedSolution,
 
     requestId:
       requestId || null
