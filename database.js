@@ -1064,6 +1064,60 @@ const SOFTWARE_DATABASE = [
        END
        ========================================================= */
 
+    {
+        id: "1password",
+        name: "1Password",
+        category: "Password & Access Security",
+        description: "Gestione centralizzata di password, credenziali e accessi per persone e team.",
+        pricingUrl: "https://1password.com/it/pricing/business",
+        affiliateUrl: "",
+        needs: {
+            crm: 1, automation: 4, email: 1, followup: 1, sales: 1,
+            quotes: 1, excel: 1, marketing: 1, projects: 2,
+            documents: 5, appointments: 1, ecommerce: 1, ai: 3
+        },
+        team: ["Solo io", "2–5", "6–20", "21–50", "50+"],
+        tech: ["Base", "Medio", "Avanzato"],
+        automation: ["Semplice", "Smart"],
+        integrations: ["Browser", "SSO", "API", "Developer tools"]
+    },
+
+    {
+        id: "otter",
+        name: "Otter.ai",
+        category: "Meeting AI & Transcription",
+        description: "Registrazione e trascrizione di riunioni, con ricerca, condivisione e riepiloghi.",
+        pricingUrl: "https://otter.ai/pricing",
+        affiliateUrl: "",
+        needs: {
+            crm: 2, automation: 6, email: 2, followup: 4, sales: 2,
+            quotes: 1, excel: 1, marketing: 3, projects: 4,
+            documents: 8, appointments: 7, ecommerce: 1, ai: 10
+        },
+        team: ["Solo io", "2–5", "6–20", "21–50", "50+"],
+        tech: ["Base", "Medio", "Avanzato"],
+        automation: ["Semplice", "Smart", "AI Mode 🤖"],
+        integrations: ["Zoom", "Google Meet", "Microsoft Teams"]
+    },
+
+    {
+        id: "jotform",
+        name: "Jotform",
+        category: "Forms & Data Collection",
+        description: "Creazione di moduli online per raccogliere dati, richieste e invii strutturati.",
+        pricingUrl: "https://www.jotform.com/pricing/",
+        affiliateUrl: "",
+        needs: {
+            crm: 4, automation: 8, email: 6, followup: 4, sales: 4,
+            quotes: 3, excel: 7, marketing: 6, projects: 3,
+            documents: 5, appointments: 5, ecommerce: 3, ai: 6
+        },
+        team: ["Solo io", "2–5", "6–20", "21–50", "50+"],
+        tech: ["Base", "Medio", "Avanzato"],
+        automation: ["Semplice", "Smart", "AI Mode 🤖"],
+        integrations: ["Google Sheets", "Microsoft 365", "Zapier", "Make"]
+    },
+
 ];
 
 
