@@ -306,7 +306,7 @@ const SOFTWARE_DATABASE = [
         id: "power-automate",
         name: "Microsoft Power Automate",
         category: "Automation",
-        description: "Automazione dei flussi di lavoro integrata nell'ecosistema Microsoft 365.",
+        description: "Automazione dei flussi di lavoro e delle attività desktop in Windows, inclusa l'organizzazione di file e cartelle.",
         pricingUrl: "https://www.microsoft.com/en-us/power-platform/products/power-automate/pricing",
         affiliateUrl: "",
         needs: {
