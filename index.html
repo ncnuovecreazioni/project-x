@@ -826,6 +826,18 @@ if((isVeryShort&&isGenericOnly)||(isVeryShort&&intent&&intent.matchedKeywords<=1
   if(assistant){
     assistant.hidden=false;
     assistant.innerHTML='<b>Ho capito di cosa stai parlando.</b><br>Ma non voglio tirarti fuori un software a caso. Dimmi cosa vuoi ottenere:<div class="quick-choices">'+choices.map(function(c){return '<button type="button" class="quick-choice" data-choice="'+c.replace(/"/g,'&quot;')+'">'+c+'</button>';}).join('')+'</div>';
+    assistant.querySelectorAll('.quick-choice').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var choice=btn.getAttribute('data-choice')||'';
+        var current=($('quickProblem').value||'').trim();
+        var suffix=current&&current.toLowerCase().indexOf(choice.toLowerCase())<0?' '+choice.toLowerCase()+'.':'';
+        $('quickProblem').value=(current+suffix).trim();
+        assistant.querySelectorAll('.quick-choice').forEach(function(x){x.classList.remove('selected')});
+        btn.classList.add('selected');
+        assistant.innerHTML='<b>Perfetto.</b><br>Ho aggiunto questo obiettivo al tuo problema. Ora premi <strong>Aiutami →</strong> e continuo io.';
+        $('quickProblem').focus();
+      });
+    });
   }
   return;
 }
