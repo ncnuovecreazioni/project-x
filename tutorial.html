@@ -76,7 +76,42 @@ body{background:radial-gradient(circle at 12% 0%,rgba(124,92,255,.16),transparen
 .px-status{background:rgba(54,217,157,.035)!important;color:#a9d9c5!important}
 @media(max-width:900px){.layout{grid-template-columns:1fr!important}.sidebar{position:static!important}}
 @media(max-width:620px){.guide-toc{padding:19px 20px!important}.step{grid-template-columns:32px 1fr!important}.num{width:32px!important;height:32px!important}.step h3{font-size:21px!important}.step p{font-size:13.5px!important}.hero h1{font-size:41px!important}}
-</style></head>
+</style>
+<style id="px-simple-guide">
+/* ===== SIMPLE GUIDE MODE ===== */
+.guide-toc{display:none!important}
+.layout{display:block!important;max-width:860px!important;margin:0 auto!important}
+.sidebar{display:none!important}
+.hero{padding:58px 0 24px!important;text-align:center!important}
+.hero h1{font-size:clamp(40px,6vw,64px)!important}
+.hero p{max-width:680px!important;margin-left:auto!important;margin-right:auto!important;font-size:15px!important}
+.notice{display:none!important}
+.main{padding-bottom:70px!important}
+.section{padding:22px!important}
+.example-grid,.outcome{display:none!important}
+.card.section:first-child{margin-bottom:12px!important}
+.steps{margin-top:12px!important}
+.step{display:none!important;border:0!important;padding:4px 0 0!important}
+.step.is-current{display:grid!important}
+.step .kicker{font-size:8px!important}
+.step h3{font-size:24px!important;margin-top:4px!important}
+.step .article-paragraph{display:none!important}
+.step .example-line{display:none!important}
+.step .troubleStep{margin-top:10px!important}
+.step .action-line{font-size:13px!important;margin-top:14px!important;padding:15px 16px!important;line-height:1.65!important}
+.step .success-line{font-size:11px!important;margin-top:10px!important;padding:12px 14px!important}
+.screen{margin-top:12px!important}
+.px-assist{position:sticky!important;bottom:12px!important;top:auto!important;margin:12px 0 0!important;z-index:30!important;padding:15px!important;box-shadow:0 18px 50px rgba(0,0,0,.35)!important}
+.px-assist-grid{grid-template-columns:1fr!important;gap:6px!important}
+.px-helpbox:nth-child(3),.px-helpbox:nth-child(4){display:none!important}
+.px-assist h3{font-size:18px!important}
+.px-assist-actions{display:grid!important;grid-template-columns:1fr 1fr!important}
+.px-assist #assistDone{grid-column:1/-1!important;order:-1!important;min-height:44px!important}
+.px-assist #assistPrev,.px-assist #assistCopy{font-size:8px!important}
+.px-where{display:none!important}
+@media(max-width:620px){.hero{padding-top:42px!important}.section{padding:18px!important}.step h3{font-size:21px!important}.px-assist{border-radius:16px!important}.px-assist-actions{grid-template-columns:1fr 1fr!important}}
+</style>
+</head>
 <body>
 <header class="top"><div class="wrap nav"><div class="logo">PROJECT-<b>X</b></div><div class="navlinks"><a href="/">← Torna al risultato</a><a href="/report-pro.html">Report PRO</a></div></div></header>
 
@@ -560,11 +595,11 @@ function goAssist(delta){
  if(delta<0 && selected>0) selected--;
  else if(delta>0 && selected<d.steps.length-1) selected++;
  else if(delta>0 && selected===d.steps.length-1){
-   var out=document.getElementById('outcome');if(out)out.scrollIntoView({behavior:'smooth',block:'center'});
+   var out=document.querySelector('.bottom');if(out)out.scrollIntoView({behavior:'smooth',block:'center'});
    return;
  }
- renderAssist();renderScreen();
- var row=document.querySelector('.step[data-step="'+selected+'"]');if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
+ renderSteps();renderScreen();
+ window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function stepNarrative(s,i){
@@ -609,17 +644,11 @@ function renderToc(){
 }
 function renderSteps(){
  var list=document.getElementById('steps');
- list.innerHTML=d.steps.map(function(s,i){
-   var done=!!state[String(i)],trouble=stepTrouble(s);
-   return '<article class="step '+(done?'done':'')+'" data-step="'+i+'" id="passo-'+i+'"><div class="num">'+String(i+1).padStart(2,'0')+'</div><div><div class="kicker">PASSO '+(i+1)+' · FACCIAMOLO INSIEME</div><h3>'+esc(s[0])+'</h3>'+
-   stepNarrative(s,i)+
-   '<div class="action-line"><b>Adesso fai questo.</b> '+esc(s[2]||s[1]||'Segui il passaggio indicato.')+'</div>'+
-   '<p class="example-line"><b>Esempio pratico.</b> '+esc(stepExample(i,s))+'</p>'+
-   '<div class="success-line"><b>Come capisci che è fatto.</b> '+esc(s[3]||'Il risultato del passaggio deve essere visibile prima di continuare.')+'</div>'+
-   '<details class="troubleStep"><summary>Se qualcosa non torna</summary><p>'+esc(trouble)+'</p></details></div></article>';
- }).join('');
+ var s=d.steps[selected]||d.steps[0];
+ var i=selected;
+ var done=!!state[String(i)],trouble=stepTrouble(s);
+ list.innerHTML='<article class="step is-current '+(done?'done':'')+'" data-step="'+i+'" id="passo-'+i+'"><div class="num">'+String(i+1).padStart(2,'0')+'</div><div><div class="kicker">PASSO '+(i+1)+' DI '+d.steps.length+'</div><h3>'+esc(s[0])+'</h3>'+stepNarrative(s,i)+'<div class="action-line"><b>Adesso fai questo.</b> '+esc(s[2]||s[1]||'Segui il passaggio indicato.')+'</div><div class="success-line"><b>Quando è fatto:</b> '+esc(s[3]||'Verifica il risultato prima di continuare.')+'</div><details class="troubleStep"><summary>Se qualcosa non torna</summary><p>'+esc(trouble)+'</p></details></div></article>';
  renderToc();
- document.querySelectorAll('.step').forEach(function(row){row.onclick=function(e){if(e.target.classList.contains('check'))return;selected=Number(row.dataset.step||0);renderScreen();renderAssist();}});
  updateProgress();renderAssist();
 }
 function updateProgress(){
@@ -638,9 +667,8 @@ document.getElementById('assistNext').onclick=function(){goAssist(1)};
 document.getElementById('assistDone').onclick=function(){
  state[String(selected)]=true;
  saveState(tool.id,state);
- updateProgress();
- renderSteps();
  selected=selected<d.steps.length-1?selected+1:selected;
+ renderSteps();
  renderScreen();
  renderAssist();
 };moneyBtn.addEventListener('click',function(){try{if(window.gtag)window.gtag('event','tutorial_monetization_click',{tool:tool.name,toolId:tool.id,eligible:!!eligible[tool.id]})}catch(e){}});
