@@ -1469,5 +1469,6 @@ if(!E){document.body.innerHTML='<div style="padding:50px;color:white;font-family
 
 
 
-<script>/* HOME FINAL CLEAN: advanced experience layers are intentionally disabled here. */</script></body>
+<script>/* HOME FINAL CLEAN: advanced experience layers are intentionally disabled here. */</script><script id="px-click-safety-fix">(function(){'use strict';function boot(){var b=document.getElementById('quickBtn');if(!b||b.dataset.pxSafetyBound==='1')return;b.dataset.pxSafetyBound='1';b.style.setProperty('pointer-events','auto','important');b.style.setProperty('position','relative','important');b.style.setProperty('z-index','2147483000','important');b.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();var f=document.getElementById('quickProblem'),a=document.getElementById('quickAssistant'),u=window.ProjectXUI;if(!f||!a)return;if(!f.value.trim()){a.hidden=false;a.textContent='Scrivi qui cosa vuoi risolvere e poi premi “Aiutami”.';f.focus();return;}if(u&&typeof u.startQuick==='function'){try{u.startQuick();}catch(err){a.hidden=false;a.textContent='Non riesco ad avviare l’analisi. Riprova tra poco.';console.error('[PROJECT-X] startQuick failed',err);}}else{a.hidden=false;a.textContent='Il motore di PROJECT-X non è stato caricato correttamente. Ricarica la pagina e riprova.';console.error('[PROJECT-X] ProjectXUI.startQuick unavailable');}},true);}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();})();</script>
+</body>
 </html>
