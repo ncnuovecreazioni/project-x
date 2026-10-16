@@ -1469,6 +1469,101 @@ if(!E){document.body.innerHTML='<div style="padding:50px;color:white;font-family
 
 
 
-<script>/* HOME FINAL CLEAN: advanced experience layers are intentionally disabled here. */</script><script id="px-click-safety-fix">(function(){'use strict';function boot(){var b=document.getElementById('quickBtn');if(!b||b.dataset.pxSafetyBound==='1')return;b.dataset.pxSafetyBound='1';b.style.setProperty('pointer-events','auto','important');b.style.setProperty('position','relative','important');b.style.setProperty('z-index','2147483000','important');b.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();var f=document.getElementById('quickProblem'),a=document.getElementById('quickAssistant'),u=window.ProjectXUI;if(!f||!a)return;if(!f.value.trim()){a.hidden=false;a.textContent='Scrivi qui cosa vuoi risolvere e poi premi “Aiutami”.';f.focus();return;}if(u&&typeof u.startQuick==='function'){try{u.startQuick();}catch(err){a.hidden=false;a.textContent='Non riesco ad avviare l’analisi. Riprova tra poco.';console.error('[PROJECT-X] startQuick failed',err);}}else{a.hidden=false;a.textContent='Il motore di PROJECT-X non è stato caricato correttamente. Ricarica la pagina e riprova.';console.error('[PROJECT-X] ProjectXUI.startQuick unavailable');}},true);}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();})();</script>
+<script>/* HOME FINAL CLEAN: advanced experience layers are intentionally disabled here. */</script><script id="px-click-safety-fix">
+(function(){
+  'use strict';
+  function esc(value){
+    return String(value==null?'':value).replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function assistantFor(field){
+    var box=document.getElementById('quickAssistant');
+    if(!box && field && field.parentNode){
+      box=document.createElement('div');
+      box.id='quickAssistant';
+      box.className='quick-assistant';
+      box.setAttribute('role','status');
+      field.insertAdjacentElement('afterend',box);
+    }
+    return box;
+  }
+  function showError(message,field){
+    var box=assistantFor(field);
+    if(box){box.hidden=false;box.textContent=message;}
+    else window.alert(message);
+  }
+  function fallbackAnalyze(problem,field){
+    var engine=window.ProjectXEngine||window.StackPilotEngine;
+    if(!engine || typeof engine.analyzeAnswers!=='function'){
+      showError('Il motore di analisi non è stato caricato. Ricarica la pagina; se continua, il sito richiede una correzione tecnica.',field);
+      return;
+    }
+    try{
+      var result=engine.analyzeAnswers({
+        painPoint:problem,
+        businessType:'Professionista',
+        budget:'€31–50',
+        teamSize:'2–5',
+        techLevel:'Medio',
+        automationLevel:'Smart',
+        hours:'4–7',
+        hourlyValue:'€30',
+        goals:[],
+        existingTools:[],
+        doNotChange:[],
+        doNotReplace:[],
+        keepTools:[],
+        toolsToKeep:[]
+      },null);
+      var tool=result&&(result.primaryTool||result.primary||(result.rankedTools&&result.rankedTools[0]));
+      if(!tool) throw new Error('Nessuna soluzione disponibile');
+      var home=document.getElementById('home'),benefits=document.getElementById('benefits');
+      var questionnaire=document.getElementById('questionnaire'),loading=document.getElementById('loading'),results=document.getElementById('results');
+      var mount=document.getElementById('primaryMount');
+      if(!results||!mount) throw new Error('Area risultati non disponibile');
+      [home,benefits,questionnaire,loading].forEach(function(el){if(el){el.hidden=true;el.style.display='none';}});
+      results.hidden=false;results.style.display='block';
+      mount.innerHTML='<div class="simple-answer"><div class="simple-section"><div class="simple-label">IL TUO PROBLEMA</div><p class="simple-problem">'+esc(problem)+'</p></div><div class="simple-divider"></div><div class="simple-section"><div class="simple-label">PRIMA SOLUZIONE CONSIGLIATA</div><h2>'+esc(tool.name||tool.id||'Strumento consigliato')+'</h2><p class="simple-copy">'+esc(tool.description||'Parti da questo strumento e verifica se risolve il problema che hai descritto.')+'</p><p class="simple-result-note">Questa è una proposta iniziale basata sul motore locale di PROJECT-X. L’assistente IA non è necessario per mostrarla.</p><button type="button" class="btn secondary" id="pxFallbackBack">← Torna indietro</button></div></div>';
+      var back=document.getElementById('pxFallbackBack');
+      if(back) back.addEventListener('click',function(){results.style.display='none';results.hidden=true;if(home){home.hidden=false;home.style.display='block';}if(benefits){benefits.hidden=true;benefits.style.display='none';}window.scrollTo({top:0,behavior:'smooth'});});
+      window.scrollTo({top:0,behavior:'smooth'});
+    }catch(err){
+      console.error('[PROJECT-X] fallback analysis failed',err);
+      showError('Non sono riuscito a generare il risultato. Il sito ha registrato un errore tecnico: ricarica la pagina e riprova.',field);
+    }
+  }
+  function boot(){
+    var button=document.getElementById('quickBtn');
+    if(!button || button.dataset.pxSafetyBound==='2') return;
+    button.dataset.pxSafetyBound='2';
+    button.style.setProperty('pointer-events','auto','important');
+    button.style.setProperty('position','relative','important');
+    button.style.setProperty('z-index','2147483000','important');
+    button.addEventListener('click',function(ev){
+      var field=document.getElementById('quickProblem');
+      if(!field){showError('Non trovo il campo in cui descrivere il problema. Ricarica la pagina.',null);return;}
+      var problem=(field.value||'').trim();
+      if(!problem){
+        ev.preventDefault();ev.stopImmediatePropagation();
+        showError('Scrivi cosa vuoi risolvere e poi premi “Aiutami”.',field);
+        field.focus();
+        return;
+      }
+      var ui=window.ProjectXUI;
+      if(ui && typeof ui.startQuick==='function'){
+        ev.preventDefault();ev.stopImmediatePropagation();
+        try{ui.startQuick();}catch(err){console.error('[PROJECT-X] startQuick failed',err);fallbackAnalyze(problem,field);}
+        return;
+      }
+      ev.preventDefault();ev.stopImmediatePropagation();
+      console.error('[PROJECT-X] ProjectXUI.startQuick unavailable; using local engine fallback');
+      fallbackAnalyze(problem,field);
+    },true);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
+})();
+</script>
 </body>
 </html>
