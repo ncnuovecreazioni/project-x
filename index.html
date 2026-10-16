@@ -1264,7 +1264,8 @@ function renderResults(r){
  renderPrimary(p);
  renderSolutionDiscovery(r);
  $('aiBadge').style.display='none';
- $('refineBtn').textContent='Voglio capire meglio';
+ var refineButton=$('refineBtn');
+ if(refineButton)refineButton.textContent='Voglio capire meglio';
 }
 function humanImpact(p){
 var cat=String(p&&p.category||'').toLowerCase();
